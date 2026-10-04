@@ -159,6 +159,131 @@ import logoRenson from "./partners/renson.svg";
 import logoResplendent from "./partners/resplendent.svg";
 import logoSom from "./partners/som.webp";
 
+/* Project photography, from Durall's own project folders (October 2026):
+ * one folder per project under ./projects, each photograph in two or three
+ * widths. */
+import gardensDusk960 from "./projects/secret-gardens/dusk-960w.webp";
+import gardensDusk1440 from "./projects/secret-gardens/dusk-1440w.webp";
+import gardensDusk from "./projects/secret-gardens/dusk-1920w.webp";
+import gardensStair800 from "./projects/secret-gardens/stair-800w.webp";
+import gardensStair from "./projects/secret-gardens/stair-1600w.webp";
+import gardensSwing800 from "./projects/secret-gardens/swing-800w.webp";
+import gardensSwing from "./projects/secret-gardens/swing-1600w.webp";
+import gardensPavilion800 from "./projects/secret-gardens/pavilion-800w.webp";
+import gardensPavilion from "./projects/secret-gardens/pavilion-1600w.webp";
+import gardensBedroom800 from "./projects/secret-gardens/bedroom-800w.webp";
+import gardensBedroom from "./projects/secret-gardens/bedroom-1600w.webp";
+import gardensGlass640 from "./projects/secret-gardens/glass-640w.webp";
+import gardensGlass from "./projects/secret-gardens/glass-1125w.webp";
+import gardensGlassClose640 from "./projects/secret-gardens/glass-close-640w.webp";
+import gardensGlassClose from "./projects/secret-gardens/glass-close-1125w.webp";
+import gardensWindow640 from "./projects/secret-gardens/window-640w.webp";
+import gardensWindow from "./projects/secret-gardens/window-1200w.webp";
+import mandalaDusk960 from "./projects/mandala/dusk-960w.webp";
+import mandalaDusk1440 from "./projects/mandala/dusk-1440w.webp";
+import mandalaDusk from "./projects/mandala/dusk-1500w.webp";
+import mandalaDining800 from "./projects/mandala/dining-800w.webp";
+import mandalaDining from "./projects/mandala/dining-1500w.webp";
+import mandalaLiving800 from "./projects/mandala/living-800w.webp";
+import mandalaLiving from "./projects/mandala/living-1500w.webp";
+import mandalaPool800 from "./projects/mandala/pool-800w.webp";
+import mandalaPool from "./projects/mandala/pool-1032w.webp";
+import mandalaNight800 from "./projects/mandala/night-800w.webp";
+import mandalaNight from "./projects/mandala/night-903w.webp";
+import sentosaShelves960 from "./projects/sentosa/shelves-960w.webp";
+import sentosaShelves1440 from "./projects/sentosa/shelves-1440w.webp";
+import sentosaShelves from "./projects/sentosa/shelves-1500w.webp";
+import sentosaBedroom800 from "./projects/sentosa/bedroom-800w.webp";
+import sentosaBedroom from "./projects/sentosa/bedroom-1500w.webp";
+import sentosaLiving640 from "./projects/sentosa/living-640w.webp";
+import sentosaLiving from "./projects/sentosa/living-1200w.webp";
+import sentosaLounge640 from "./projects/sentosa/lounge-640w.webp";
+import sentosaLounge from "./projects/sentosa/lounge-1200w.webp";
+import sentosaShadow640 from "./projects/sentosa/shadow-640w.webp";
+import sentosaShadow from "./projects/sentosa/shadow-1200w.webp";
+import chilternPond960 from "./projects/chiltern/pond-960w.webp";
+import chilternPond1440 from "./projects/chiltern/pond-1440w.webp";
+import chilternPond from "./projects/chiltern/pond-1920w.webp";
+import chilternLiving800 from "./projects/chiltern/living-800w.webp";
+import chilternLiving from "./projects/chiltern/living-1600w.webp";
+import chilternPool640 from "./projects/chiltern/pool-640w.webp";
+import chilternPool from "./projects/chiltern/pool-1200w.webp";
+import chilternCorner640 from "./projects/chiltern/corner-640w.webp";
+import chilternCorner from "./projects/chiltern/corner-1200w.webp";
+import chilternBedroom800 from "./projects/chiltern/bedroom-800w.webp";
+import chilternBedroom from "./projects/chiltern/bedroom-1600w.webp";
+import chilternLounge800 from "./projects/chiltern/lounge-800w.webp";
+import chilternLounge from "./projects/chiltern/lounge-1600w.webp";
+import chilternStudy800 from "./projects/chiltern/study-800w.webp";
+import chilternStudy from "./projects/chiltern/study-1600w.webp";
+import juhuAerial960 from "./projects/juhu/aerial-960w.webp";
+import juhuAerial from "./projects/juhu/aerial-1330w.webp";
+import juhuCourt640 from "./projects/juhu/court-640w.webp";
+import juhuCourt from "./projects/juhu/court-1104w.webp";
+import juhuShutters640 from "./projects/juhu/shutters-640w.webp";
+import juhuShutters from "./projects/juhu/shutters-904w.webp";
+import juhuGlazing640 from "./projects/juhu/glazing-640w.webp";
+import juhuGlazing from "./projects/juhu/glazing-904w.webp";
+import juhuTerrace640 from "./projects/juhu/terrace-640w.webp";
+import juhuTerrace from "./projects/juhu/terrace-1200w.webp";
+import juhuLiving640 from "./projects/juhu/living-640w.webp";
+import juhuLiving from "./projects/juhu/living-1200w.webp";
+import juhuDusk640 from "./projects/juhu/dusk-640w.webp";
+import juhuDusk from "./projects/juhu/dusk-1168w.webp";
+import ritzAerial960 from "./projects/ritz/aerial-960w.webp";
+import ritzAerial1440 from "./projects/ritz/aerial-1440w.webp";
+import ritzAerial from "./projects/ritz/aerial-1920w.webp";
+import ritzVilla800 from "./projects/ritz/villa-800w.webp";
+import ritzVilla from "./projects/ritz/villa-1600w.webp";
+import ritzPool800 from "./projects/ritz/pool-800w.webp";
+import ritzPool from "./projects/ritz/pool-1600w.webp";
+import ritzBedroom800 from "./projects/ritz/bedroom-800w.webp";
+import ritzBedroom from "./projects/ritz/bedroom-1600w.webp";
+import ritzBeach800 from "./projects/ritz/beach-800w.webp";
+import ritzBeach from "./projects/ritz/beach-1600w.webp";
+import ritzEvening800 from "./projects/ritz/evening-800w.webp";
+import ritzEvening from "./projects/ritz/evening-1600w.webp";
+import ritzGarden800 from "./projects/ritz/garden-800w.webp";
+import ritzGarden from "./projects/ritz/garden-1600w.webp";
+import ritzRing640 from "./projects/ritz/ring-640w.webp";
+import ritzRing from "./projects/ritz/ring-1200w.webp";
+import ritzShore640 from "./projects/ritz/shore-640w.webp";
+import ritzShore from "./projects/ritz/shore-1200w.webp";
+import ritzDeck800 from "./projects/ritz/deck-800w.webp";
+import ritzDeck from "./projects/ritz/deck-1600w.webp";
+import ritzSpa800 from "./projects/ritz/spa-800w.webp";
+import ritzSpa from "./projects/ritz/spa-1600w.webp";
+import patinaPavilion960 from "./projects/patina/pavilion-960w.webp";
+import patinaPavilion1440 from "./projects/patina/pavilion-1440w.webp";
+import patinaPavilion from "./projects/patina/pavilion-1920w.webp";
+import patinaSuite800 from "./projects/patina/suite-800w.webp";
+import patinaSuite from "./projects/patina/suite-1600w.webp";
+import patinaTerrace800 from "./projects/patina/terrace-800w.webp";
+import patinaTerrace from "./projects/patina/terrace-1600w.webp";
+import patinaVillaPool800 from "./projects/patina/villa-pool-800w.webp";
+import patinaVillaPool from "./projects/patina/villa-pool-1600w.webp";
+import patinaBeach800 from "./projects/patina/beach-800w.webp";
+import patinaBeach from "./projects/patina/beach-1600w.webp";
+import patinaBar800 from "./projects/patina/bar-800w.webp";
+import patinaBar from "./projects/patina/bar-1600w.webp";
+import patinaLounge800 from "./projects/patina/lounge-800w.webp";
+import patinaLounge from "./projects/patina/lounge-1600w.webp";
+import patinaRestaurant800 from "./projects/patina/restaurant-800w.webp";
+import patinaRestaurant from "./projects/patina/restaurant-1600w.webp";
+import patinaIsland640 from "./projects/patina/island-640w.webp";
+import patinaIsland from "./projects/patina/island-1200w.webp";
+import patinaWaterVillas640 from "./projects/patina/water-villas-640w.webp";
+import patinaWaterVillas from "./projects/patina/water-villas-1200w.webp";
+import patinaShore800 from "./projects/patina/shore-800w.webp";
+import patinaShore from "./projects/patina/shore-1440w.webp";
+import carmichaelSkyline960 from "./projects/carmichael/skyline-960w.webp";
+import carmichaelSkyline1440 from "./projects/carmichael/skyline-1440w.webp";
+import carmichaelSkyline from "./projects/carmichael/skyline-1920w.webp";
+import carmichaelScreens800 from "./projects/carmichael/screens-800w.webp";
+import carmichaelScreens from "./projects/carmichael/screens-1600w.webp";
+import carmichaelFacade800 from "./projects/carmichael/facade-800w.webp";
+import carmichaelFacade from "./projects/carmichael/facade-1600w.webp";
+
 export type ImageAsset = {
   src: string;
   width: number;
@@ -540,4 +665,412 @@ export const IMAGES = {
   logoNomadic: one(logoNomadic, 249, 249),
   logoSom: one(logoSom, 600, 208),
   logoResplendent: one(logoResplendent, 701, 193),
+
+  /* Project pages: hero, gallery and section photographs for each project. */
+  gardensDusk: set(
+    [
+      [gardensDusk960, 960],
+      [gardensDusk1440, 1440],
+      [gardensDusk, 1920],
+    ],
+    1282,
+  ),
+  gardensStair: set(
+    [
+      [gardensStair800, 800],
+      [gardensStair, 1600],
+    ],
+    1067,
+  ),
+  gardensSwing: set(
+    [
+      [gardensSwing800, 800],
+      [gardensSwing, 1600],
+    ],
+    1019,
+  ),
+  gardensPavilion: set(
+    [
+      [gardensPavilion800, 800],
+      [gardensPavilion, 1600],
+    ],
+    1067,
+  ),
+  gardensBedroom: set(
+    [
+      [gardensBedroom800, 800],
+      [gardensBedroom, 1600],
+    ],
+    1068,
+  ),
+  gardensGlass: set(
+    [
+      [gardensGlass640, 640],
+      [gardensGlass, 1125],
+    ],
+    1116,
+  ),
+  gardensGlassClose: set(
+    [
+      [gardensGlassClose640, 640],
+      [gardensGlassClose, 1125],
+    ],
+    1122,
+  ),
+  gardensWindow: set(
+    [
+      [gardensWindow640, 640],
+      [gardensWindow, 1200],
+    ],
+    1213,
+  ),
+  mandalaDusk: set(
+    [
+      [mandalaDusk960, 960],
+      [mandalaDusk1440, 1440],
+      [mandalaDusk, 1500],
+    ],
+    803,
+  ),
+  mandalaDining: set(
+    [
+      [mandalaDining800, 800],
+      [mandalaDining, 1500],
+    ],
+    751,
+  ),
+  mandalaLiving: set(
+    [
+      [mandalaLiving800, 800],
+      [mandalaLiving, 1500],
+    ],
+    803,
+  ),
+  mandalaPool: set(
+    [
+      [mandalaPool800, 800],
+      [mandalaPool, 1032],
+    ],
+    708,
+  ),
+  mandalaNight: set(
+    [
+      [mandalaNight800, 800],
+      [mandalaNight, 903],
+    ],
+    565,
+  ),
+  sentosaShelves: set(
+    [
+      [sentosaShelves960, 960],
+      [sentosaShelves1440, 1440],
+      [sentosaShelves, 1500],
+    ],
+    901,
+  ),
+  sentosaBedroom: set(
+    [
+      [sentosaBedroom800, 800],
+      [sentosaBedroom, 1500],
+    ],
+    1001,
+  ),
+  sentosaLiving: set(
+    [
+      [sentosaLiving640, 640],
+      [sentosaLiving, 1200],
+    ],
+    1500,
+  ),
+  sentosaLounge: set(
+    [
+      [sentosaLounge640, 640],
+      [sentosaLounge, 1200],
+    ],
+    1798,
+  ),
+  sentosaShadow: set(
+    [
+      [sentosaShadow640, 640],
+      [sentosaShadow, 1200],
+    ],
+    1798,
+  ),
+  chilternPond: set(
+    [
+      [chilternPond960, 960],
+      [chilternPond1440, 1440],
+      [chilternPond, 1920],
+    ],
+    1280,
+  ),
+  chilternLiving: set(
+    [
+      [chilternLiving800, 800],
+      [chilternLiving, 1600],
+    ],
+    1200,
+  ),
+  chilternPool: set(
+    [
+      [chilternPool640, 640],
+      [chilternPool, 1200],
+    ],
+    1800,
+  ),
+  chilternCorner: set(
+    [
+      [chilternCorner640, 640],
+      [chilternCorner, 1200],
+    ],
+    1600,
+  ),
+  chilternBedroom: set(
+    [
+      [chilternBedroom800, 800],
+      [chilternBedroom, 1600],
+    ],
+    798,
+  ),
+  chilternLounge: set(
+    [
+      [chilternLounge800, 800],
+      [chilternLounge, 1600],
+    ],
+    825,
+  ),
+  chilternStudy: set(
+    [
+      [chilternStudy800, 800],
+      [chilternStudy, 1600],
+    ],
+    1078,
+  ),
+  juhuAerial: set(
+    [
+      [juhuAerial960, 960],
+      [juhuAerial, 1330],
+    ],
+    1356,
+  ),
+  juhuCourt: set(
+    [
+      [juhuCourt640, 640],
+      [juhuCourt, 1104],
+    ],
+    1356,
+  ),
+  juhuShutters: set(
+    [
+      [juhuShutters640, 640],
+      [juhuShutters, 904],
+    ],
+    1356,
+  ),
+  juhuGlazing: set(
+    [
+      [juhuGlazing640, 640],
+      [juhuGlazing, 904],
+    ],
+    1356,
+  ),
+  juhuTerrace: set(
+    [
+      [juhuTerrace640, 640],
+      [juhuTerrace, 1200],
+    ],
+    1310,
+  ),
+  juhuLiving: set(
+    [
+      [juhuLiving640, 640],
+      [juhuLiving, 1200],
+    ],
+    1237,
+  ),
+  juhuDusk: set(
+    [
+      [juhuDusk640, 640],
+      [juhuDusk, 1168],
+    ],
+    1356,
+  ),
+  ritzAerial: set(
+    [
+      [ritzAerial960, 960],
+      [ritzAerial1440, 1440],
+      [ritzAerial, 1920],
+    ],
+    1439,
+  ),
+  ritzVilla: set(
+    [
+      [ritzVilla800, 800],
+      [ritzVilla, 1600],
+    ],
+    1067,
+  ),
+  ritzPool: set(
+    [
+      [ritzPool800, 800],
+      [ritzPool, 1600],
+    ],
+    1045,
+  ),
+  ritzBedroom: set(
+    [
+      [ritzBedroom800, 800],
+      [ritzBedroom, 1600],
+    ],
+    899,
+  ),
+  ritzBeach: set(
+    [
+      [ritzBeach800, 800],
+      [ritzBeach, 1600],
+    ],
+    900,
+  ),
+  ritzEvening: set(
+    [
+      [ritzEvening800, 800],
+      [ritzEvening, 1600],
+    ],
+    1031,
+  ),
+  ritzGarden: set(
+    [
+      [ritzGarden800, 800],
+      [ritzGarden, 1600],
+    ],
+    1062,
+  ),
+  ritzRing: set(
+    [
+      [ritzRing640, 640],
+      [ritzRing, 1200],
+    ],
+    1436,
+  ),
+  ritzShore: set(
+    [
+      [ritzShore640, 640],
+      [ritzShore, 1200],
+    ],
+    1444,
+  ),
+  ritzDeck: set(
+    [
+      [ritzDeck800, 800],
+      [ritzDeck, 1600],
+    ],
+    1067,
+  ),
+  ritzSpa: set(
+    [
+      [ritzSpa800, 800],
+      [ritzSpa, 1600],
+    ],
+    1202,
+  ),
+  patinaPavilion: set(
+    [
+      [patinaPavilion960, 960],
+      [patinaPavilion1440, 1440],
+      [patinaPavilion, 1920],
+    ],
+    1440,
+  ),
+  patinaSuite: set(
+    [
+      [patinaSuite800, 800],
+      [patinaSuite, 1600],
+    ],
+    1200,
+  ),
+  patinaTerrace: set(
+    [
+      [patinaTerrace800, 800],
+      [patinaTerrace, 1600],
+    ],
+    1181,
+  ),
+  patinaVillaPool: set(
+    [
+      [patinaVillaPool800, 800],
+      [patinaVillaPool, 1600],
+    ],
+    1200,
+  ),
+  patinaBeach: set(
+    [
+      [patinaBeach800, 800],
+      [patinaBeach, 1600],
+    ],
+    1200,
+  ),
+  patinaBar: set(
+    [
+      [patinaBar800, 800],
+      [patinaBar, 1600],
+    ],
+    1190,
+  ),
+  patinaLounge: set(
+    [
+      [patinaLounge800, 800],
+      [patinaLounge, 1600],
+    ],
+    1202,
+  ),
+  patinaRestaurant: set(
+    [
+      [patinaRestaurant800, 800],
+      [patinaRestaurant, 1600],
+    ],
+    1196,
+  ),
+  patinaIsland: set(
+    [
+      [patinaIsland640, 640],
+      [patinaIsland, 1200],
+    ],
+    1200,
+  ),
+  patinaWaterVillas: set(
+    [
+      [patinaWaterVillas640, 640],
+      [patinaWaterVillas, 1200],
+    ],
+    1600,
+  ),
+  patinaShore: set(
+    [
+      [patinaShore800, 800],
+      [patinaShore, 1440],
+    ],
+    1043,
+  ),
+  carmichaelSkyline: set(
+    [
+      [carmichaelSkyline960, 960],
+      [carmichaelSkyline1440, 1440],
+      [carmichaelSkyline, 1920],
+    ],
+    1020,
+  ),
+  carmichaelScreens: set(
+    [
+      [carmichaelScreens800, 800],
+      [carmichaelScreens, 1600],
+    ],
+    1067,
+  ),
+  carmichaelFacade: set(
+    [
+      [carmichaelFacade800, 800],
+      [carmichaelFacade, 1600],
+    ],
+    1062,
+  ),
 } as const satisfies Record<string, ImageAsset>;

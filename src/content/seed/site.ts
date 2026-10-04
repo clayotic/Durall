@@ -95,7 +95,7 @@ export const SETTINGS_SEED: SiteSettings = {
   },
   seo: {
     shareImage: "/og-durall.jpg",
-    shareImageAlt: "Parikrama House, Murud — a Durall aluminium envelope framed by palms",
+    shareImageAlt: "Parikrama House, Nandgaon — the long dark house beneath coconut palms",
   },
   behaviour: {
     loadingScreen: true,

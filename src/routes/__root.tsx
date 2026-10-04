@@ -33,7 +33,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
  * CDN the images used to come from sends `x-robots-tag: noindex, nofollow`,
  * which is not what you want on a card image. */
 const OG_IMAGE = "/og-durall.jpg";
-const OG_IMAGE_ALT = "Parikrama House, Murud — a Durall aluminium envelope framed by palms";
+const OG_IMAGE_ALT = "Parikrama House, Nandgaon — the long dark house beneath coconut palms";
 
 /* Space Grotesk and Inter are the two faces used above the fold; both are
  * variable fonts, so one file each covers every weight the site asks for.

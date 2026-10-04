@@ -5,7 +5,7 @@ export const PROJECTS_PAGE_SEED: ProjectsPage = {
   seo: {
     title: "Projects — Durall Systems Portfolio of Built Work",
     description:
-      "Residences, resorts and landmarks where Durall’s aluminium systems became the architecture's most exacting details — from Parikrama in Murud to Patina in the Maldives.",
+      "Residences, resorts and landmarks where Durall’s aluminium systems became the architecture's most exacting details — from Parikrama House in Nandgaon to Patina Maldives.",
     image: null,
   },
   opening: {
@@ -27,11 +27,11 @@ export const PROJECTS_PAGE_SEED: ProjectsPage = {
   detail: {
     heroPrefix: "Project",
     info: "Project information",
-    intro: "Introduction",
-    gallery: "Project photography",
+    intro: "The project",
+    gallery: "Gallery",
     plates: "plates",
-    scope: "Durall’s scope",
-    system: "The system",
+    scope: "Durall’s contribution",
+    system: "Systems",
     experience: "The experience",
     next: "Next project",
     cta: {

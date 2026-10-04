@@ -157,7 +157,7 @@ export function projectForm(others: ProjectDoc[]): SectionSpec[] {
       title: "The Experience",
       fields: [
         photo("experience", "Photograph"),
-        text("experience.heading", "Heading"),
+        text("experience.heading", "Heading (the pull quote: also shown on the project’s card)"),
         area("experience.body", "Text"),
       ],
     },

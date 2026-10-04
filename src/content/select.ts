@@ -45,7 +45,11 @@ export function featuredProject(projects: readonly ProjectDoc[]): ProjectDoc | u
 export type PortfolioItem = Pick<
   ProjectDoc,
   "slug" | "name" | "location" | "architect" | "categories" | "year" | "hero"
-> & { index: string };
+> & {
+  index: string;
+  /** The project's pull quote: the heading of its closing section. */
+  quote: string;
+};
 
 /**
  * The /projects grid. Numbered in portfolio order with the featured project
@@ -66,6 +70,7 @@ export function portfolioOf(projects: readonly ProjectDoc[]): PortfolioItem[] {
       categories: p.categories,
       year: p.year,
       hero: p.hero,
+      quote: p.experience.heading,
     }))
     .filter((p) => p.slug !== featured?.slug);
 }

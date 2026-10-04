@@ -217,6 +217,11 @@ export function ProjectGrid({
                   <p className="mt-3 font-body text-sm text-slate">
                     {project.location} · {project.architect}
                   </p>
+                  {project.quote ? (
+                    <p className="mt-2 max-w-[34rem] font-body text-sm leading-relaxed text-pretty text-slate italic">
+                      {project.quote}
+                    </p>
+                  ) : null}
                 </motion.article>
               </motion.li>
             ))}

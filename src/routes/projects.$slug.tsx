@@ -1,4 +1,4 @@
-import { createFileRoute, notFound } from "@tanstack/react-router";
+import { createFileRoute, notFound, redirect } from "@tanstack/react-router";
 import { SiteHeader } from "@/components/durall/SiteHeader";
 import { DurallFooter } from "@/components/durall/DurallFooter";
 import { PageCtaBand } from "@/components/durall/PageCta";
@@ -15,10 +15,23 @@ import {
 import { fetchProject } from "@/content/api";
 import { seoHead } from "@/content/head";
 
+/* The addresses four projects had before October 2026, when they were
+ * renamed to match Durall's own write-ups. Links to the old ones still land. */
+const MOVED: Record<string, string> = {
+  "parikrama-murud-house": "parikrama-house",
+  "chiltron-house": "chiltern-house",
+  "project-bangalore": "mandala-house",
+  patina: "patina-maldives",
+};
+
 export const Route = createFileRoute("/projects/$slug")({
   // Resolved in the loader so an unknown project is a real 404, not an empty
   // page wearing the site's chrome.
   loader: async ({ params }) => {
+    const moved = MOVED[params.slug];
+    if (moved) {
+      throw redirect({ to: "/projects/$slug", params: { slug: moved }, statusCode: 301 });
+    }
     const data = await fetchProject({ data: params.slug });
     if (!data) throw notFound();
     return data;
@@ -50,7 +63,8 @@ function ProjectPage() {
         <ProjectOverview project={project} labels={labels} />
         <ProjectGallery project={project} labels={labels} />
         <ProjectScope project={project} labels={labels} />
-        <ProjectSystem project={project} labels={labels} />
+        {/* Only where a system is named: nothing is invented for the rest. */}
+        {project.system.body ? <ProjectSystem project={project} labels={labels} /> : null}
         <ProjectExperience project={project} labels={labels} />
         <NextProject next={detailOf(data.next)} labels={labels} />
         <PageCtaBand band={labels.cta} />

@@ -83,14 +83,13 @@ export const EXPERTISE_SEED: ExpertisePage = {
           {
             name: "House of Secret Gardens",
             place: "Ahmedabad",
-            credit: "SPASM Design Architects · Ahmedabad",
+            credit: "SPASM Design · Ahmedabad",
             photo: photo(
               "secretGardens",
               "Glass wall of House of Secret Gardens under a roof overgrown with bougainvillea",
             ),
             thumb: null,
-            // TODO: no project page yet; link it here once one is published.
-            href: "",
+            href: "/projects/house-of-secret-gardens",
           },
           {
             name: "Patina Maldives",
@@ -98,7 +97,7 @@ export const EXPERTISE_SEED: ExpertisePage = {
             credit: "Studio MK27 · Fari Islands, Maldives",
             photo: photo("patinaPool", "Pool deck and open timber pavilion at Patina Maldives"),
             thumb: null,
-            href: "/projects/patina",
+            href: "/projects/patina-maldives",
           },
           {
             name: "Parikrama House",
@@ -106,7 +105,7 @@ export const EXPERTISE_SEED: ExpertisePage = {
             credit: "SPASM Design Architects · Nandgaon, Maharashtra",
             photo: photo("heroParikrama", "Glass pavilion of Parikrama House among coconut palms"),
             thumb: null,
-            href: "/projects/parikrama-murud-house",
+            href: "/projects/parikrama-house",
           },
           {
             name: "Chiltern House",
@@ -117,7 +116,7 @@ export const EXPERTISE_SEED: ExpertisePage = {
               "Living room of Chiltern House with a long clerestory window onto the garden",
             ),
             thumb: null,
-            href: "/projects/chiltron-house",
+            href: "/projects/chiltern-house",
           },
           {
             name: "Juhu House",
@@ -142,7 +141,7 @@ export const EXPERTISE_SEED: ExpertisePage = {
               "Patina Maldives from above: a villa, its pool and the beach",
             ),
             thumb: photo("patinaPool", "Pool deck and open timber pavilion at Patina Maldives"),
-            href: "/projects/patina",
+            href: "/projects/patina-maldives",
           },
           {
             name: "Ritz-Carlton Maldives",
@@ -161,8 +160,8 @@ export const EXPERTISE_SEED: ExpertisePage = {
           {
             name: "Villa in the Sky",
             place: "Mumbai",
-            credit: "Mumbai",
-            // TODO: photograph to come from Durall (the design marks it "photo needed").
+            credit: "Abraham John Architects · Mumbai",
+            // TODO: photograph to come from Durall; its project page is a draft until then.
             photo: null,
             thumb: null,
             href: "",
@@ -190,16 +189,18 @@ export const EXPERTISE_SEED: ExpertisePage = {
               "White house with a screened upper floor over a glazed ground floor and pool",
             ),
             thumb: photo("mandalaHouse", "Two wings of Mandala House either side of a pool court"),
-            href: "",
+            href: "/projects/mandala-house",
           },
           {
             name: "Carmichael Residences",
             place: "Mumbai",
-            credit: "Mumbai",
-            // TODO: photograph to come from Durall (the design marks it "photo needed").
-            photo: null,
+            credit: "SOM · Mumbai",
+            photo: photo(
+              "carmichaelScreens",
+              "Sliding timber screens across full-height glazing at Carmichael Residences",
+            ),
             thumb: null,
-            href: "",
+            href: "/projects/carmichael-residences",
           },
         ],
       },
