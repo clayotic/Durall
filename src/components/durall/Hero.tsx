@@ -1,136 +1,217 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect } from "react";
 import { useHeroIntro } from "@/lib/anim";
 import { prefersReducedMotion } from "@/lib/motion-prefs";
+import { clamp01, ramp, smooth } from "@/lib/scene";
 import { destination, imageOf } from "@/content/render";
 import type { HomePage } from "@/content/types";
 import { CtaButton } from "./ui";
 
+/* The opening film, as its frames: the doors of the room sliding open, 72
+ * pictures after the still (which is the film's first frame). They are
+ * taken from the original at equal steps of change in the picture, not of
+ * time, so that equal steps of scroll move the doors equally. */
+const FRAMES = Object.entries(
+  import.meta.glob<string>("@/assets/hero-doors/*.webp", {
+    eager: true,
+    query: "?url",
+    import: "default",
+  }),
+)
+  .sort(([a], [b]) => a.localeCompare(b))
+  .map(([, url]) => url);
+
+/** How closely the film keeps up with the scroll: the share of the distance
+ *  left that it covers each second, as an exponent. */
+const FOLLOW = 9;
+/** The stretch of the film's scroll over which the heading and buttons lift
+ *  away, so the open room is seen clear before the page comes over it. */
+const LIFT = { from: 0.5, to: 0.95 };
+/** Left alone at the top, the doors open a crack and close again: how long
+ *  they wait (ms), how long it takes (ms) and how far they go (of the film). */
+const HINT = { every: 6000, length: 2800, reach: 0.14 };
+
 /**
- * The opening film: muted, looping, no controls, filling the frame exactly as
- * the still under it does.
+ * The opening film, played by the scroll.
  *
- * The still is the film's own first frame, so the film starting is not a
- * change of picture: it simply begins to move. The file runs forwards and
- * then backwards (eased at both ends, like a door opened and closed), so it
- * also ends on that frame and the loop has no jump in it.
+ * The opening keeps a stretch of scroll to itself (its bottom margin, set in
+ * styles.css) and the film runs across it: scrolling down slides the doors
+ * open, scrolling back closes them, and where the scroll stops they stop.
+ * After that stretch the page comes up over the room as it always has.
  *
- * It is not set as the `poster` attribute as well: that takes one address,
- * so a phone would fetch the full-size still on top of the one sized for it.
- * And the film's files are only asked for once the page itself has loaded:
- * named in the markup they are fetched alongside the still, and on a slow
- * phone that held the first picture back by seconds. The opening curtain is
- * still up at that point, so nobody sees the difference.
+ * It is drawn frame by frame on a canvas over the still rather than played
+ * as a video: a video cannot be run backwards, is slow to be sent to an
+ * exact frame, and may be refused altogether (a phone saving power, a tab in
+ * the background). A picture drawn on a canvas has none of that. Between
+ * two frames it shows a mix of both, so a slow scroll moves the doors
+ * smoothly rather than in steps; at rest it is always one whole frame.
  *
- * It always starts by itself and never shows a play button: if the browser
- * refuses or pauses it (a phone saving power does both), it is started again
- * the moment that is allowed, and the browser's own button is hidden in
- * styles.css. Someone who has asked for less motion keeps the still.
+ * The frames are asked for once the page has loaded, at low priority, and
+ * coarsely first: every eighth, then the ones between. The doors can
+ * travel their whole way on the first few to arrive and get finer as the
+ * rest do. Until any has, and where there is no such stretch (an upright
+ * screen, a short window, reduced motion, a data saver), there is only the
+ * still and the page scrolls over it.
  */
-function HeroFilm() {
-  const ref = useRef<HTMLVideoElement>(null);
-  const [wanted, setWanted] = useState(false);
-  const [playing, setPlaying] = useState(false);
-
+function useHeroFilm(sectionRef: React.RefObject<HTMLElement | null>) {
   useEffect(() => {
-    if (prefersReducedMotion()) return;
-    const want = () => setWanted(true);
-    if (document.readyState === "complete") want();
-    else window.addEventListener("load", want, { once: true });
-    return () => window.removeEventListener("load", want);
-  }, []);
+    const section = sectionRef.current;
+    const canvas = section?.querySelector<HTMLCanvasElement>("[data-hero-film]");
+    const context = canvas?.getContext("2d");
+    const saving = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection
+      ?.saveData;
+    if (!section || !canvas || !context || prefersReducedMotion() || saving) return;
+    const copy = section.querySelector<HTMLElement>("[data-hero-copy]");
+    const tint = section.querySelector<HTMLElement>("[data-hero-tint]");
+    const cue = section.querySelector<HTMLElement>("[data-hero-cue]");
 
-  useEffect(() => {
-    const video = ref.current;
-    if (!video || !wanted) return;
-    // Set here as well as in the markup: React does not write `muted` into
-    // server HTML, and a film that is not muted is not allowed to autoplay.
-    video.muted = true;
-    video.defaultMuted = true;
+    const count = FRAMES.length;
+    /** Frame `n` of the film once it has arrived; 0 is the still, under the canvas. */
+    const frames: (HTMLImageElement | undefined)[] = [];
+    let runway = 0; // the length of scroll the film is played across, in px
+    let asked = false;
+    let scrolled = 0; // how far through the film the scroll has it, 0 to 1
+    let nudge = 0; // and how far the hint has it
+    let drawn = -1;
+    let frame = 0;
+    let last = 0;
+    let idleSince = performance.now();
+    let timer = 0;
+    let disposed = false;
 
-    // The opening is held behind the page for its whole length (it is
-    // sticky), so the film rests while the page is over it.
-    const covered = () => window.scrollY > window.innerHeight;
-    const play = () => {
-      if (covered() || document.hidden || !video.paused) return;
-      void video.play().catch((error: unknown) => {
-        // Refused outright: a browser saving power refuses every film until
-        // the page has been touched. Show the still rather than a stopped
-        // film with the browser's play button on it; the first touch or
-        // click starts it (see `again` below).
-        if (error instanceof DOMException && error.name === "NotAllowedError") setPlaying(false);
-      });
+    /** The frame nearest `n` that there is. */
+    const nearest = (n: number) => {
+      for (let d = 0; d <= count; d++) {
+        if (n - d === 0 || frames[n - d]) return n - d;
+        if (frames[n + d]) return n + d;
+      }
+      return 0;
     };
-    // The sources have just been added: have the element pick them up.
-    video.load();
-    play();
 
-    const show = () => setPlaying(true);
-    const onScroll = () => {
-      if (covered()) video.pause();
-      else play();
+    const draw = (position: number) => {
+      const at = clamp01(position) * count;
+      const key = Math.round(at * 64);
+      if (key === drawn) return;
+      drawn = key;
+      const below = Math.floor(at);
+      const base = nearest(below);
+      const next = frames[below + 1];
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      context.globalAlpha = 1;
+      const image = frames[base];
+      if (image) context.drawImage(image, 0, 0, canvas.width, canvas.height);
+      // Part-way to the next frame: that one over this, as far as it has got.
+      if (base === below && next && at > below) {
+        context.globalAlpha = at - below;
+        context.drawImage(next, 0, 0, canvas.width, canvas.height);
+      }
     };
-    // Every moment a refused or interrupted film may be allowed to run:
-    // it can play, the tab or page comes back, or the visitor touches the
-    // page (which is what a phone saving power waits for).
-    const again = ["pointerup", "touchend", "click", "keydown"] as const;
-    /* A watch on the film while it should be running: if it is found
-     * paused it is started again, and the still is shown meanwhile. A film
-     * that is merely waiting for more of itself to download is left alone;
-     * loading it afresh there would only throw away what had arrived. */
-    const watch = window.setInterval(() => {
-      if (covered() || document.hidden || !video.paused) return;
-      setPlaying(false);
-      play();
-    }, 1500);
-    video.addEventListener("playing", show);
-    video.addEventListener("canplay", play);
-    video.addEventListener("pause", play);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("pageshow", play);
-    document.addEventListener("visibilitychange", play);
-    again.forEach((type) => window.addEventListener(type, play, { passive: true }));
+
+    const tick = (now: number) => {
+      frame = 0;
+      const dt = Math.min(0.05, Math.max(0, (now - last) / 1000));
+      last = now;
+
+      // The scroll, to the nearest whole frame, and the film easing after it.
+      const goal = runway ? Math.round(clamp01(window.scrollY / runway) * count) / count : 0;
+      scrolled += (goal - scrolled) * (1 - Math.exp(-dt * FOLLOW));
+      if (Math.abs(goal - scrolled) < 0.0004) scrolled = goal;
+
+      // The hint, while the page rests at the top with nothing over it.
+      const resting =
+        runway > 0 &&
+        window.scrollY <= 2 &&
+        !document.hidden &&
+        !document.documentElement.classList.contains("intro-pending");
+      let hint = 0;
+      let hinting = false;
+      if (!resting) idleSince = now;
+      else if (now - idleSince > HINT.every) {
+        const u = (now - idleSince - HINT.every) / HINT.length;
+        if (u < 1) {
+          hinting = true;
+          hint = HINT.reach * Math.sin(Math.PI * u) ** 2;
+        } else idleSince = now;
+      }
+      // Eased as well, so a scroll in the middle of it takes the doors over
+      // from where they are instead of dropping them shut first.
+      nudge += (hint - nudge) * (1 - Math.exp(-dt * 12));
+      if (!hinting && nudge < 0.0004) nudge = 0;
+
+      draw(Math.max(scrolled, nudge));
+      const lift = smooth(ramp(scrolled, LIFT.from, LIFT.to));
+      if (copy) {
+        copy.style.opacity = (1 - lift).toFixed(3);
+        copy.style.translate = `0 ${(-24 * lift).toFixed(2)}px`;
+        copy.inert = lift > 0.95;
+      }
+      if (tint) tint.style.opacity = (1 - 0.7 * lift).toFixed(3);
+      if (cue) cue.style.opacity = runway ? (1 - ramp(scrolled, 0, 0.08)).toFixed(3) : "0";
+
+      // Still moving: go on. Settled at the top: come back when the hint is
+      // due, or shortly, if something (the opening curtain) is in its way.
+      window.clearTimeout(timer);
+      if (scrolled !== goal || hinting || nudge > 0) frame = requestAnimationFrame(tick);
+      else if (resting) timer = window.setTimeout(wake, HINT.every - (now - idleSince) + 20);
+      else if (runway && window.scrollY <= 2) timer = window.setTimeout(wake, 500);
+    };
+    const wake = () => {
+      if (frame) return;
+      last = performance.now();
+      frame = requestAnimationFrame(tick);
+    };
+
+    const ask = () => {
+      asked = true;
+      const order: number[] = [];
+      for (const step of [8, 4, 2, 1])
+        for (let n = step; n <= count; n += step) if (!order.includes(n)) order.push(n);
+      for (const n of order) {
+        const image = new Image();
+        image.fetchPriority = "low";
+        image.onload = () => {
+          if (disposed) return;
+          frames[n] = image;
+          drawn = -1;
+          wake();
+        };
+        image.src = FRAMES[n - 1] ?? "";
+      }
+    };
+
+    let loaded = document.readyState === "complete";
+    const measure = () => {
+      runway = parseFloat(getComputedStyle(section).marginBottom) || 0;
+      if (runway && loaded && !asked) ask();
+      wake();
+    };
+    const onLoad = () => {
+      loaded = true;
+      measure();
+    };
+
+    measure();
+    if (!loaded) window.addEventListener("load", onLoad, { once: true });
+    window.addEventListener("scroll", wake, { passive: true });
+    window.addEventListener("resize", measure);
+    document.addEventListener("visibilitychange", wake);
     return () => {
-      window.clearInterval(watch);
-      video.removeEventListener("playing", show);
-      video.removeEventListener("canplay", play);
-      video.removeEventListener("pause", play);
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("pageshow", play);
-      document.removeEventListener("visibilitychange", play);
-      again.forEach((type) => window.removeEventListener(type, play));
+      disposed = true;
+      cancelAnimationFrame(frame);
+      window.clearTimeout(timer);
+      window.removeEventListener("load", onLoad);
+      window.removeEventListener("scroll", wake);
+      window.removeEventListener("resize", measure);
+      document.removeEventListener("visibilitychange", wake);
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      if (copy) {
+        copy.style.opacity = "";
+        copy.style.translate = "";
+        copy.inert = false;
+      }
+      if (tint) tint.style.opacity = "";
+      if (cue) cue.style.opacity = "";
     };
-  }, [wanted]);
-
-  return (
-    <video
-      ref={ref}
-      data-hero-film
-      muted
-      loop
-      playsInline
-      autoPlay={wanted}
-      preload={wanted ? "auto" : "none"}
-      aria-hidden="true"
-      tabIndex={-1}
-      disablePictureInPicture
-      disableRemotePlayback
-      controlsList="nodownload nofullscreen noremoteplayback"
-      className={`pointer-events-none absolute inset-0 h-full w-full object-cover transition-opacity duration-[var(--dur-short)] ease-linear ${
-        playing ? "opacity-100" : "opacity-0"
-      }`}
-    >
-      {wanted ? (
-        <>
-          {/* H.264 only: every browser plays it and decodes it in
-              hardware. A WebM alternative was a sixth smaller, but Safari
-              takes it when offered and can stall on it. Phones get the
-              lighter file. */}
-          <source src="/video/hero-720.mp4" type="video/mp4" media="(max-width: 48rem)" />
-          <source src="/video/hero-1080.mp4" type="video/mp4" />
-        </>
-      ) : null}
-    </video>
-  );
+  }, [sectionRef]);
 }
 
 export function Hero({ content }: { content: HomePage["hero"] }) {
@@ -139,6 +220,7 @@ export function Hero({ content }: { content: HomePage["hero"] }) {
     HTMLHeadingElement,
     HTMLDivElement
   >();
+  useHeroFilm(sectionRef);
   const image = imageOf(content.photo.image);
 
   return (
@@ -146,6 +228,7 @@ export function Hero({ content }: { content: HomePage["hero"] }) {
       ref={sectionRef}
       id="top"
       data-hero-pin
+      data-hero-runway
       className="relative flex min-h-[100svh] flex-col justify-end overflow-hidden bg-navy pb-[max(clamp(3rem,7vw,4rem),env(safe-area-inset-bottom))]"
     >
       <div data-hero-media className="absolute inset-0">
@@ -160,10 +243,21 @@ export function Hero({ content }: { content: HomePage["hero"] }) {
             decoding="async"
             className="h-full w-full object-cover"
           />
-          <HeroFilm />
+          {/* The film, drawn over the still by useHeroFilm. */}
+          <canvas
+            data-hero-film
+            width={1600}
+            height={900}
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 h-full w-full object-cover"
+          />
         </div>
       </div>
-      <div aria-hidden="true" className="absolute inset-0 bg-linear-to-t from-navy/0 to-navy/70" />
+      <div
+        data-hero-tint
+        aria-hidden="true"
+        className="absolute inset-0 bg-linear-to-t from-navy/0 to-navy/70"
+      />
       {/* Deepens as the page slides over the opening (lib/anim heroCover). */}
       <div
         data-hero-dim
@@ -171,32 +265,47 @@ export function Hero({ content }: { content: HomePage["hero"] }) {
         className="pointer-events-none absolute inset-0 bg-navy opacity-0"
       />
 
-      <div className="shell relative pt-[clamp(8rem,15vw,10rem)] lg:pt-[6rem]">
-        <h1
-          ref={headingRef}
-          data-anim-hide
-          className="max-w-[20ch] font-display text-[clamp(2.25rem,6.7vw,8rem)] leading-[0.94] font-medium tracking-hero text-balance text-white"
-        >
-          {content.heading}
-        </h1>
-
-        <div className="mt-[clamp(1.5rem,3vw,2rem)] grid grid-cols-1 items-end gap-[clamp(1.5rem,3vw,2rem)] border-t border-white/15 pt-[clamp(1.5rem,3vw,2rem)] md:grid-cols-[minmax(0,1fr)_auto]">
-          <p
-            data-hero-fade
-            className="min-w-0 max-w-[24.5rem] flex-1 font-body text-[clamp(0.875rem,1.1vw,1rem)] leading-relaxed text-pretty text-white/72"
+      {/* Lifts away as the doors come open, so the room is seen clear
+          (useHeroFilm). A layer of its own: the entrance and the scroll own
+          the ones inside it. */}
+      <div data-hero-copy className="relative">
+        <div className="shell relative pt-[clamp(8rem,15vw,10rem)] lg:pt-[6rem]">
+          <h1
+            ref={headingRef}
+            data-anim-hide
+            className="max-w-[20ch] font-display text-[clamp(2.25rem,6.7vw,8rem)] leading-[0.94] font-medium tracking-hero text-balance text-white"
           >
-            {content.body}
-          </p>
-          <div data-hero-fade className="flex flex-wrap gap-3.5">
-            <CtaButton {...destination(content.primary.href)} variant="inverted">
-              {content.primary.label}
-            </CtaButton>
-            <CtaButton {...destination(content.secondary.href)} variant="outlineLight">
-              {content.secondary.label}
-            </CtaButton>
+            {content.heading}
+          </h1>
+
+          <div className="mt-[clamp(1.5rem,3vw,2rem)] grid grid-cols-1 items-end gap-[clamp(1.5rem,3vw,2rem)] border-t border-white/15 pt-[clamp(1.5rem,3vw,2rem)] md:grid-cols-[minmax(0,1fr)_auto]">
+            <p
+              data-hero-fade
+              className="min-w-0 max-w-[24.5rem] flex-1 font-body text-[clamp(0.875rem,1.1vw,1rem)] leading-relaxed text-pretty text-white/72"
+            >
+              {content.body}
+            </p>
+            <div data-hero-fade className="flex flex-wrap gap-3.5">
+              <CtaButton {...destination(content.primary.href)} variant="inverted">
+                {content.primary.label}
+              </CtaButton>
+              <CtaButton {...destination(content.secondary.href)} variant="outlineLight">
+                {content.secondary.label}
+              </CtaButton>
+            </div>
           </div>
         </div>
       </div>
+
+      {/* Says the page answers to a scroll; gone once it has (useHeroFilm). */}
+      <span
+        data-hero-cue
+        aria-hidden="true"
+        className="pointer-events-none absolute bottom-3 left-1/2 flex -translate-x-1/2 flex-col items-center gap-1 pl-[0.2em] font-display text-[0.6875rem] leading-none font-medium tracking-[0.2em] text-white/75 uppercase opacity-0"
+      >
+        Scroll
+        <span className="hero-cue-line -ml-[0.2em] h-3 w-px bg-white/75" />
+      </span>
     </section>
   );
 }

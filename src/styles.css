@@ -243,18 +243,6 @@
   /* Photographs and films cannot be dragged out of the page, selected, or
    * long-pressed for a "save image" sheet. The context menu is handled in
    * routes/__root.tsx. Nothing here changes how they look or lay out. */
-  /* The opening film starts itself; the browser's own "tap to play" button
-   * (a phone in a power-saving mode puts one over a film it has held back)
-   * is never shown. */
-  [data-hero-film]::-webkit-media-controls,
-  [data-hero-film]::-webkit-media-controls-panel,
-  [data-hero-film]::-webkit-media-controls-start-playback-button,
-  [data-hero-film]::-webkit-media-controls-overlay-play-button {
-    display: none !important;
-    -webkit-appearance: none;
-    opacity: 0;
-  }
-
   img,
   video {
     -webkit-user-drag: none;
@@ -428,6 +416,31 @@
   .group:focus-within .card-frame {
     opacity: 1;
   }
+}
+
+/* The line under the opening's "Scroll": drawn downwards, then let go. */
+@keyframes hero-cue-line {
+  0% {
+    scale: 1 0;
+    transform-origin: top;
+  }
+  45%,
+  55% {
+    scale: 1 1;
+    transform-origin: top;
+  }
+  56% {
+    scale: 1 1;
+    transform-origin: bottom;
+  }
+  100% {
+    scale: 1 0;
+    transform-origin: bottom;
+  }
+}
+
+.hero-cue-line {
+  animation: hero-cue-line 2.4s ease-in-out infinite;
 }
 
 /* A label that changes in place (the stage tag, caption and count on the
@@ -672,6 +685,20 @@ html.intro-bailout .site-intro {
     position: sticky;
     top: 0;
     z-index: -1;
+  }
+}
+
+/* The home page's opening plays its film across this much scroll before the
+ * page starts over it (Hero.tsx; lib/anim heroCover waits for it too). Only
+ * where the opening is held as above, and only on a screen wide enough to
+ * have the doors in the picture: an upright one shows the middle of the
+ * room and nothing of them. The shadow is navy below the opening, for a
+ * browser whose toolbar folds away mid-scroll and leaves the window taller
+ * than the opening is. */
+@media (min-height: 40rem) and (orientation: landscape) and (prefers-reduced-motion: no-preference) {
+  main > [data-hero-runway] {
+    margin-bottom: 90svh;
+    box-shadow: 0 8rem 0 var(--color-navy);
   }
 }
 

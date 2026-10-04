@@ -507,15 +507,21 @@ export function useSectionIntro<T extends HTMLElement = HTMLDivElement>(
  *
  * Scroll positions are given as numbers: a trigger measured from a sticky
  * element reads wherever it happens to be stuck at the time.
+ *
+ * An opening can keep a stretch of scroll to itself first, as a bottom
+ * margin (the home page's does, and plays its film across it): the page
+ * only starts over it after that, so everything here starts there too.
  */
+const heroLead = (section: HTMLElement) => parseFloat(getComputedStyle(section).marginBottom) || 0;
+
 export function heroCover(gsap: GsapModule, section: HTMLElement) {
   const media = section.querySelector<HTMLElement>("[data-hero-media]");
   const dim = section.querySelector<HTMLElement>("[data-hero-dim]");
   const tl = gsap.timeline({
     defaults: { ease: "none", immediateRender: false },
     scrollTrigger: {
-      start: 0,
-      end: () => section.offsetHeight,
+      start: () => heroLead(section),
+      end: () => heroLead(section) + section.offsetHeight,
       scrub: true,
       invalidateOnRefresh: true,
     },
@@ -605,8 +611,8 @@ export function useHeroIntro<
               ease: "none",
               immediateRender: false,
               scrollTrigger: {
-                start: 0,
-                end: () => section.offsetHeight * 0.65,
+                start: () => heroLead(section),
+                end: () => heroLead(section) + section.offsetHeight * 0.65,
                 scrub: 0.6,
                 invalidateOnRefresh: true,
               },
