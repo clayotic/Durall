@@ -310,7 +310,9 @@ function PreviewBanner() {
   const { configured, imported, member } = useAdmin();
   if (configured && imported) return null;
   const message = !configured
-    ? "Preview: the database is not connected, so you can look around but nothing can be saved. See the Dashboard for the setup steps."
+    ? member
+      ? "Preview: editing is switched off for now. The site is running on the content in its code, so you can look around but nothing can be saved."
+      : "Preview: the database is not connected, so you can look around but nothing can be saved. See the Dashboard for the setup steps."
     : member?.role === "owner"
       ? "Read-only until the site’s content is imported. Import it from the Dashboard to start editing."
       : "Read-only until the owner imports the site’s content.";

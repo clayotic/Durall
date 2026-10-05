@@ -1,7 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { setResponseStatus } from "@tanstack/react-start/server";
 import { can, isSection, type Member, type Role, type Section } from "@/admin/permissions";
-import { isSupabaseConfigured, sessionClient } from "./supabase";
+import { isLoginConfigured, isSupabaseConfigured, sessionClient } from "./supabase";
 
 /** An error the admin panel shows as-is, with the HTTP status it deserves. */
 export class AdminError extends Error {
@@ -56,7 +56,7 @@ export function memberOf(row: ProfileRow): Member {
 export async function currentMember(
   client?: SupabaseClient,
 ): Promise<{ member: Member; db: SupabaseClient } | null> {
-  if (!isSupabaseConfigured()) return null;
+  if (!isLoginConfigured()) return null;
   const db = client ?? sessionClient();
   const {
     data: { user },

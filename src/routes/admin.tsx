@@ -1,7 +1,7 @@
 import { createFileRoute, notFound, Outlet, redirect } from "@tanstack/react-router";
 import adminCss from "@/admin/admin.css?url";
 import { getContentStatus } from "@/admin/api/content";
-import { ADMIN_ENABLED } from "@/admin/enabled";
+import { ADMIN_VISIBLE } from "@/admin/enabled";
 import { getAdminState } from "@/admin/api/session";
 import { AdminContext } from "@/admin/context";
 import { AdminShell } from "@/admin/Shell";
@@ -16,10 +16,10 @@ import { errorMessage, OverlayProviders } from "@/admin/ui/overlay";
  */
 export const Route = createFileRoute("/admin")({
   ssr: false,
-  // Switched off for now (src/admin/enabled.ts): every page under /admin
-  // answers "not found" until it is turned back on.
+  // Can be hidden altogether (src/admin/enabled.ts): every page under
+  // /admin then answers "not found".
   beforeLoad: () => {
-    if (!ADMIN_ENABLED) throw notFound();
+    if (!ADMIN_VISIBLE) throw notFound();
   },
   head: () => ({
     meta: [{ title: "Admin — Durall Systems" }, { name: "robots", content: "noindex, nofollow" }],
@@ -27,10 +27,13 @@ export const Route = createFileRoute("/admin")({
   }),
   loader: async () => {
     const state = await getAdminState();
-    // Connected but not signed in: to the login. Not connected at all: the
-    // panel opens as a read-only preview with the setup steps.
-    if (state.configured && !state.member) throw redirect({ to: "/admin/login" });
-    const status = state.member ? await getContentStatus() : { configured: false, imported: false };
+    // Locked and not signed in: to the login. Not locked (no database, no
+    // sign-in asked for): the panel opens as a read-only preview.
+    if (state.locked && !state.member) throw redirect({ to: "/admin/login" });
+    const status =
+      state.member && state.configured
+        ? await getContentStatus()
+        : { configured: false, imported: false };
     return { ...state, imported: status.imported };
   },
   staleTime: 60_000,

@@ -4,6 +4,14 @@ import { lockScroll, unlockScroll } from "@/lib/scroll-lock";
 
 const WORDMARK = "DURALL SYSTEMS";
 
+/* The mark at the head of the Durall Systems logo, as two outlines: the D
+ * and the S that leans on it. Traced from the logo itself (its first 234 of
+ * 1200 units), so it is the same mark, only drawable. */
+const MARK = [
+  "M0 0H121V70.6L85.6 106H0Z",
+  "M156.4 0H234V35.4L198.6 70.8V106H121V70.6L156.4 35.2Z",
+] as const;
+
 /* The loading half has to be shown for at least this long from the moment
  * the curtain first painted, or the mark would not finish drawing before the
  * doors part. Timed from that moment (`__introAt`, set by the pre-paint
@@ -25,9 +33,10 @@ const DOORS_MS = 1000;
 const DOORS_DELAY_MS = 320;
 
 /**
- * Page-load opening: the Durall mark draws itself, the wordmark rises, a
- * hairline fills as the page gets ready — then the screen parts down the
- * middle like one of Durall's own sliding doors, onto the page's entrance.
+ * Page-load opening: the Durall mark draws itself and fills, the wordmark
+ * rises under it, a hairline fills as the page gets ready — then the screen
+ * parts down the middle like one of Durall's own sliding doors, onto the
+ * page's entrance.
  *
  * The loading half is pure CSS (styles.css, "Site intro"), so it starts on
  * the very first paint instead of waiting for the JavaScript bundle. Script
@@ -149,7 +158,8 @@ export function SiteIntro() {
     // Leave once the page is genuinely ready and the mark has had its moment,
     // or at the cap, whichever comes first.
     const elapsed = () => performance.now() - shownAt;
-    const hero = document.querySelector<HTMLImageElement>('img[fetchpriority="high"]');
+    // The page's own opening picture, not the logo on the curtain.
+    const hero = document.querySelector<HTMLImageElement>('main img[fetchpriority="high"]');
     const ready = Promise.all([
       document.fonts?.ready,
       hero?.decode ? hero.decode().catch(() => undefined) : undefined,
@@ -182,25 +192,28 @@ export function SiteIntro() {
         className="absolute inset-0 flex flex-col items-center justify-center text-white"
       >
         <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          className="intro-mark h-[clamp(2.75rem,4vw,3.75rem)] w-auto"
+          viewBox="-2 -2 238 110"
+          fill="currentColor"
+          className="intro-mark h-[clamp(2.25rem,3.2vw,3rem)] w-auto"
         >
-          <path
-            pathLength={1}
-            d="M4 4h7a8 8 0 0 1 0 16H4V4Z"
-            stroke="currentColor"
-            strokeWidth="1.1"
-            strokeLinejoin="round"
-          />
-          <path pathLength={1} d="M14 12h7" stroke="currentColor" strokeWidth="1.1" />
+          {MARK.map((d) => (
+            <path
+              key={d}
+              pathLength={1}
+              d={d}
+              stroke="currentColor"
+              strokeWidth="1.25"
+              strokeLinejoin="miter"
+              vectorEffect="non-scaling-stroke"
+            />
+          ))}
         </svg>
 
         <p className="mt-[clamp(1.25rem,2.2vw,1.75rem)] font-display text-[clamp(1rem,1.7vw,1.375rem)] font-bold tracking-[0.3125rem] uppercase">
           <span className="intro-word">
             {Array.from(WORDMARK).map((char, i) => (
               <span key={i} className="intro-char" style={{ "--i": i } as CSSProperties}>
-                {char === " " ? " " : char}
+                {char === " " ? "\u00a0" : char}
               </span>
             ))}
           </span>

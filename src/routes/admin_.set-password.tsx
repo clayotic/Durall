@@ -2,7 +2,7 @@ import { useMemo, useState, type FormEvent } from "react";
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import adminCss from "@/admin/admin.css?url";
 import { AuthFrame } from "@/admin/AuthFrame";
-import { ADMIN_ENABLED } from "@/admin/enabled";
+import { ADMIN_VISIBLE } from "@/admin/enabled";
 import { completePasswordSetup } from "@/admin/api/session";
 import { Button, ButtonLink, Field, Notice, TextInput } from "@/admin/ui/controls";
 import { errorMessage } from "@/admin/ui/overlay";
@@ -16,7 +16,7 @@ import { errorMessage } from "@/admin/ui/overlay";
 export const Route = createFileRoute("/admin_/set-password")({
   ssr: false,
   beforeLoad: () => {
-    if (!ADMIN_ENABLED) throw notFound();
+    if (!ADMIN_VISIBLE) throw notFound();
   },
   head: () => ({
     meta: [

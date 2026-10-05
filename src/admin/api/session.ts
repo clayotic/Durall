@@ -3,7 +3,9 @@ import { getRequestUrl } from "@tanstack/react-start/server";
 import { z } from "zod";
 import type { Member } from "@/admin/permissions";
 import { currentMember, fail, logActivity, requireMember } from "@/server/auth";
+import { ADMIN_LOGIN } from "@/admin/enabled";
 import {
+  isLoginConfigured,
   isSupabaseConfigured,
   serviceClient,
   sessionClient,
@@ -20,8 +22,13 @@ import { input } from "@/server/validate";
  */
 
 export type AdminState = {
-  /** The database is connected (the URL and public key are set). */
+  /** The content database is connected (switched on, and the URL and public
+   *  key are set). */
   configured: boolean;
+  /** The panel opens only for a signed-in member. */
+  locked: boolean;
+  /** Signing in is possible on this server (the keys are set). */
+  signIn: boolean;
   /** The server can manage accounts and uploads (the service key is set). */
   serviceKey: boolean;
   member: Member | null;
@@ -30,10 +37,11 @@ export type AdminState = {
 export const getAdminState = createServerFn({ method: "GET" }).handler(
   async (): Promise<AdminState> => {
     const configured = isSupabaseConfigured();
+    const signIn = isLoginConfigured();
+    const locked = configured || ADMIN_LOGIN;
     const serviceKey = Boolean(supabaseConfig().serviceKey);
-    if (!configured) return { configured, serviceKey, member: null };
-    const session = await currentMember();
-    return { configured, serviceKey, member: session?.member ?? null };
+    const session = signIn ? await currentMember() : null;
+    return { configured, locked, signIn, serviceKey, member: session?.member ?? null };
   },
 );
 
@@ -45,7 +53,7 @@ const credentials = z.object({
 export const signIn = createServerFn({ method: "POST" })
   .inputValidator(input(credentials))
   .handler(async ({ data }) => {
-    if (!isSupabaseConfigured()) fail("The database is not connected yet.", 503);
+    if (!isLoginConfigured()) fail("Signing in is not set up on this server yet.", 503);
     const db = sessionClient();
     const { error } = await db.auth.signInWithPassword(data);
     // One message for every failure, so the form does not reveal which
@@ -56,12 +64,15 @@ export const signIn = createServerFn({ method: "POST" })
       await db.auth.signOut();
       fail("This account has been disabled. Ask the site owner for access.", 403);
     }
-    await logActivity(session, "sign-in", "account", session.member.id, "Signed in");
+    // The activity log is part of the content database: nothing is written
+    // to it while that is off.
+    if (isSupabaseConfigured())
+      await logActivity(session, "sign-in", "account", session.member.id, "Signed in");
     return { member: session.member };
   });
 
 export const signOut = createServerFn({ method: "POST" }).handler(async () => {
-  if (!isSupabaseConfigured()) return { ok: true };
+  if (!isLoginConfigured()) return { ok: true };
   await sessionClient().auth.signOut();
   return { ok: true };
 });
@@ -75,7 +86,7 @@ function setPasswordUrl() {
 export const requestPasswordReset = createServerFn({ method: "POST" })
   .inputValidator(input(z.object({ email: z.string().trim().toLowerCase().email() })))
   .handler(async ({ data }) => {
-    if (!isSupabaseConfigured()) fail("The database is not connected yet.", 503);
+    if (!isLoginConfigured()) fail("Signing in is not set up on this server yet.", 503);
     const { error } = await sessionClient().auth.resetPasswordForEmail(data.email, {
       redirectTo: setPasswordUrl(),
     });
@@ -107,7 +118,7 @@ export const completePasswordSetup = createServerFn({ method: "POST" })
     ),
   )
   .handler(async ({ data }) => {
-    if (!isSupabaseConfigured()) fail("The database is not connected yet.", 503);
+    if (!isLoginConfigured()) fail("Signing in is not set up on this server yet.", 503);
     const db = sessionClient();
     let opened = false;
     if (data.code) {
@@ -130,7 +141,8 @@ export const completePasswordSetup = createServerFn({ method: "POST" })
     const session = await currentMember(db);
     if (!session) fail("This account has been disabled. Ask the site owner for access.", 403);
     if (data.name) await saveOwnName(session.member.id, data.name);
-    await logActivity(session, "password", "account", session.member.id, "Set a password");
+    if (isSupabaseConfigured())
+      await logActivity(session, "password", "account", session.member.id, "Set a password");
     return { member: session.member };
   });
 

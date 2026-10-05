@@ -2,7 +2,7 @@ import { useState, type FormEvent } from "react";
 import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-router";
 import adminCss from "@/admin/admin.css?url";
 import { AuthFrame } from "@/admin/AuthFrame";
-import { ADMIN_ENABLED } from "@/admin/enabled";
+import { ADMIN_VISIBLE } from "@/admin/enabled";
 import { getAdminState, requestPasswordReset, signIn } from "@/admin/api/session";
 import { Button, ButtonLink, Field, Notice, TextInput } from "@/admin/ui/controls";
 import { errorMessage } from "@/admin/ui/overlay";
@@ -10,7 +10,7 @@ import { errorMessage } from "@/admin/ui/overlay";
 export const Route = createFileRoute("/admin_/login")({
   ssr: false,
   beforeLoad: () => {
-    if (!ADMIN_ENABLED) throw notFound();
+    if (!ADMIN_VISIBLE) throw notFound();
   },
   head: () => ({
     meta: [{ title: "Sign In — Durall Admin" }, { name: "robots", content: "noindex, nofollow" }],
@@ -25,26 +25,34 @@ export const Route = createFileRoute("/admin_/login")({
 });
 
 function LoginPage() {
-  const { configured } = Route.useLoaderData();
+  const { signIn: canSignIn, locked } = Route.useLoaderData();
   const [mode, setMode] = useState<"sign-in" | "reset" | "reset-sent">("sign-in");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
-  if (!configured) {
+  if (!canSignIn) {
+    // No keys on this server. Where the panel is locked it stays shut;
+    // otherwise it can still be opened as the preview.
     return (
       <AuthFrame
-        title="Not Connected Yet"
-        intro="Signing in needs the database, which has not been connected to this site yet."
+        title={locked ? "Sign-In Is Not Set Up" : "Not Connected Yet"}
+        intro={
+          locked
+            ? "The admin panel opens only for a signed-in account, and this server cannot check accounts yet."
+            : "Signing in needs the database, which has not been connected to this site yet."
+        }
       >
-        <Notice tone="warning" title="Database not connected">
-          Add the Supabase keys to the site’s environment settings, then reload this page. Until
-          then you can open the panel as a read-only preview.
+        <Notice tone="warning" title="Supabase keys missing">
+          Add the Supabase keys to the site’s environment settings, then reload this page.
+          {locked ? "" : " Until then you can open the panel as a read-only preview."}
         </Notice>
-        <div className="mt-6">
-          <ButtonLink to="/admin" variant="primary">
-            Open the Preview
-          </ButtonLink>
-        </div>
+        {locked ? null : (
+          <div className="mt-6">
+            <ButtonLink to="/admin" variant="primary">
+              Open the Preview
+            </ButtonLink>
+          </div>
+        )}
       </AuthFrame>
     );
   }

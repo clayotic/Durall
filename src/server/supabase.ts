@@ -1,7 +1,7 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { createServerClient } from "@supabase/ssr";
 import { getCookies, setCookie } from "@tanstack/react-start/server";
-import { ADMIN_ENABLED } from "@/admin/enabled";
+import { ADMIN_ENABLED, ADMIN_LOGIN } from "@/admin/enabled";
 
 /**
  * The three ways the site talks to Supabase. Server-only: nothing here may
@@ -54,6 +54,14 @@ const realtime = {
 export function isSupabaseConfigured(): boolean {
   const { url, anonKey } = supabaseConfig();
   return ADMIN_ENABLED && Boolean(url && anonKey);
+}
+
+/** Whether accounts can be checked, for signing in to the admin panel. That
+ * can be on while the content above is off (src/admin/enabled.ts): it reads
+ * who is signed in and nothing of the site's content. */
+export function isLoginConfigured(): boolean {
+  const { url, anonKey } = supabaseConfig();
+  return (ADMIN_ENABLED || ADMIN_LOGIN) && Boolean(url && anonKey);
 }
 
 let anonClient: SupabaseClient | undefined;

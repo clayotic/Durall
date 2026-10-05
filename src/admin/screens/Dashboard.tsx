@@ -248,7 +248,8 @@ export function Dashboard() {
         }
       />
       <div className="grid gap-5">
-        {!configured ? <SetupSteps /> : null}
+        {/* Signed in with the content database off: there is nothing to set up. */}
+        {!configured && !member ? <SetupSteps /> : null}
         {configured && !imported && member?.role === "owner" ? <ImportCard /> : null}
         {configured && !imported && member?.role !== "owner" ? (
           <Notice tone="warning">

@@ -16,6 +16,7 @@ import type {
   SharedContent,
   SiteSettings,
 } from "@/content/types";
+import { ADMIN_LOGIN } from "@/admin/enabled";
 import { can, type Member, type Section } from "@/admin/permissions";
 import { currentMember, fail, logActivity, requireMember, requireOwner } from "@/server/auth";
 import { purgeContentCache } from "@/server/cache";
@@ -45,7 +46,13 @@ async function isImported(db: SupabaseClient) {
 async function adminStore(
   section?: Section,
 ): Promise<{ store: ContentStore; editable: boolean; member: Member | null }> {
-  if (!isSupabaseConfigured()) return { store: seedStore, editable: false, member: null };
+  if (!isSupabaseConfigured()) {
+    // Preview: the content in the code, read-only. Behind the sign-in where
+    // the panel is locked, so the lock is not only the page in front of it.
+    const session = ADMIN_LOGIN ? await currentMember() : null;
+    if (ADMIN_LOGIN && !session) fail("Sign in to open the admin panel.", 401);
+    return { store: seedStore, editable: false, member: session?.member ?? null };
+  }
   const { db, member } = await requireMember(section);
   if (!(await isImported(db))) return { store: seedStore, editable: false, member };
   return { store: databaseStore(db), editable: true, member };

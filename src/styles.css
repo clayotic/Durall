@@ -698,9 +698,9 @@
  * runs the exit. `intro-pending` is set by the pre-paint script in
  * __root.tsx, once per session and never under reduced motion.
  *
- * `stroke-dashoffset` is a paint property, against the transform-and-opacity
- * rule — accepted here because it is one 24-unit SVG drawn once, on a screen
- * with nothing else on it.
+ * `stroke-dashoffset` and `fill-opacity` are paint properties, against the
+ * transform-and-opacity rule — accepted here because it is one small SVG
+ * drawn once, on a screen with nothing else on it.
  */
 .site-intro {
   display: none;
@@ -729,10 +729,21 @@ html.intro-bailout .site-intro {
   transition: opacity 400ms var(--ease-micro);
 }
 
+/* The mark: each of its two shapes is outlined, then filled in, the S a
+ * beat behind the D. */
 .intro-mark path {
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
-  animation: intro-draw 900ms var(--ease-entrance) 120ms forwards;
+  fill-opacity: 0;
+  animation:
+    intro-draw 800ms var(--ease-entrance) 120ms forwards,
+    intro-ink 380ms var(--ease-micro) 640ms forwards;
+}
+
+/* Both are whole by 1.2s, inside the time the curtain is always shown for
+ * (MIN_MS in SiteIntro.tsx). */
+.intro-mark path + path {
+  animation-delay: 260ms, 800ms;
 }
 
 .intro-word {
@@ -769,6 +780,12 @@ html.intro-bailout .site-intro {
 @keyframes intro-draw {
   to {
     stroke-dashoffset: 0;
+  }
+}
+
+@keyframes intro-ink {
+  to {
+    fill-opacity: 1;
   }
 }
 

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type FormEvent, type ReactNode, type RefObject } from "react";
+import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "motion/react";
 import { useReveal, useSectionIntro } from "@/lib/anim";
@@ -16,10 +16,8 @@ import { RULES } from "./contact/submit";
 /**
  * "Let's frame the view." — the navy band at the foot of Home, About,
  * Partners and Expertise: the enquiry form, and beside it a framed
- * slideshow of the projects, with
- * lines running from the photograph's edges out to the section's, so the
- * frame reads as a window at the end of a room. It runs straight into the
- * navy footer, whose top rule closes the design.
+ * slideshow of the projects. It runs straight into the navy footer, whose
+ * top rule closes the design.
  *
  * Sizes were measured from the design at 1920px wide. Inside the frame they
  * are container query units of the photograph (802px there, so 1cqw is
@@ -31,19 +29,14 @@ type Source = "home" | "about" | "partners" | "expertise";
 export function EnquiryBand({ source }: { source: Source }) {
   const { shared, slides } = useSite();
   const copy = shared.enquiryBand;
-  const sectionRef = useRef<HTMLElement>(null);
-  const photoRef = useRef<HTMLDivElement>(null);
   const introRef = useSectionIntro<HTMLDivElement>();
   const frameRef = useReveal<HTMLDivElement>({ y: 32, duration: 0.9 });
 
   return (
     <section
-      ref={sectionRef}
       id="contact"
       className="relative scroll-mt-24 overflow-hidden bg-navy pt-[clamp(4rem,6.2vw,7.45rem)] pb-[clamp(3rem,5.1vw,6.125rem)] text-white"
     >
-      <PerspectiveLines sectionRef={sectionRef} photoRef={photoRef} />
-
       <div className="relative mx-auto grid w-full max-w-[120rem] grid-cols-1 gap-x-[clamp(2.5rem,4.95vw,5.95rem)] gap-y-[clamp(3rem,8vw,4.5rem)] px-[clamp(1.25rem,5.5vw,6.625rem)] lg:pr-[4.85vw] min-[120rem]:pr-[5.8rem] lg:grid-cols-[minmax(0,801fr)_minmax(0,824fr)] lg:items-start">
         <div className="min-w-0 lg:pt-[0.55vw]">
           <div ref={introRef}>
@@ -66,107 +59,13 @@ export function EnquiryBand({ source }: { source: Source }) {
 
         <div ref={frameRef} className="min-w-0">
           <div className="border border-white/35 p-[clamp(0.375rem,0.57vw,0.6875rem)]">
-            <div
-              ref={photoRef}
-              className="@container relative aspect-[4/5] overflow-hidden bg-white/5 sm:aspect-[802/599]"
-            >
+            <div className="@container relative aspect-[4/5] overflow-hidden bg-white/5 sm:aspect-[802/599]">
               <Slideshow slides={slides} viewProject={copy.viewProject} />
             </div>
           </div>
         </div>
       </div>
     </section>
-  );
-}
-
-/* ── The lines ─────────────────────────────────────────────────────────── */
-
-/* Each line runs from a point on the photograph's edge (as a share of its
- * width and height) to a point on the section's edge (as a share of the
- * section's). The corners go to the section's corners; the fainter ones
- * leave the top and bottom edges at a quarter, a half and three quarters. */
-const LINES: readonly { from: [number, number]; to: [number, number]; faint?: true }[] = [
-  { from: [0, 0], to: [0, 0] },
-  { from: [1, 0], to: [1, 0.005] },
-  { from: [0, 1], to: [0, 1] },
-  { from: [1, 1], to: [1, 1] },
-  { from: [0.25, 0], to: [0.483, 0], faint: true },
-  { from: [0.5, 0], to: [0.723, 0], faint: true },
-  { from: [0.75, 0], to: [0.962, 0], faint: true },
-  { from: [0.25, 1], to: [0.389, 1], faint: true },
-  { from: [0.5, 1], to: [0.702, 1], faint: true },
-  { from: [0.75, 1], to: [1, 0.923], faint: true },
-];
-
-type Geometry = { width: number; height: number; x: number; y: number; w: number; h: number };
-
-/** The element's offset from an ancestor, ignoring transforms (the reveal
- * slides the frame in; the lines should meet it where it comes to rest). */
-function offsetWithin(el: HTMLElement, ancestor: HTMLElement) {
-  let x = 0;
-  let y = 0;
-  let node: HTMLElement | null = el;
-  while (node && node !== ancestor) {
-    x += node.offsetLeft;
-    y += node.offsetTop;
-    node = node.offsetParent as HTMLElement | null;
-  }
-  return { x, y };
-}
-
-function PerspectiveLines({
-  sectionRef,
-  photoRef,
-}: {
-  sectionRef: RefObject<HTMLElement | null>;
-  photoRef: RefObject<HTMLDivElement | null>;
-}) {
-  const [geometry, setGeometry] = useState<Geometry | null>(null);
-
-  useEffect(() => {
-    const section = sectionRef.current;
-    const photo = photoRef.current;
-    if (!section || !photo) return;
-    const measure = () => {
-      const { x, y } = offsetWithin(photo, section);
-      setGeometry({
-        width: section.offsetWidth,
-        height: section.offsetHeight,
-        x,
-        y,
-        w: photo.offsetWidth,
-        h: photo.offsetHeight,
-      });
-    };
-    measure();
-    const observer = new ResizeObserver(measure);
-    observer.observe(section);
-    observer.observe(photo);
-    return () => observer.disconnect();
-  }, [sectionRef, photoRef]);
-
-  if (!geometry) return null;
-  const { width, height, x, y, w, h } = geometry;
-  return (
-    <svg
-      aria-hidden="true"
-      viewBox={`0 0 ${width} ${height}`}
-      className="pointer-events-none absolute inset-0 hidden h-full w-full lg:block"
-    >
-      {LINES.map(({ from, to, faint }, index) => (
-        <line
-          key={index}
-          x1={x + from[0] * w}
-          y1={y + from[1] * h}
-          x2={to[0] * width}
-          y2={to[1] * height}
-          stroke="white"
-          strokeOpacity={faint ? 0.11 : 0.3}
-          strokeWidth={1}
-          vectorEffect="non-scaling-stroke"
-        />
-      ))}
-    </svg>
   );
 }
 
