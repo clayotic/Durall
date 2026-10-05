@@ -693,14 +693,22 @@
 }
 
 /* ── Site intro ───────────────────────────────────────────────────────────
- * The loading half of the first-visit opening, in CSS so it starts on the
- * first paint rather than when the JavaScript bundle arrives. SiteIntro.tsx
- * runs the exit. `intro-pending` is set by the pre-paint script in
- * __root.tsx, once per session and never under reduced motion.
+ * The opening, built the way Durall builds: two rails are drawn across the
+ * screen, the D and the S of the mark slide in along them from either side
+ * like door leaves and meet, and the glass is wiped into both along the
+ * mark's own 45°. Then the mark turns out to be a window — the glass clears,
+ * the page is behind it, and the screen flies through the opening.
  *
- * `stroke-dashoffset` and `fill-opacity` are paint properties, against the
- * transform-and-opacity rule — accepted here because it is one small SVG
- * drawn once, on a screen with nothing else on it.
+ * Everything up to the glass is CSS, so it starts on the first paint rather
+ * than when the JavaScript bundle arrives. SiteIntro.tsx decides when to
+ * leave (`is-opening`, then `is-through`) and runs the fly-through.
+ * `intro-pending` is set by the pre-paint script in __root.tsx, on a full
+ * page load and never under reduced motion.
+ *
+ * The glass is a transform inside a small SVG and the fly-through one inside
+ * a full-screen SVG: both repaint rather than composite, against the
+ * transform-and-opacity rule in spirit — accepted because each is one flat
+ * shape, once, with nothing else moving.
  */
 .site-intro {
   display: none;
@@ -715,10 +723,12 @@ html.intro-pending .site-intro {
   position: fixed;
   inset: 0;
   z-index: 100;
+  overflow: hidden;
 }
 
-/* The bar arrives with the page, not before it. */
-html.intro-pending [data-site-header] {
+/* The bar arrives with the page, not before it: it fades up as the glass
+ * clears, and is there to be seen through the opening. */
+html.intro-covered [data-site-header] {
   opacity: 0;
 }
 
@@ -729,75 +739,177 @@ html.intro-bailout .site-intro {
   transition: opacity 400ms var(--ease-micro);
 }
 
-/* The mark: each of its two shapes is outlined, then filled in, the S a
- * beat behind the D. */
-.intro-mark path {
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
-  fill-opacity: 0;
-  animation:
-    intro-draw 800ms var(--ease-entrance) 120ms forwards,
-    intro-ink 380ms var(--ease-micro) 640ms forwards;
+.intro-rail {
+  position: absolute;
+  background: rgb(255 255 255 / 0.2);
 }
 
-/* Both are whole by 1.2s, inside the time the curtain is always shown for
- * (MIN_MS in SiteIntro.tsx). */
-.intro-mark path + path {
-  animation-delay: 260ms, 800ms;
+/* The two tracks, one drawn from each side of the screen. They stay. */
+.intro-rail-x {
+  left: 50%;
+  width: 100vw;
+  height: 1px;
+  translate: -50% 0;
+  scale: 0 1;
+  transform-origin: left;
+  animation: intro-rail 900ms var(--ease-entrance) 40ms forwards;
 }
 
-.intro-word {
-  display: inline-flex;
-  overflow: hidden;
-  /* Room for descending tracking so the last glyph is not clipped. */
-  padding-inline-end: 0.3125rem;
+.intro-rail-x + .intro-rail-x {
+  transform-origin: right;
+  animation-delay: 140ms;
 }
 
+/* The setting-out lines at the mark's edges: each crosses the screen from
+ * the top and leaves it at the bottom, gone before the name is set. */
+.intro-rail-y {
+  top: 50%;
+  width: 1px;
+  height: 100vh;
+  translate: 0 -50%;
+  scale: 1 0;
+  animation: intro-pass 1100ms var(--ease-reveal) var(--d, 0ms) forwards;
+}
+
+/* The leaves. Out past the screen's edge until their turn, then a long
+ * soft-close into place. */
+.intro-sash {
+  animation: intro-slide 840ms cubic-bezier(0.16, 1, 0.3, 1) 200ms both;
+}
+
+.intro-sash-d {
+  --from: calc(-50vw - 100%);
+}
+
+.intro-sash-s {
+  --from: calc(50vw + 100%);
+  animation-delay: 290ms;
+}
+
+/* The glass: one band with a 45° leading edge, in the mark's own
+ * coordinates in both leaves, so the edge runs straight across the two. */
+.intro-glass {
+  transform: translateX(-4px) skewX(-45deg);
+  animation: intro-glaze 480ms var(--ease-reveal) 900ms forwards;
+}
+
+/* The name gathers in from wide spacing, the middle letters first. `--n` is
+ * each letter's place counted from the middle of the word. */
 .intro-char {
   display: inline-block;
-  translate: 0 110%;
-  animation: intro-rise 900ms var(--ease-entrance) forwards;
-  animation-delay: calc(320ms + var(--i, 0) * 32ms);
+  opacity: 0;
+  translate: calc(var(--n) * 0.5em) 0;
+  animation: intro-gather 640ms var(--ease-entrance) forwards;
+  animation-delay: calc(780ms + max(var(--n), -1 * var(--n)) * 24ms);
 }
 
-.intro-bar {
-  transform-origin: left center;
-  scale: 0 1;
-  animation: intro-fill 1300ms var(--ease-micro) 480ms forwards;
+/* Leaving. The solid wall is swapped for the same wall with the mark cut
+ * out of it, in the frame the glass still covers the cut; the glass then
+ * carries on across and off, the rails run out the way they were going. */
+.intro-window,
+.site-intro.is-opening .intro-wall {
+  display: none;
 }
 
-/* The meeting stiles of the two panels: they draw in as the doors are about
- * to part, then travel outward with them. */
-.intro-edge {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 1px;
-  background: rgb(255 255 255 / 0.22);
-  scale: 1 0;
+.site-intro.is-opening .intro-window {
+  display: block;
 }
 
-@keyframes intro-draw {
+.site-intro.is-opening .intro-glass {
+  animation: intro-unglaze 420ms var(--ease-reveal) forwards;
+}
+
+.site-intro.is-opening .intro-rail-x {
+  transform-origin: right;
+  animation: intro-rail-out 380ms var(--ease-reveal) forwards;
+}
+
+.site-intro.is-opening .intro-rail-x + .intro-rail-x {
+  transform-origin: left;
+}
+
+.site-intro.is-opening .intro-name {
+  animation: intro-leave 260ms var(--ease-micro) forwards;
+}
+
+/* The window's own outline takes over from the leaves' as it starts to
+ * grow. */
+.site-intro.is-through [data-intro-content] {
+  visibility: hidden;
+}
+
+@keyframes intro-rail {
   to {
-    stroke-dashoffset: 0;
+    scale: 1 1;
   }
 }
 
-@keyframes intro-ink {
+@keyframes intro-rail-out {
+  from {
+    scale: 1 1;
+  }
   to {
-    fill-opacity: 1;
+    scale: 0 1;
   }
 }
 
-@keyframes intro-rise {
+/* The origin changes ends while the line is whole, where it cannot show. */
+@keyframes intro-pass {
+  0% {
+    scale: 1 0;
+    transform-origin: center top;
+  }
+  42% {
+    scale: 1 1;
+    transform-origin: center top;
+  }
+  58% {
+    scale: 1 1;
+    transform-origin: center bottom;
+  }
+  100% {
+    scale: 1 0;
+    transform-origin: center bottom;
+  }
+}
+
+@keyframes intro-slide {
+  from {
+    translate: var(--from) 0;
+  }
   to {
     translate: 0 0;
   }
 }
 
-@keyframes intro-fill {
+/* 344: far enough that the band's slanted edge has cleared the mark's
+ * bottom-right corner (234 across, 106 down). */
+@keyframes intro-glaze {
   to {
-    scale: 0.92 1;
+    transform: translateX(344px) skewX(-45deg);
+  }
+}
+
+@keyframes intro-unglaze {
+  from {
+    transform: translateX(344px) skewX(-45deg);
+  }
+  to {
+    transform: translateX(806px) skewX(-45deg);
+  }
+}
+
+@keyframes intro-gather {
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes intro-leave {
+  to {
+    opacity: 0;
+    translate: 0 0.5rem;
   }
 }
 
