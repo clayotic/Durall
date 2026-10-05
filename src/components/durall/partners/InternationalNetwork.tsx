@@ -2,6 +2,7 @@ import { useReveal, useSplitLines } from "@/lib/anim";
 import { imageOf } from "@/content/render";
 import type { PartnerDoc, PartnersPage } from "@/content/types";
 import { Interactive } from "../ui";
+import { InternationalNetworkMobile } from "./InternationalNetworkMobile";
 import { PartnerLogo } from "./marks";
 
 export function InternationalNetwork({
@@ -19,9 +20,12 @@ export function InternationalNetwork({
   return (
     <section
       id="international-systems"
-      className="relative isolate overflow-hidden bg-white pt-[clamp(3.5rem,8vw,7.5rem)]"
+      className="relative isolate overflow-hidden bg-white max-md:bg-[#fdfdfb] md:pt-[clamp(3.5rem,8vw,7.5rem)]"
     >
-      <div ref={introRef} className="shell-about">
+      {/* On a phone the section is laid out differently altogether; the
+          three blocks after this are for `md` and up. */}
+      <InternationalNetworkMobile content={content} partners={partners} />
+      <div ref={introRef} className="shell-about max-md:hidden">
         <p
           data-reveal
           className="flex items-center gap-3 font-display text-[clamp(0.625rem,0.72vw,0.6875rem)] font-bold tracking-eyebrow text-accent-blue uppercase"
@@ -46,7 +50,7 @@ export function InternationalNetwork({
         </p>
       </div>
 
-      <div className="relative mt-[clamp(2.5rem,5vw,4.5rem)]">
+      <div className="relative mt-[clamp(2.5rem,5vw,4.5rem)] max-md:hidden">
         {/* Behind everything in the section (-z-1 inside the section's own
             stacking context), not just behind the grid: it is taller than
             the grid and reaches up under the intro, and its translucent white
@@ -99,7 +103,7 @@ export function InternationalNetwork({
           a 45° chamfer, drops beside the text and meets the rule beneath it.
           That rule is also the boundary with the practices section below,
           which is why this section has no bottom padding. */}
-      <div ref={quoteRef} className="shell-about mt-[clamp(2.5rem,5vw,4.5rem)]">
+      <div ref={quoteRef} className="shell-about mt-[clamp(2.5rem,5vw,4.5rem)] max-md:hidden">
         <div className="relative">
           <span
             aria-hidden="true"

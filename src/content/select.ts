@@ -19,11 +19,19 @@ export function readingTimeOf(article: Pick<ArticleDoc, "body" | "excerpt">): st
   const text = [
     article.excerpt,
     ...article.body.flatMap((block) =>
-      block.type === "list"
-        ? block.items
+      "text" in block
+        ? [block.text, "muted" in block ? block.muted : ""]
         : block.type === "image" || block.type === "video"
           ? [block.caption]
-          : [block.text],
+          : "items" in block
+            ? block.items.map((item) =>
+                typeof item === "string"
+                  ? item
+                  : Object.values(item)
+                      .filter((v) => typeof v === "string")
+                      .join(" "),
+              )
+            : [],
     ),
   ].join(" ");
   const words = text.split(/\s+/).filter(Boolean).length;

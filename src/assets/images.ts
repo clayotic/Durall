@@ -283,6 +283,44 @@ import carmichaelScreens800 from "./projects/carmichael/screens-800w.webp";
 import carmichaelScreens from "./projects/carmichael/screens-1600w.webp";
 import carmichaelFacade800 from "./projects/carmichael/facade-800w.webp";
 import carmichaelFacade from "./projects/carmichael/facade-1600w.webp";
+// Durall’s factory floor and drawings, for the Premium Glazing Series (Insights).
+import insightsProfileCut640 from "./insights/profile-cut-640w.webp";
+import insightsProfileCut from "./insights/profile-cut-1200w.webp";
+import insightsYard640 from "./insights/yard-640w.webp";
+import insightsYard from "./insights/yard-1080w.webp";
+import insightsAssemblyAbove640 from "./insights/assembly-above-640w.webp";
+import insightsAssemblyAbove from "./insights/assembly-above-1080w.webp";
+import insightsFabrication640 from "./insights/fabrication-640w.webp";
+import insightsFabrication from "./insights/fabrication-1080w.webp";
+import insightsCutting640 from "./insights/cutting-640w.webp";
+import insightsCutting from "./insights/cutting-1080w.webp";
+import insightsParikramaWide640 from "./insights/parikrama-wide-640w.webp";
+import insightsParikramaWide from "./insights/parikrama-wide-1280w.webp";
+import insightsProfile640 from "./insights/profile-640w.webp";
+import insightsProfile from "./insights/profile-1200w.webp";
+import insightsGlazing640 from "./insights/glazing-640w.webp";
+import insightsGlazing from "./insights/glazing-1080w.webp";
+import insightsProfilesStaged640 from "./insights/profiles-staged-640w.webp";
+import insightsProfilesStaged from "./insights/profiles-staged-1080w.webp";
+import insightsProfileStock640 from "./insights/profile-stock-640w.webp";
+import insightsProfileStock from "./insights/profile-stock-1080w.webp";
+import insightsParikramaIntent640 from "./insights/parikrama-intent-640w.webp";
+import insightsParikramaIntent from "./insights/parikrama-intent-1280w.webp";
+import insightsBanner640 from "./insights/banner-640w.webp";
+import insightsBanner from "./insights/banner-1920w.webp";
+import insightsHall640 from "./insights/hall-640w.webp";
+import insightsHall from "./insights/hall-1080w.webp";
+import insightsSection from "./insights/section-1300w.webp";
+import insightsMachiningCentre640 from "./insights/machining-centre-640w.webp";
+import insightsMachiningCentre from "./insights/machining-centre-1080w.webp";
+import insightsAssembly640 from "./insights/assembly-640w.webp";
+import insightsAssembly from "./insights/assembly-1080w.webp";
+import insightsScreenCarried640 from "./insights/screen-carried-640w.webp";
+import insightsScreenCarried from "./insights/screen-carried-900w.webp";
+import insightsGlassStaged640 from "./insights/glass-staged-640w.webp";
+import insightsGlassStaged from "./insights/glass-staged-1080w.webp";
+import insightsMachining640 from "./insights/machining-640w.webp";
+import insightsMachining from "./insights/machining-1080w.webp";
 
 export type ImageAsset = {
   src: string;
@@ -1072,5 +1110,133 @@ export const IMAGES = {
       [carmichaelFacade, 1600],
     ],
     1062,
+  ),
+  // Insights: the Premium Glazing Series.
+  insightsProfileCut: set(
+    [
+      [insightsProfileCut640, 640],
+      [insightsProfileCut, 1200],
+    ],
+    1636,
+  ),
+  insightsYard: set(
+    [
+      [insightsYard640, 640],
+      [insightsYard, 1080],
+    ],
+    1440,
+  ),
+  insightsAssemblyAbove: set(
+    [
+      [insightsAssemblyAbove640, 640],
+      [insightsAssemblyAbove, 1080],
+    ],
+    1600,
+  ),
+  insightsFabrication: set(
+    [
+      [insightsFabrication640, 640],
+      [insightsFabrication, 1080],
+    ],
+    1040,
+  ),
+  insightsCutting: set(
+    [
+      [insightsCutting640, 640],
+      [insightsCutting, 1080],
+    ],
+    740,
+  ),
+  insightsParikramaWide: set(
+    [
+      [insightsParikramaWide640, 640],
+      [insightsParikramaWide, 1280],
+    ],
+    640,
+  ),
+  insightsProfile: set(
+    [
+      [insightsProfile640, 640],
+      [insightsProfile, 1200],
+    ],
+    1650,
+  ),
+  insightsGlazing: set(
+    [
+      [insightsGlazing640, 640],
+      [insightsGlazing, 1080],
+    ],
+    820,
+  ),
+  insightsProfilesStaged: set(
+    [
+      [insightsProfilesStaged640, 640],
+      [insightsProfilesStaged, 1080],
+    ],
+    1640,
+  ),
+  insightsProfileStock: set(
+    [
+      [insightsProfileStock640, 640],
+      [insightsProfileStock, 1080],
+    ],
+    950,
+  ),
+  insightsParikramaIntent: set(
+    [
+      [insightsParikramaIntent640, 640],
+      [insightsParikramaIntent, 1280],
+    ],
+    814,
+  ),
+  insightsBanner: set(
+    [
+      [insightsBanner640, 640],
+      [insightsBanner, 1920],
+    ],
+    800,
+  ),
+  insightsHall: set(
+    [
+      [insightsHall640, 640],
+      [insightsHall, 1080],
+    ],
+    1180,
+  ),
+  insightsSection: one(insightsSection, 1300, 235),
+  insightsMachiningCentre: set(
+    [
+      [insightsMachiningCentre640, 640],
+      [insightsMachiningCentre, 1080],
+    ],
+    1180,
+  ),
+  insightsAssembly: set(
+    [
+      [insightsAssembly640, 640],
+      [insightsAssembly, 1080],
+    ],
+    820,
+  ),
+  insightsScreenCarried: set(
+    [
+      [insightsScreenCarried640, 640],
+      [insightsScreenCarried, 900],
+    ],
+    1020,
+  ),
+  insightsGlassStaged: set(
+    [
+      [insightsGlassStaged640, 640],
+      [insightsGlassStaged, 1080],
+    ],
+    700,
+  ),
+  insightsMachining: set(
+    [
+      [insightsMachining640, 640],
+      [insightsMachining, 1080],
+    ],
+    840,
   ),
 } as const satisfies Record<string, ImageAsset>;

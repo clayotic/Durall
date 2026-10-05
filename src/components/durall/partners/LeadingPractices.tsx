@@ -2,6 +2,7 @@ import { REVEAL_WINDOW, useReveal, useSplitLines } from "@/lib/anim";
 import { imageOf } from "@/content/render";
 import type { PartnerDoc, PartnersPage } from "@/content/types";
 import { Interactive } from "../ui";
+import { LeadingPracticesMobile } from "./LeadingPracticesMobile";
 import { PracticeLogo } from "./marks";
 
 export function LeadingPractices({
@@ -20,15 +21,18 @@ export function LeadingPractices({
   return (
     <section
       id="practices"
-      className="relative overflow-hidden bg-white pb-[clamp(3.5rem,8vw,7.5rem)]"
+      className="relative overflow-hidden bg-white max-md:bg-[#fdfdfb] md:pb-[clamp(3.5rem,8vw,7.5rem)]"
     >
+      {/* On a phone the section is laid out differently altogether; the
+          three blocks after this are for `md` and up. */}
+      <LeadingPracticesMobile content={content} practices={practices} />
       {/* The intro, with the house drawn large to its right. From lg up the
           picture is taken out of flow: it hangs from just under the outline
           that closes the section above, runs off the right edge of the page,
           and fades into the white at its foot, as in the design. The row is
           given the picture's height (69vw at 1365 × 648, less the faded
           foot) so the logos below start where it has faded out. */}
-      <div className="relative lg:min-h-[31vw]">
+      <div className="relative max-md:hidden lg:min-h-[31vw]">
         <div
           ref={introRef}
           className="shell-about relative z-[1] min-w-0 pt-[clamp(3rem,6.4vw,6.5rem)]"
@@ -85,7 +89,7 @@ export function LeadingPractices({
 
       <ul
         ref={gridRef}
-        className="shell-about relative mt-[clamp(2.5rem,5vw,4.5rem)] grid grid-cols-1 gap-y-[clamp(2rem,4vw,3rem)] sm:grid-cols-2 lg:grid-cols-4"
+        className="shell-about relative mt-[clamp(2.5rem,5vw,4.5rem)] grid grid-cols-1 gap-y-[clamp(2rem,4vw,3rem)] max-md:hidden sm:grid-cols-2 lg:grid-cols-4"
       >
         {practices.map((practice) => (
           <li key={practice.id} data-cell className="min-w-0">
@@ -108,7 +112,10 @@ export function LeadingPractices({
         ))}
       </ul>
 
-      <div ref={closingRef} className="shell-about mt-[clamp(2.5rem,5vw,4.5rem)] text-center">
+      <div
+        ref={closingRef}
+        className="shell-about mt-[clamp(2.5rem,5vw,4.5rem)] text-center max-md:hidden"
+      >
         <p className="font-display text-[clamp(0.5625rem,0.75vw,0.6875rem)] font-bold tracking-eyebrow text-navy uppercase">
           {content.tagline}
         </p>

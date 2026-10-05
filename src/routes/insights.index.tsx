@@ -6,6 +6,7 @@ import { DurallFooter } from "@/components/durall/DurallFooter";
 import { LeadStory } from "@/components/durall/insights/LeadStory";
 import { FilmsBand } from "@/components/durall/insights/FilmsBand";
 import { InsightIndex, type InsightsFilter } from "@/components/durall/insights/InsightIndex";
+import { SeriesIndex } from "@/components/durall/insights/SeriesIndex";
 import { fetchInsights } from "@/content/api";
 import { seoHead } from "@/content/head";
 import { hasImage } from "@/content/render";
@@ -28,8 +29,32 @@ export const Route = createFileRoute("/insights/")({
 });
 
 function InsightsIndex() {
-  const { page, articles } = Route.useLoaderData();
+  const { page, articles, parts } = Route.useLoaderData();
   const filter = Route.useSearch();
+  // While a series is running the page is the series' own; anything
+  // published outside it is listed underneath.
+  if (parts.length) {
+    const others = articles.filter((card) => !parts.some((part) => part.slug === card.slug));
+    return (
+      <div className="relative bg-[#fdfdfb] font-body text-navy">
+        <SiteHeader />
+        <main id="main" tabIndex={-1} className="scroll-mt-24">
+          <SeriesIndex content={page.intro} parts={parts} />
+          {others.length ? (
+            <InsightIndex
+              cards={others}
+              leadSlug={undefined}
+              filter={filter}
+              content={page.index}
+              labels={page.labels}
+            />
+          ) : null}
+          <PageCtaBand band={page.cta} />
+        </main>
+        <DurallFooter />
+      </div>
+    );
+  }
   // The cover story is the newest (or pinned) written piece with a
   // photograph to lead with; films have their own stage just below it.
   const written = articles.filter((card) => card.format !== "video");

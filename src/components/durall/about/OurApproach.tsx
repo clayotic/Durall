@@ -3,6 +3,7 @@ import { EASE, loadGsap, useReveal, useSectionIntro } from "@/lib/anim";
 import { iconOf } from "@/content/icons";
 import { imageOf, Lines } from "@/content/render";
 import type { AboutPage } from "@/content/types";
+import { OurApproachMobile } from "./OurApproachMobile";
 
 const SCENE_QUERY = "(min-width: 64rem) and (prefers-reduced-motion: no-preference)";
 
@@ -276,17 +277,20 @@ export function OurApproach({ content }: { content: AboutPage["approach"] }) {
       ref={sectionRef}
       id="approach"
       aria-labelledby="approach-heading"
-      className="relative bg-white pt-[clamp(2.5rem,2.2vw,2.6rem)] pb-[clamp(3rem,6vw,5.5rem)]"
+      className="relative bg-white max-lg:bg-[#fdfdfb] lg:pt-[clamp(2.5rem,2.2vw,2.6rem)] lg:pb-[clamp(3rem,6vw,5.5rem)]"
     >
+      {/* Below the desktop breakpoint the diagram runs down the page
+          instead; everything after this is desktop's. */}
+      <OurApproachMobile content={content} />
       {/* The section opens the page under the hero, with its name set large
           and centred above the diagram, as in the design. */}
       <p
         ref={titleRef}
-        className="shell-about text-center font-display text-[clamp(1.75rem,2.5vw,3rem)] leading-tight font-bold tracking-[0.03em] text-accent-blue uppercase"
+        className="shell-about text-center font-display text-[clamp(1.75rem,2.5vw,3rem)] leading-tight font-bold tracking-[0.03em] text-accent-blue uppercase max-lg:hidden"
       >
         {content.eyebrow}
       </p>
-      <div className="mt-[clamp(2rem,4.6vw,5.5rem)]">
+      <div className="mt-[clamp(2rem,4.6vw,5.5rem)] max-lg:hidden">
         <div
           ref={stageRef}
           className="shell-about relative grid grid-cols-1 items-center gap-[clamp(2.5rem,4vw,3rem)] lg:grid-cols-[minmax(0,280fr)_minmax(0,240fr)_minmax(0,280fr)_minmax(0,359fr)] lg:gap-[clamp(1.5rem,4vw,4.5rem)]"

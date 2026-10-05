@@ -5,6 +5,7 @@ import { PageCtaBand } from "@/components/durall/PageCta";
 import { ArrowLeft } from "@/components/durall/ui";
 import { Meta, ReadArticle } from "@/components/durall/Insights";
 import { CardImage, VideoPlayer } from "@/components/durall/insights/media";
+import { SeriesArticle } from "@/components/durall/insights/SeriesArticle";
 import {
   Contents,
   ContentsDisclosure,
@@ -295,7 +296,24 @@ function MoreArticles({
   );
 }
 
+/** A part of a series has a layout of its own (SeriesArticle). */
 function ArticlePage() {
+  const { article, parts, page } = Route.useLoaderData();
+  const { series } = article;
+  if (!series) return <PlainArticlePage />;
+  return (
+    <div className="relative bg-[#fdfdfb] font-body text-navy">
+      <SiteHeader />
+      <main id="main" tabIndex={-1} className="scroll-mt-24">
+        <SeriesArticle article={{ ...article, series }} parts={parts} />
+        <PageCtaBand band={page.article.cta} />
+      </main>
+      <DurallFooter />
+    </div>
+  );
+}
+
+function PlainArticlePage() {
   const { article, more, page } = Route.useLoaderData();
   const { slug } = Route.useParams();
   const headRef = useSectionIntro<HTMLDivElement>();

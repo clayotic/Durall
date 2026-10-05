@@ -512,6 +512,10 @@ function createBlock(type: ArticleBlock["type"]): ArticleBlock {
       };
     case "video":
       return { type, url: "", caption: "" };
+    // The laid-out blocks of a series article are written in the seed and
+    // are not on offer here.
+    default:
+      return { type: "paragraph", text: "" };
   }
 }
 
@@ -550,7 +554,9 @@ function BlockEditor({
       ) : null}
       <ol className="grid gap-3">
         {blocks.map((block, index) => {
-          const meta = BLOCKS.find((b) => b.type === block.type)!;
+          // A laid-out block of a series article has no entry: it is
+          // shown under the paragraph's sign and cannot be edited here.
+          const meta = BLOCKS.find((b) => b.type === block.type) ?? BLOCKS[1];
           const Icon = meta.icon;
           return (
             <li

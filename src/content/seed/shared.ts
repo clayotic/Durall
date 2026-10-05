@@ -20,28 +20,38 @@ export const SHARED_SEED: SharedContent = {
       {
         title: "Design",
         body: "System selection, material strategy, and elevation studies. We draw alternates, not just options.",
-        photo: photo("philosophyPavilion", "Dining pavilion framed by full-height sliding systems"),
+        photo: photo(
+          "patinaPavilion",
+          "Patina Maldives: a villa living room open through sliding glazing to its pool",
+        ),
+        caption: "Patina Maldives · Studio MK27",
       },
       {
         title: "Engineer",
         body: "Structural, thermal, acoustic, and weather performance — every detail load-tested before the workshop sees it.",
         photo: photo(
-          "stageEngineer",
-          "Interior with slatted ceiling and precise square light cutouts",
+          "parikramaDining",
+          "The dining pavilion of Parikrama House, framed by slim sliding glass",
         ),
+        caption: "Parikrama House · SPASM Design",
       },
       {
         title: "Fabricate",
         body: "In-house workshop discipline. Custom extrusions, jigged assemblies, and a single QC chain.",
         photo: photo(
-          "stageFabricate",
-          "Interior with wooden slat ceiling overlooking a pool at dusk",
+          "carmichaelFacade",
+          "Carmichael Residences: timber screens between deep floor bands on the tower’s façade",
         ),
+        caption: "Carmichael Residences · SOM",
       },
       {
         title: "Install",
         body: "Site supervision, sequencing, and handover — backed by a maintenance schedule we publish in writing.",
-        photo: photo("stageInstall", "White modern balcony with glass railings"),
+        photo: photo(
+          "chilternLiving",
+          "Chiltern House at dusk, its tall glazing slid aside onto a reflecting pool",
+        ),
+        caption: "Chiltern House · WOW Architects",
       },
     ],
     link: { label: "Explore our approach", href: "/about#approach" },

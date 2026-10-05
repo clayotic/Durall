@@ -7,6 +7,7 @@ import { ramp, sceneScrollY, smooth, useSceneProgress } from "@/lib/scene";
 import { scrollToY } from "@/lib/scroll-lock";
 
 import { ArrowLeft, ArrowRight, CtaButton } from "./ui";
+import { ProcessMobile } from "./ProcessMobile";
 
 /* Scene pacing, as fractions of the section's scroll.
  *
@@ -375,23 +376,6 @@ export function Process() {
     },
   );
 
-  /* ---- Below the desktop breakpoint: follow the step being read -------- */
-  const mobileListRef = useRef<HTMLOListElement>(null);
-  useEffect(() => {
-    const list = mobileListRef.current;
-    if (!list) return;
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) select(Number((entry.target as HTMLElement).dataset["index"]));
-        }
-      },
-      { rootMargin: "-45% 0px -45% 0px" },
-    );
-    list.querySelectorAll("li").forEach((li) => io.observe(li));
-    return () => io.disconnect();
-  }, []);
-
   /* Choosing a stage starts the change at once and scrolls the page to
    * where that stage lives, so the scroll position still agrees with what
    * is on screen and the next wheel tick cannot undo the click. */
@@ -416,9 +400,12 @@ export function Process() {
       aria-labelledby="process-heading"
       // Five stages: one viewport of frame plus roughly seventy percent of a
       // viewport of scroll per stage change and the two holds.
-      className="relative bg-[#fdfdfb] py-[clamp(3.5rem,8vw,5rem)] lg:h-[460svh] lg:py-0"
+      className="relative bg-[#fdfdfb] lg:h-[460svh]"
     >
-      <div className="lg:sticky lg:top-0 lg:h-svh lg:overflow-clip">
+      {/* Below the desktop breakpoint the section is laid out differently
+          altogether; the scene underneath is desktop's alone. */}
+      <ProcessMobile content={content} stages={STAGES} />
+      <div className="max-lg:hidden lg:sticky lg:top-0 lg:h-svh lg:overflow-clip">
         <div className="grid w-full grid-cols-1 gap-[clamp(2rem,5vw,3rem)] lg:h-full lg:grid-cols-2 lg:items-start lg:gap-0">
           {/* ---- Copy column: 282px in at 1920, clear of the fixed bar ---- */}
           <div className="flex min-w-0 flex-col px-[clamp(1.25rem,3.75vw,4.5rem)] lg:h-full lg:pt-[max(calc(var(--header-h)+1vh),5.2vh)] lg:pr-[clamp(2rem,4vw,5rem)] lg:pl-[clamp(3rem,calc(22vw-8.75rem),17.625rem)]">
@@ -504,25 +491,6 @@ export function Process() {
                   </li>
                 );
               })}
-            </ol>
-
-            {/* Below the desktop breakpoint: every stage, in full. */}
-            <ol ref={mobileListRef} className="mt-8 border-l border-navy/14 lg:hidden">
-              {STAGES.map((item, index) => (
-                <li key={item.num} data-index={index} className="flex gap-5 py-4 pl-5">
-                  <span className="shrink-0 pt-[0.5625rem] font-display text-[0.8125rem] leading-none font-medium tracking-[0.154em] text-slate tabular-nums">
-                    {item.num}
-                  </span>
-                  <div className="min-w-0">
-                    <h3 className="font-display text-[1.625rem] leading-[1.2] tracking-[-0.016em] text-navy">
-                      {item.title}
-                    </h3>
-                    <p className="mt-2 font-display text-[1.0625rem] leading-[1.53] text-pretty text-slate">
-                      {item.body}
-                    </p>
-                  </div>
-                </li>
-              ))}
             </ol>
 
             <div className="mt-[clamp(1.5rem,5.3vh,3.5625rem)] lg:[@media(max-height:45rem)]:mt-4">

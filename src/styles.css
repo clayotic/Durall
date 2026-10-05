@@ -463,6 +463,183 @@
   }
 }
 
+/* The line along the foot of the phone's process photograph: it runs its
+ * length in the time one stage is shown, and the stage changes when it
+ * ends (ProcessMobile.tsx). */
+@keyframes stage-timer {
+  from {
+    scale: 0 1;
+  }
+}
+
+.stage-timer {
+  animation: stage-timer 6s linear both;
+}
+
+/* ── Sequences played on arrival ──────────────────────────────────────────
+ * For the phone layouts whose parts come in one after another (About's
+ * "Our approach", the Partners sections). A `.seq` group's parts wait in
+ * their start state and play once the group is on screen (`.is-in`, set by
+ * lib/seen.ts), each `--d` seconds in; lines and slides take `--t`. Lines
+ * drawn by their dash are each given a path length of 1. Without motion
+ * none of this applies and the parts are simply there. */
+@media (prefers-reduced-motion: no-preference) {
+  .seq .seq-rise {
+    opacity: 0;
+    translate: 0 0.75rem;
+  }
+
+  .seq .seq-fade,
+  .seq .seq-pulse {
+    opacity: 0;
+  }
+
+  .seq .seq-pop {
+    opacity: 0;
+    scale: 0.92;
+  }
+
+  .seq .seq-x {
+    scale: 0 1;
+  }
+
+  .seq .seq-y {
+    scale: 1 0;
+  }
+
+  .seq .seq-draw {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+  }
+
+  .seq .seq-pulse {
+    stroke-dasharray: 0.07 1;
+    stroke-dashoffset: 0.07;
+  }
+
+  .seq.is-in :is(.seq-rise, .seq-pop, .seq-x, .seq-y) {
+    animation: seq-settle var(--t, 0.6s) cubic-bezier(0.2, 0.7, 0.2, 1) var(--d, 0s) forwards;
+  }
+
+  .seq.is-in .seq-fade {
+    animation: seq-fade 0.5s ease var(--d, 0s) forwards;
+  }
+
+  .seq.is-in .seq-draw {
+    animation: seq-draw var(--t, 0.9s) cubic-bezier(0.65, 0, 0.35, 1) var(--d, 0s) forwards;
+  }
+
+  /* A cover that slides off to the right, uncovering what is under it. */
+  .seq.is-in .seq-slide {
+    animation: seq-slide var(--t, 1.4s) cubic-bezier(0.65, 0, 0.25, 1) var(--d, 0s) forwards;
+  }
+
+  .seq.is-in .seq-pulse {
+    animation: seq-pulse var(--t, 2.8s) linear var(--d, 0s) infinite;
+  }
+
+  .seq.is-in .seq-ring {
+    animation: seq-ring 2.8s ease-out var(--d, 0s) infinite;
+  }
+
+  /* Not tied to a group: a line drawn each time it is put on the page, and
+     a dot that keeps sending out a ring (the Partners map on a phone). */
+  .draw-once {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: seq-draw 0.9s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+  }
+
+  .ring-out {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: ring-out 1.8s ease-out infinite;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .seq-pulse,
+  .seq-slide,
+  .ring-out {
+    display: none;
+  }
+}
+
+@keyframes seq-settle {
+  to {
+    opacity: 1;
+    translate: 0 0;
+    scale: 1;
+  }
+}
+
+@keyframes seq-fade {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes seq-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes seq-slide {
+  to {
+    translate: 100% 0;
+  }
+}
+
+/* A short light running the length of a line. */
+@keyframes seq-pulse {
+  0% {
+    stroke-dashoffset: 0.07;
+    opacity: 0;
+  }
+  8%,
+  92% {
+    opacity: 0.9;
+  }
+  100% {
+    stroke-dashoffset: -1;
+    opacity: 0;
+  }
+}
+
+@keyframes seq-ring {
+  0% {
+    scale: 1;
+    opacity: 1;
+  }
+  70%,
+  100% {
+    scale: 1.08;
+    opacity: 0;
+  }
+}
+
+@keyframes ring-out {
+  from {
+    scale: 1;
+    opacity: 0.6;
+  }
+  to {
+    scale: 3.2;
+    opacity: 0;
+  }
+}
+
+/* The ground a drawing is shown on in the Insights series: navy, squared
+ * off faintly like drafting paper. */
+.blueprint {
+  background-color: var(--color-navy);
+  background-image:
+    linear-gradient(rgb(255 255 255 / 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 0.06) 1px, transparent 1px);
+  background-size: 2.5rem 2.5rem;
+}
+
 /* Links whose arrow travels rather than the whole label. */
 .hover-arrow {
   translate: 0 0;

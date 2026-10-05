@@ -72,7 +72,26 @@ export const fetchInsights = createServerFn({ method: "GET" }).handler(async () 
   cachePublicly();
   const store = contentStore();
   const [page, articles] = await Promise.all([store.page("insights"), store.articles()]);
-  return { page, articles: publishedArticles(articles).map(cardOf) };
+  const live = publishedArticles(articles);
+  return {
+    page,
+    articles: live.map(cardOf),
+    // The parts of the series in order, each with its own contents, for
+    // the series' place on the page.
+    parts: live
+      .flatMap((a) =>
+        a.series
+          ? [
+              {
+                ...cardOf(a),
+                series: a.series,
+                headings: a.body.flatMap((block) => (block.type === "heading" ? [block.text] : [])),
+              },
+            ]
+          : [],
+      )
+      .sort((a, b) => a.series.part - b.series.part),
+  };
 });
 
 /** One article, the three after it for "More insights", and the page chrome. */
@@ -96,6 +115,22 @@ export const fetchArticle = createServerFn({ method: "GET" })
         .filter((a) => a.slug !== slug)
         .slice(0, 3)
         .map(cardOf),
+      // The parts of the series, in order, for a part's page to link on to.
+      parts: live
+        .flatMap((a) =>
+          a.series
+            ? [
+                {
+                  slug: a.slug,
+                  title: a.title,
+                  part: a.series.part,
+                  cover: a.cover,
+                  opening: a.series.opening,
+                },
+              ]
+            : [],
+        )
+        .sort((a, b) => a.part - b.part),
     };
   });
 

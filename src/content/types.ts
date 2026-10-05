@@ -221,7 +221,67 @@ export type ArticleBlock =
   | { type: "quote"; text: string }
   | { type: "image"; photo: Photo; caption: string }
   /** A YouTube or Vimeo film inside the text. */
-  | { type: "video"; url: string; caption: string };
+  | { type: "video"; url: string; caption: string }
+  /* The blocks below are the laid-out pieces of a series article (the
+   * Premium Glazing Series). They are written in the seed, not in the
+   * admin panel's block editor, which shows them as fixed. */
+  /** The opening paragraph, set large. */
+  | { type: "lead"; text: string }
+  /** A paragraph marked out with a rule down its left side. */
+  | { type: "callout"; text: string }
+  /** A line set very large between two rules, its second clause muted. */
+  | { type: "statement"; text: string; muted: string }
+  /** The closing line, white on navy. */
+  | { type: "closing"; text: string }
+  /** Photographs side by side, each under a label ("What you see"). */
+  | { type: "figures"; items: { label: string; photo: Photo; caption: string }[] }
+  /** Short points as numbered tiles. */
+  | { type: "checks"; items: string[] }
+  /** Numbered tiles with a title and a line each (the teams involved). */
+  | { type: "cards"; items: { title: string; body: string }[] }
+  /** The stages of a project in order, on a line. */
+  | { type: "steps"; items: string[] }
+  /** Points with a tick against each. */
+  | { type: "ticks"; items: string[] }
+  /** A photograph beside a short numbered list. */
+  | { type: "split"; photo: Photo; caption: string; intro: string; items: string[] }
+  /** Horizontal bars compared on one scale; `share` is 0 to 1. */
+  | {
+      type: "bars";
+      title: string;
+      rows: { label: string; value: string; share: number }[];
+      ticks: string[];
+    }
+  /** One of the diagrams drawn in code (insights/seriesBlocks.tsx). */
+  | { type: "diagram"; name: "approval" | "materials"; title: string; alt: string }
+  /** Stages to tap through, each with a photograph where there is one. */
+  | {
+      type: "stages";
+      caption: string;
+      items: { label: string; text: string; photo: Photo | null }[];
+    };
+
+/** What makes an article one part of a series, and how its opening is set. */
+export type ArticleSeries = {
+  /** 1-based place in the series. */
+  part: number;
+  /** The line beside "Part 01": "Where it begins". */
+  kicker: string;
+  /** Where the part sits between enquiry (0) and handover (1), and the
+   *  name of that stage. */
+  at: number;
+  stage: string;
+  /** The opening picture is the cover photograph, or a drawing on the
+   *  blueprint ground with a label and a note on it. */
+  opening: "photo" | "drawing";
+  openingLabel: string;
+  openingNote: string;
+  caption: string;
+  /** CSS object-position of the cover in the opening, e.g. "50% 40%". */
+  focus: string;
+  /** The line quoted from the part on the Insights page. */
+  pull: string;
+};
 
 /** A film hosted on YouTube or Vimeo: the address as pasted, and its length. */
 export type VideoRef = { url: string; duration: string };
@@ -243,6 +303,8 @@ export type ArticleDoc = {
   excerpt: string;
   cover: Photo;
   body: ArticleBlock[];
+  /** Set for the parts of a series; they use the series layout. */
+  series?: ArticleSeries;
 };
 
 export type RoleDoc = {
