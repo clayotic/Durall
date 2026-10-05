@@ -1,7 +1,6 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { SiteHeader } from "@/components/durall/SiteHeader";
 import { PhotoHero } from "@/components/durall/PhotoHero";
-import { HeroRibbon } from "@/components/durall/HeroRibbon";
 import { OpenRoles } from "@/components/durall/careers/OpenRoles";
 import { DurallFooter } from "@/components/durall/DurallFooter";
 import { seoHead } from "@/content/head";
@@ -36,25 +35,7 @@ function CareersPage() {
           compact
           focus="50% 67%"
           wash={{ corners: true, left: 1, top: true }}
-        >
-          <HeroRibbon
-            credit={opening.credit}
-            count={String(roles.length).padStart(2, "0")}
-            label={opening.rolesLabel}
-          >
-            {opening.viewRoles ? (
-              <Link
-                to="/careers"
-                hash="roles"
-                search={(current) => current}
-                // 44px to touch, without making the strip taller than it is drawn.
-                className="-my-1 inline-flex min-h-11 items-center font-display text-[0.8125rem] font-medium tracking-[0.15em] text-white/85 uppercase hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-              >
-                {opening.viewRoles}&nbsp;<span aria-hidden="true">↓</span>
-              </Link>
-            ) : null}
-          </HeroRibbon>
-        </PhotoHero>
+        />
         <OpenRoles content={page.roles} open={page.open} roles={roles} team={team} email={email} />
       </main>
       <DurallFooter />

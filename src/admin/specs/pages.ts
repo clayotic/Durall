@@ -324,9 +324,6 @@ export const PAGE_FORMS: Record<PageKey, SectionSpec[]> = {
           { create: () => ({ title: "", body: "" }), max: 5 },
         ),
         photo("detail.photo", "Photograph behind the drawing"),
-        text("detail.drawingLabel", "Drawing title"),
-        text("detail.credit", "Photograph credit"),
-        text("detail.scale", "Scale"),
       ],
     },
     { id: "cta", title: "Closing Band", fields: ctaBand("cta") },
@@ -432,15 +429,11 @@ export const PAGE_FORMS: Record<PageKey, SectionSpec[]> = {
     {
       id: "opening",
       title: "Opening (Hero)",
-      description:
-        "The photograph and heading at the top of the Careers page. The number of open roles along its foot counts itself.",
+      description: "The photograph and heading at the top of the Careers page.",
       fields: [
         photo("opening.photo", "Background photograph"),
         lines("opening.heading", "Heading"),
         area("opening.body", "Text", { rows: 3 }),
-        text("opening.credit", "Photograph credit"),
-        text("opening.rolesLabel", "Words beside the number of roles"),
-        text("opening.viewRoles", "Link down to the roles"),
       ],
     },
     {

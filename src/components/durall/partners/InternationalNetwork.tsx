@@ -64,7 +64,7 @@ export function InternationalNetwork({
             alt=""
             aria-hidden="true"
             decoding="async"
-            className="absolute top-1/2 left-1/2 w-[130%] max-w-none -translate-x-1/2 -translate-y-1/2 opacity-45 select-none"
+            className="absolute top-1/2 left-1/2 w-[130%] max-w-none -translate-x-1/2 -translate-y-1/2 opacity-20 select-none"
             loading="lazy"
           />
         </div>

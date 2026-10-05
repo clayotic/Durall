@@ -229,9 +229,6 @@ export const EXPERTISE_SEED: ExpertisePage = {
       },
     ],
     photo: photo("expDetailDoor", "Slim glass door in a concrete wall at Chiltern House"),
-    drawingLabel: "Sill detail — flush sliding door",
-    credit: "Chiltern House, Singapore · WOW Architects",
-    scale: "Scale 1:2",
   },
   cta: {
     eyebrow: "Bring us in early",

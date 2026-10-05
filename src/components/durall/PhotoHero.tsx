@@ -1,4 +1,3 @@
-import type { ReactNode } from "react";
 import { useHeroIntro } from "@/lib/anim";
 import { imageOf, Lines } from "@/content/render";
 import type { PhotoHero as Content } from "@/content/types";
@@ -28,7 +27,6 @@ export function PhotoHero({
   wash = {},
   compact = false,
   focus,
-  children,
 }: {
   content: Content;
   wash?: Wash;
@@ -36,8 +34,6 @@ export function PhotoHero({
   compact?: boolean;
   /** Which part of the photograph to keep in view, as a CSS object-position. */
   focus?: string;
-  /** Anything set along the foot of the photograph (see HeroRibbon). */
-  children?: ReactNode;
 }) {
   const { sectionRef, headingRef, imageRef } = useHeroIntro<
     HTMLElement,
@@ -94,7 +90,12 @@ export function PhotoHero({
       </div>
 
       <div className="relative mx-auto w-full max-w-[120rem] pr-[clamp(1.25rem,4.53vw,5.45rem)] pl-[clamp(1.25rem,7.92vw,9.5rem)]">
-        <div className={children ? "" : "pb-[clamp(3rem,8.75vw,10.5rem)]"}>
+        {/* The shorter opening keeps its words nearer its foot. */}
+        <div
+          className={
+            compact ? "pb-[clamp(2.5rem,4.6vw,5.5rem)]" : "pb-[clamp(3rem,8.75vw,10.5rem)]"
+          }
+        >
           <h1
             ref={headingRef}
             data-anim-hide
@@ -109,7 +110,6 @@ export function PhotoHero({
             {content.body}
           </p>
         </div>
-        {children}
       </div>
     </section>
   );

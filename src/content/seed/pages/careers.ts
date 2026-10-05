@@ -15,9 +15,6 @@ export const CAREERS_SEED: CareersPage = {
     ),
     heading: "Build the part\npeople touch.",
     body: "We design, make and install building envelopes under one roof. These are the roles we’re hiring for now.",
-    credit: "House of Secret Gardens, Ahmedabad · SPASM Design · Photo: Edmund Sumner",
-    rolesLabel: "Open roles",
-    viewRoles: "View open roles",
   },
   roles: {
     eyebrow: "Open roles",

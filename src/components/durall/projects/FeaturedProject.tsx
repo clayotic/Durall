@@ -52,20 +52,52 @@ export function FeaturedProject({
   const current = FEATURED_GALLERY[active] ?? FEATURED_GALLERY[0]!;
 
   return (
-    <section className="relative bg-white pt-[clamp(2.5rem,4.6vw,5.5rem)] pb-[clamp(3.5rem,6vw,7.5rem)]">
-      {/* Stepped hairline stepping down into the featured frame (Figma Vector 31). */}
-      <svg
-        aria-hidden="true"
-        viewBox="0 0 1915 187"
-        fill="none"
-        preserveAspectRatio="none"
-        className="pointer-events-none absolute -top-10 left-0 hidden h-[7.5rem] w-full xl:block"
-      >
-        <path d="M0 186H900L980 1H1915" stroke="var(--color-navy)" strokeOpacity="0.14" />
-      </svg>
+    <section
+      // `--step` is the rise of the stepped line: the design's 78px at 1920.
+      // Clipped sideways because that line runs on past both edges.
+      className="relative overflow-x-clip bg-white pt-[clamp(2.5rem,4.6vw,5.5rem)] pb-[clamp(3.5rem,6vw,7.5rem)] [--step:clamp(3.5rem,4.06vw,4.875rem)] xl:pt-[calc(var(--step)*1.28)]"
+    >
+      <div className="shell relative grid grid-cols-1 items-stretch gap-[clamp(2rem,4vw,3.5rem)] xl:grid-cols-[minmax(0,0.78fr)_minmax(0,1fr)]">
+        {/* The stepped hairline (Figma Vector 31). It comes in from the left
+            edge of the page and passes behind the photograph; above the
+            photograph it climbs out and runs on to the right edge, just
+            under the opening. A short drop from it ends in a dot over the
+            "Featured project" label. Each piece is placed against the
+            column it belongs to (an absolutely placed grid item takes its
+            grid area as its box), so they stay on the photograph's corner
+            at every width. */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 col-start-2 hidden xl:block"
+        >
+          <span className="absolute top-[calc(var(--step)*0.82)] right-full h-px w-screen bg-navy/16" />
+          <svg
+            viewBox="0 0 65 78"
+            fill="none"
+            preserveAspectRatio="none"
+            className="absolute bottom-full left-[calc(var(--step)*0.94)] h-[var(--step)] w-[calc(var(--step)*0.83)] overflow-visible"
+          >
+            <path
+              d="M0 78 65 0"
+              stroke="var(--color-navy)"
+              strokeOpacity="0.16"
+              vectorEffect="non-scaling-stroke"
+            />
+          </svg>
+          <span className="absolute -top-[var(--step)] left-[calc(var(--step)*1.77)] h-px w-screen bg-navy/16" />
+        </div>
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 col-start-1 hidden xl:block"
+        >
+          <span className="absolute top-[calc(var(--step)*0.82)] left-2 h-[calc(var(--step)*0.58)] w-px bg-navy/16" />
+          <span className="absolute top-[calc(var(--step)*1.4)] left-2 size-[9px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#c5c6d2]" />
+        </div>
 
-      <div className="shell grid grid-cols-1 items-stretch gap-[clamp(2rem,4vw,3.5rem)] xl:grid-cols-[minmax(0,0.78fr)_minmax(0,1fr)]">
-        <div ref={panelRef} className="min-w-0 xl:py-[clamp(2rem,4vw,5rem)]">
+        <div
+          ref={panelRef}
+          className="min-w-0 xl:pt-[calc(var(--step)*1.56)] xl:pb-[clamp(2rem,4vw,5rem)]"
+        >
           <p
             data-reveal
             className="font-display text-[clamp(0.875rem,1.15vw,1.25rem)] font-bold tracking-[0.125rem] text-accent-blue uppercase"

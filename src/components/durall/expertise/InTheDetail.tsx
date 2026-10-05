@@ -7,8 +7,6 @@ import type { ExpertisePage } from "@/content/types";
 import { SillDrawing } from "./SillDrawing";
 import { EYEBROW, HEADING, NUMERAL, PAPER, SHELL } from "./styles";
 
-const LABEL = "font-display text-xs leading-none font-medium tracking-[0.167em] uppercase";
-
 /* The held scene runs where the steps sit beside the drawing and motion is
  * welcome; everywhere else the section is simply its finished self. Keep in
  * step with the `lg:motion-safe:` classes below. */
@@ -254,18 +252,6 @@ export function InTheDetail({ content }: { content: ExpertisePage["detail"] }) {
               aria-hidden="true"
               className="absolute right-0 bottom-0 h-[15.1%] w-[181.13%] bg-linear-to-b from-[#fdfdfb]/0 to-[#fdfdfb] to-70%"
             />
-          </div>
-
-          {/* Under the square below `lg`; from there up, laid over its foot
-            where the design sets them (988px down, 900px to 1663px across). */}
-          <div
-            className={`${SHELL} flex flex-wrap gap-x-6 gap-y-2 pt-4 pb-10 lg:absolute lg:top-[calc(min(55.21vw,66.25rem)*0.932)] lg:right-0 lg:w-[calc(min(55.21vw,66.25rem)*0.72+clamp(1.25rem,max(3.75vw,22.5vw-10.5rem),16.125rem))] lg:max-w-none lg:p-0 lg:pr-[clamp(1.25rem,max(3.75vw,22.5vw-10.5rem),16.125rem)] 2xl:grid 2xl:grid-cols-[336fr_354fr_auto] 2xl:gap-0`}
-          >
-            <p className={`${LABEL} text-slate`}>{content.drawingLabel}</p>
-            <p className="font-display text-xs leading-none tracking-[0.033em] text-slate">
-              {content.credit}
-            </p>
-            <p className={`${LABEL} text-slate`}>{content.scale}</p>
           </div>
         </div>
         {/* The scene's length: how far the page scrolls while the block holds. */}

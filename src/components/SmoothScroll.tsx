@@ -56,7 +56,7 @@ export function SmoothScroll() {
        * fixed header's height.
        *
        * In the capture phase, so it also takes the router's own links to a
-       * section of the page they are on ("View open roles"): the router sees
+       * section of the page they are on: the router sees
        * the click as handled and does not jump there first. A link to a
        * different page, or to the same page under a different filter, is
        * left to the router. */

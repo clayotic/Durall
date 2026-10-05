@@ -465,23 +465,13 @@ export type ExpertisePage = {
     steps: { title: string; body: string }[];
     /** The photograph the drawing is laid over. */
     photo: Photo;
-    drawingLabel: string;
-    credit: string;
-    scale: string;
   };
   cta: CtaBand;
 };
 
 export type CareersPage = {
   seo: Seo;
-  opening: PhotoHero & {
-    /** Credit for the photograph, bottom right. */
-    credit: string;
-    /** Beside the number of open roles, along the foot. */
-    rolesLabel: string;
-    /** The link down to the list. */
-    viewRoles: string;
-  };
+  opening: PhotoHero;
   /** The list of open roles; the roles themselves are a collection. */
   roles: {
     eyebrow: string;

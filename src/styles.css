@@ -81,7 +81,7 @@
  * server-rendered layout closely enough that nothing jumps, and SiteHeader
  * overwrites the variable with the measured height once it mounts. */
 :root {
-  --header-h: 4.25rem;
+  --header-h: 4rem;
   --radius: 0.625rem;
 
   /* Four durations, used by both CSS and GSAP (see DUR in src/lib/anim.ts).
@@ -461,19 +461,6 @@
   .label-roll {
     animation: none;
   }
-}
-
-/* The line along the foot of the phone's process photograph: it runs its
- * length in the time one stage is shown, and the stage changes when it
- * ends (ProcessMobile.tsx). */
-@keyframes stage-timer {
-  from {
-    scale: 0 1;
-  }
-}
-
-.stage-timer {
-  animation: stage-timer 6s linear both;
 }
 
 /* ── Sequences played on arrival ──────────────────────────────────────────
@@ -890,8 +877,8 @@ html.intro-bailout .site-intro {
 /* ── Site header and menu ─────────────────────────────────────────────────
  * The bar is fixed and direction-aware: it slides out of the way on the way
  * down and returns the moment the reader scrolls up. Transform only, so the
- * slide never touches layout. It has no background of its own; the ink
- * changes on the wordmark, links and button themselves (SiteHeader.tsx).
+ * slide never touches layout. The bar in it is frosted glass, dark or pale
+ * with what it is over (SiteHeader.tsx).
  */
 [data-site-header] {
   translate: 0 0;
@@ -903,7 +890,8 @@ html.intro-bailout .site-intro {
 /* Never while something in it has the keyboard's focus: tabbing back into a
  * bar that had slid away put the focus ring off screen. */
 [data-site-header][data-hidden="true"]:not(:focus-within) {
-  translate: 0 -100%;
+  /* Past its own height, so the bar's shadow goes with it. */
+  translate: 0 -160%;
 }
 
 /* The menu fades and settles in, and fades out again when it closes: it

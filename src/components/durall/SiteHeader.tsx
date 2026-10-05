@@ -55,8 +55,11 @@ function linkTarget(href: string) {
 
 /**
  * The wordmark on the left and the pages and the contact button on the
- * right, across the full width of the page, with nothing behind them: white
- * over a photograph or a navy section, navy over the white of the page.
+ * right, on a bar of frosted glass that floats a little in from the edges
+ * of the window (design: 1896 × 79 at 1920, 14px in from the sides and 17px
+ * down). What is behind it shows through blurred, so the words on it read
+ * whatever passes underneath. The glass is dark with white ink over a
+ * photograph or a navy section, pale with navy ink over the page.
  */
 export function SiteHeader() {
   const { settings } = useSite();
@@ -89,11 +92,18 @@ export function SiteHeader() {
   const opensOnPhoto = () => PHOTO_TOP.test(router.state.location.pathname);
   const [darkStart, setDarkStart] = useState(opensOnPhoto);
   const [darkEnd, setDarkEnd] = useState(opensOnPhoto);
-  /* White over anything dark and over the open menu, navy over the page.
-   * The white carries a soft navy halo: with no bar behind it, a photograph
-   * with a bright sky is otherwise all that separates it from the picture. */
-  const ink = (dark: boolean) =>
-    dark || open ? "text-white [text-shadow:0_0_0.75rem_rgb(5_8_52/0.55)]" : "text-navy";
+  /* One glass for the whole bar: dark only where both ends are over
+   * something dark, so a split section (the page under the wordmark, a
+   * photograph under the links) gets the pale glass, on which navy reads
+   * over either. Over the open menu there is no glass at all: the menu is
+   * the bar's ground. */
+  const dark = open || (darkStart && darkEnd);
+  const ink = dark ? "text-white" : "text-navy";
+  const glass = open
+    ? "border-transparent"
+    : dark
+      ? "border-white/15 bg-navy/50 shadow-[inset_0_1px_0_rgb(255_255_255/0.1)] backdrop-blur-[14px] backdrop-saturate-150"
+      : "border-navy/10 bg-white/70 shadow-[inset_0_1px_0_rgb(255_255_255/0.7),0_0.5rem_2rem_rgb(5_8_52/0.07)] backdrop-blur-[14px] backdrop-saturate-150";
 
   /* The header overlays the heroes, so the pages underneath reserve its
    * height themselves. Publishing the measured value means they stay clear
@@ -257,21 +267,21 @@ export function SiteHeader() {
         data-site-header
         data-hidden={hidden && !open ? "true" : "false"}
         data-hero-bar
-        // Nothing is drawn behind the row, so only the wordmark, the links
-        // and the buttons take the pointer; the page clicks through between.
-        className="pointer-events-none fixed inset-x-0 top-0 z-50"
+        // The margin round the bar is the header's own padding, so its
+        // measured height (`--header-h`) covers the gap above the bar too.
+        // The page clicks through that margin.
+        className="pointer-events-none fixed inset-x-0 top-0 z-50 px-[clamp(0.5rem,0.73vw,0.875rem)] pt-[clamp(0.5rem,0.89vw,1.0625rem)]"
       >
-        {/* A compact row, the same height and in the same place over every
+        {/* The bar: the same height and in the same place over every
             section, so nothing in it moves when the page starts to scroll. */}
-        <div className="mx-auto flex w-full max-w-[120rem] items-center justify-between gap-4 py-[clamp(0.75rem,0.97vw,1.125rem)] pr-[clamp(1.25rem,6.2vw,7.45rem)] pl-[clamp(1.25rem,7.92vw,9.5rem)]">
+        <div
+          className={`pointer-events-auto mx-auto flex h-[clamp(3.5rem,4.11vw,4.9375rem)] w-full max-w-[118.5rem] items-center justify-between gap-4 border pr-[clamp(0.625rem,1.25vw,1.5rem)] pl-[clamp(0.875rem,1.61vw,1.9375rem)] transition-[background-color,border-color,box-shadow] duration-[var(--dur-short)] ease-[var(--ease-micro)] ${glass}`}
+        >
           <Link
             to="/"
             aria-label={settings.company.name}
             translate="no"
-            className={`pointer-events-auto flex min-h-11 shrink-0 items-center transition-colors duration-[var(--dur-short)] ease-[var(--ease-micro)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current ${ink(darkStart)} ${
-              // The same halo for the wordmark, which is a mask, not text.
-              darkStart || open ? "drop-shadow-[0_0_0.75rem_rgb(5_8_52/0.55)]" : ""
-            }`}
+            className={`flex min-h-11 shrink-0 items-center transition-colors duration-[var(--dur-short)] ease-[var(--ease-micro)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current ${ink}`}
           >
             {/* The wordmark as a mask over the current colour, so it changes
                 ink with the links rather than swapping one file for another. */}
@@ -285,7 +295,7 @@ export function SiteHeader() {
             />
           </Link>
 
-          <nav aria-label="Primary" className="pointer-events-auto hidden min-w-0 lg:block">
+          <nav aria-label="Primary" className="hidden min-w-0 lg:block">
             <ul className="flex items-center justify-end gap-x-[clamp(1.25rem,1.82vw,2.2rem)]">
               {items.map((item) => {
                 const active = isActive(pathname, item.href);
@@ -296,7 +306,7 @@ export function SiteHeader() {
                       {...linkTarget(item.href)}
                       aria-current={active ? "page" : undefined}
                       {...(full ? { "aria-label": full } : {})}
-                      className={`flex min-h-11 items-center border-b-2 font-display text-[clamp(0.875rem,0.78vw,0.9375rem)] transition-colors duration-[var(--dur-short)] ease-[var(--ease-micro)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current ${ink(darkEnd)} ${
+                      className={`flex min-h-11 items-center border-b-2 font-display text-[clamp(0.875rem,0.78vw,0.9375rem)] transition-colors duration-[var(--dur-short)] ease-[var(--ease-micro)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current ${ink} ${
                         active
                           ? "border-current font-medium"
                           : "border-transparent hover:border-current/45"
@@ -311,12 +321,12 @@ export function SiteHeader() {
                 <li className="ml-[clamp(0rem,0.1vw,0.1rem)]">
                   <Link
                     {...linkTarget(settings.header.cta.href)}
-                    // The button turns over with the ink: white on a
-                    // photograph, navy on the page. `hover-lift` carries
+                    // The button turns over with the glass: white on the
+                    // dark one, navy on the pale one. `hover-lift` carries
                     // the colour transition.
                     // The style sheet's button, held to the bar's 44px.
                     className={`hover-lift flex min-h-11 items-center px-6 font-display text-[0.8125rem] font-medium tracking-[0.077em] focus-visible:outline-2 focus-visible:outline-offset-2 ${
-                      darkEnd
+                      dark
                         ? "bg-white text-navy hover:bg-[#f4f4f2] focus-visible:outline-white"
                         : "bg-navy text-white hover:bg-navy-700 focus-visible:outline-navy"
                     }`}
@@ -334,7 +344,7 @@ export function SiteHeader() {
             onClick={() => setOpen((v) => !v)}
             aria-expanded={open}
             aria-controls="site-menu"
-            className={`pointer-events-auto -mr-3 flex min-h-11 min-w-11 items-center justify-center gap-2.5 px-3 font-display text-[0.6875rem] font-bold tracking-eyebrow uppercase transition-colors duration-[var(--dur-short)] ease-[var(--ease-micro)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current lg:hidden ${ink(darkEnd)}`}
+            className={`flex min-h-11 min-w-11 items-center justify-center gap-2.5 px-3 font-display text-[0.6875rem] font-bold tracking-eyebrow uppercase transition-colors duration-[var(--dur-short)] ease-[var(--ease-micro)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current lg:hidden ${ink}`}
           >
             <span>{open ? "Close" : "Menu"}</span>
             <span aria-hidden="true" className="relative block h-3 w-4">
