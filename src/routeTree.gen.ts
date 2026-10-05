@@ -16,7 +16,9 @@ import { Route as CareersRouteImport } from './routes/careers'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ExpertiseRouteImport } from './routes/expertise'
 import { Route as PartnersRouteImport } from './routes/partners'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminAccountRouteImport } from './routes/admin.account'
 import { Route as AdminActivityRouteImport } from './routes/admin.activity'
@@ -76,9 +78,19 @@ const PartnersRoute = PartnersRouteImport.update({
   path: '/partners',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
@@ -205,7 +217,9 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/expertise': typeof ExpertiseRoute
   '/partners': typeof PartnersRoute
+  '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/terms': typeof TermsRoute
   '/admin/account': typeof AdminAccountRoute
   '/admin/activity': typeof AdminActivityRoute
   '/admin/careers': typeof AdminCareersRoute
@@ -237,7 +251,9 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/expertise': typeof ExpertiseRoute
   '/partners': typeof PartnersRoute
+  '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/terms': typeof TermsRoute
   '/admin/account': typeof AdminAccountRoute
   '/admin/activity': typeof AdminActivityRoute
   '/admin/careers': typeof AdminCareersRoute
@@ -271,7 +287,9 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/expertise': typeof ExpertiseRoute
   '/partners': typeof PartnersRoute
+  '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/terms': typeof TermsRoute
   '/admin/account': typeof AdminAccountRoute
   '/admin/activity': typeof AdminActivityRoute
   '/admin/careers': typeof AdminCareersRoute
@@ -306,7 +324,9 @@ export interface FileRouteTypes {
     | '/contact'
     | '/expertise'
     | '/partners'
+    | '/privacy'
     | '/sitemap.xml'
+    | '/terms'
     | '/admin/account'
     | '/admin/activity'
     | '/admin/careers'
@@ -338,7 +358,9 @@ export interface FileRouteTypes {
     | '/contact'
     | '/expertise'
     | '/partners'
+    | '/privacy'
     | '/sitemap.xml'
+    | '/terms'
     | '/admin/account'
     | '/admin/activity'
     | '/admin/careers'
@@ -371,7 +393,9 @@ export interface FileRouteTypes {
     | '/contact'
     | '/expertise'
     | '/partners'
+    | '/privacy'
     | '/sitemap.xml'
+    | '/terms'
     | '/admin/account'
     | '/admin/activity'
     | '/admin/careers'
@@ -405,7 +429,9 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   ExpertiseRoute: typeof ExpertiseRoute
   PartnersRoute: typeof PartnersRoute
+  PrivacyRoute: typeof PrivacyRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  TermsRoute: typeof TermsRoute
   AdminLoginRoute: typeof AdminLoginRoute
   AdminSetPasswordRoute: typeof AdminSetPasswordRoute
   InsightsSlugRoute: typeof InsightsSlugRoute
@@ -465,11 +491,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PartnersRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sitemap.xml': {
       id: '/sitemap.xml'
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/': {
@@ -686,7 +726,9 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   ExpertiseRoute: ExpertiseRoute,
   PartnersRoute: PartnersRoute,
+  PrivacyRoute: PrivacyRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  TermsRoute: TermsRoute,
   AdminLoginRoute: AdminLoginRoute,
   AdminSetPasswordRoute: AdminSetPasswordRoute,
   InsightsSlugRoute: InsightsSlugRoute,

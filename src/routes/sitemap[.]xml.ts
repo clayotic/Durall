@@ -13,6 +13,8 @@ export const Route = createFileRoute("/sitemap.xml")({
         const [projects, articles] = await Promise.all([store.projects(), store.articles()]);
         const paths = [
           ...PAGES.map((page) => page.path),
+          "/privacy",
+          "/terms",
           ...publishedProjects(projects).map((project) => `/projects/${project.slug}`),
           ...publishedArticles(articles).map((article) => `/insights/${article.slug}`),
         ];

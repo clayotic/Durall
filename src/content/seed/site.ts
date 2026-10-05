@@ -85,10 +85,9 @@ export const SETTINGS_SEED: SiteSettings = {
       { label: "LinkedIn", href: "" },
       { label: "Instagram", href: "" },
     ],
-    // Plain text until the pages exist: an empty href renders no link.
     legal: [
-      { label: "Privacy Policy", href: "" },
-      { label: "Terms of Use", href: "" },
+      { label: "Privacy Policy", href: "/privacy" },
+      { label: "Terms of Use", href: "/terms" },
     ],
     backToTop: "Back to Top",
   },
