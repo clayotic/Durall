@@ -55,6 +55,7 @@ export function EnquiryBand({ source }: { source: Source }) {
             </h2>
             <p
               data-anim
+              data-fx="words"
               className="mt-[clamp(1rem,1.4vw,1.7rem)] max-w-[36em] font-display text-[clamp(1rem,1.11vw,1.33rem)] leading-[1.4] text-pretty text-white/85"
             >
               {copy.lede}

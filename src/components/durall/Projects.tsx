@@ -85,22 +85,14 @@ export function Projects({
       // philosophy section, above this one, and has to show there.
       className="relative overflow-x-clip bg-white pb-[clamp(4.5rem,8vw,9.375rem)] max-md:pt-[4.75rem] max-md:pb-14"
     >
-      {/* On a phone the line from the philosophy photograph's frame runs on
-          down the right-hand side of the page and ends in the side of the
-          button at the foot. */}
-      <div
-        aria-hidden="true"
-        className="absolute top-0 right-3 bottom-20 w-px bg-navy/28 md:hidden"
-      />
       {/* On desktop the right-hand margin is wider than the shell's own: it
        * is where the connector line runs, beside the grid rather than over
        * it. The width is the design's at 1920 (341px there), held to the
        * same share of the screen below that. */}
-      {/* `relative`, so the row of cards passes over the phone's edge line. */}
-      <div className="shell-narrow relative lg:pr-[min(17.8vw,21.3125rem)]">
+      <div className="shell-narrow lg:pr-[min(17.8vw,21.3125rem)]">
         <div
           ref={headRef}
-          className="flex flex-col justify-between gap-[clamp(1.5rem,3vw,2rem)] max-md:gap-4 max-md:pr-3 lg:flex-row lg:items-end"
+          className="flex flex-col justify-between gap-[clamp(1.5rem,3vw,2rem)] max-md:gap-4 lg:flex-row lg:items-end"
         >
           <h2
             data-anim="lines"
@@ -199,7 +191,7 @@ export function Projects({
         </ul>
 
         {/* Phone: where the row stands, and the arrows that move it. */}
-        <div className="mt-[1.375rem] flex items-center justify-between pr-3 md:hidden">
+        <div className="mt-[1.375rem] flex items-center justify-between md:hidden">
           <p
             aria-hidden="true"
             className="flex items-center gap-3 font-display text-[0.8125rem] font-semibold tracking-[0.06em] text-navy tabular-nums"
@@ -235,8 +227,7 @@ export function Projects({
           </div>
         </div>
 
-        {/* Its right side sits on the line that runs down the page's edge. */}
-        <div className="mt-7 -mr-2 flex justify-end md:hidden">
+        <div className="mt-7 flex justify-end md:hidden">
           <ViewMore to="/projects" label="View all projects" />
         </div>
         <div className="mt-[clamp(2rem,3vw,3.5rem)] hidden justify-center md:flex lg:hidden">

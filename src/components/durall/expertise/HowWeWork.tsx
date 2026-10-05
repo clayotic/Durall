@@ -240,6 +240,7 @@ export function HowWeWork({ content }: { content: ExpertisePage["process"] }) {
           </h2>
           <p
             data-anim
+            data-fx="words"
             className="mt-[clamp(0.5rem,0.57vw,0.6875rem)] max-w-[20.7rem] font-display text-[clamp(1rem,0.94vw,1.125rem)] leading-[1.56] text-pretty text-slate"
           >
             {content.lede}

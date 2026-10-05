@@ -21,7 +21,7 @@ export function ContactBody({ content }: { content: ContactPage }) {
   const detailsRef = useReveal<HTMLDivElement>({ selector: "[data-reveal]", y: 16 });
 
   return (
-    <section className="bg-white pt-[clamp(2rem,4vw,3.5rem)] pb-[clamp(4rem,8vw,9rem)]">
+    <section className="bg-white pt-[clamp(1rem,1.8vw,1.75rem)] pb-[clamp(4rem,8vw,9rem)]">
       <div className="shell grid grid-cols-1 gap-[clamp(2.5rem,4.5vw,4.5rem)] lg:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)]">
         <div ref={mapRef} className="min-w-0">
           <OfficeMap labels={content.map} />

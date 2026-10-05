@@ -41,6 +41,7 @@ export function MeetsEngineering({ content }: { content: AboutPage["meets"] }) {
               <p
                 key={index}
                 data-reveal
+                data-fx="words"
                 className="mt-5 max-w-[28rem] font-body text-[clamp(0.8125rem,1vw,0.875rem)] leading-[1.57] text-slate"
               >
                 {paragraph}

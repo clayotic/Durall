@@ -7,9 +7,10 @@ import type { ProjectDetail } from "./data";
 /**
  * Hands the reader on to another project.
  *
- * On hover the title rolls: each line slides up out of its mask while an
- * identical copy rises in behind it, a beat apart — the reference's
- * next-work treatment. The photograph eases in at the same time.
+ * On hover nothing in it changes place: the photograph eases a little
+ * closer, a rule draws under the title and the arrow leans out. (The title
+ * used to roll over in its mask, which read as a glitch on a name this
+ * large.)
  *
  * Every project has a page, so the chain runs through all of them and wraps
  * round from the last to the first (see `nextProject`).
@@ -51,21 +52,17 @@ export function NextProject({
           <div className="min-w-0">
             <h2 className="font-display text-[clamp(3.25rem,8vw,7.5rem)] leading-[0.9] font-light tracking-[-0.04em] text-navy">
               <span className="sr-only">{next.name}</span>
-              {next.title.map((line, index) => (
-                <span
-                  key={line}
-                  aria-hidden="true"
-                  className="relative block overflow-hidden pb-[0.06em]"
-                  style={{ ["--roll-delay" as string]: `${index * 60}ms` }}
-                >
-                  <span className="roll-line block">{line}</span>
-                  <span className="roll-line roll-line--copy absolute inset-x-0 top-0 block">
-                    {line}
-                  </span>
+              {next.title.map((line) => (
+                <span key={line} aria-hidden="true" className="block pb-[0.06em]">
+                  {line}
                 </span>
               ))}
             </h2>
-            <p className="mt-6 flex items-center gap-3 font-display text-[0.6875rem] font-bold tracking-[0.18em] text-slate uppercase">
+            <span
+              aria-hidden="true"
+              className="mt-[clamp(1rem,1.6vw,1.5rem)] block h-px origin-left scale-x-0 bg-navy transition-[scale] duration-[var(--dur-medium)] ease-[var(--ease-reveal)] group-hover:scale-x-100 group-focus-visible:scale-x-100 motion-reduce:transition-none"
+            />
+            <p className="mt-[clamp(0.875rem,1.4vw,1.25rem)] flex items-center gap-3 font-display text-[0.6875rem] font-bold tracking-[0.18em] text-slate uppercase">
               {next.architect} · {next.location}
               <svg
                 viewBox="0 0 12 12"

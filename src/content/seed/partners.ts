@@ -7,7 +7,13 @@ export const PARTNERS_SEED: PartnerDoc[] = [
     order: 0,
     visible: true,
     mark: "jofebar",
-    logo: null,
+    logo: {
+      image: {
+        kind: "asset",
+        key: "logoJofebar",
+      },
+      height: 2.5,
+    },
     name: "Jofebar",
     country: "Switzerland / Portugal",
     description: "PanoramAH! minimal window systems",

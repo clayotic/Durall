@@ -84,7 +84,7 @@ export function OurApproachMobile({ content }: { content: AboutPage["approach"] 
         <span className="h-px grow bg-navy" />
         <span className="size-[5px] bg-navy" />
       </span>
-      <p className="mt-[1.125rem] font-display text-base leading-[1.6] text-slate">
+      <p data-fx="words" className="mt-[1.125rem] font-display text-base leading-[1.6] text-slate">
         {content.body}
       </p>
 

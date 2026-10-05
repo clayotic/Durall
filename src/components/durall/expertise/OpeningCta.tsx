@@ -28,6 +28,7 @@ export function OpeningCta({ band }: { band: CtaBand }) {
         </h2>
         <p
           data-anim
+          data-fx="words"
           className="mt-[clamp(1rem,1.6vw,1.9375rem)] max-w-[50rem] font-display text-[clamp(1rem,0.94vw,1.125rem)] leading-[1.56] text-pretty text-silver"
         >
           {band.body}

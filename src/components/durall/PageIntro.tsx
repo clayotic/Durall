@@ -40,6 +40,7 @@ export function PageIntro({
         </h1>
         <p
           data-anim
+          data-fx="words"
           className="mt-[clamp(1.5rem,2.4vw,2.75rem)] max-w-[34rem] font-body text-[clamp(0.9375rem,1.1vw,1rem)] leading-relaxed text-pretty text-slate"
         >
           {lede}

@@ -31,6 +31,7 @@ export function AboutPhilosophy({ content }: { content: AboutPage["philosophy"] 
           </p>
           <p
             data-reveal
+            data-fx="words"
             className="mt-5 max-w-[30rem] font-body text-[clamp(0.8125rem,0.95vw,0.875rem)] leading-[1.75] font-bold text-navy"
           >
             {content.emphasis}

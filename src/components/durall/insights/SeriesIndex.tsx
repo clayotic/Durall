@@ -98,7 +98,9 @@ export function SeriesIndex({
           )}
         </h1>
         <div className="flex flex-col gap-5 lg:col-span-4 lg:col-start-9">
-          <p className="text-base leading-[1.6] text-slate lg:text-[1.0625rem]">{content.lede}</p>
+          <p data-fx="words" className="text-base leading-[1.6] text-slate lg:text-[1.0625rem]">
+            {content.lede}
+          </p>
           <div className="flex flex-col gap-1.5 border-t border-navy/14 pt-4">
             <p className="text-xs font-semibold tracking-[0.14em] uppercase">
               Now publishing — {SERIES_NAME}

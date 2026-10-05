@@ -100,7 +100,6 @@ export type SiteSettings = {
     items: NavItem[];
     /** The button at the end of the bar. */
     cta: Cta;
-    menuTagline: string;
   };
   footer: {
     /** The paragraph under the logo and tagline. */

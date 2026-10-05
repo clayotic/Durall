@@ -30,6 +30,10 @@ function Thumb({ project }: { project: TrustedProject }) {
   );
 }
 
+/* How a row opens and closes: one curve and one length for everything that
+ * moves with it, so the row closing and the row opening read as one motion. */
+const EASE = "duration-[var(--dur-medium)] ease-[var(--ease-reveal)] motion-reduce:transition-none";
+
 /**
  * "Every site asks for something different.": the kinds of work as a list
  * that opens one at a time (on hover with a mouse, on tap or focus otherwise),
@@ -38,6 +42,14 @@ function Thumb({ project }: { project: TrustedProject }) {
  * From the design at 1920: the list 600px wide, the photograph 740 × 840,
  * 65px between them. Choosing a kind, a project in its list, or the arrows
  * on the photograph changes the picture; nothing moves by itself.
+ *
+ * A row opens by growing, not by appearing: its panel is a one-row grid
+ * taken from `0fr` to `1fr` (the one way to animate to a height nobody has
+ * measured), while the panel of the row that was open closes on the same
+ * curve, so the list keeps its length and only the rows between the two
+ * move. The title grows by `scale`, from the size it is always set at. The
+ * photograph cross-fades: the new one comes up over the last, which stays
+ * underneath until it is covered, so the frame is never empty.
  */
 export function TrustedWith({ content }: { content: ExpertisePage["trusted"] }) {
   const introRef = useSectionIntro<HTMLDivElement>();
@@ -46,16 +58,25 @@ export function TrustedWith({ content }: { content: ExpertisePage["trusted"] }) 
   const frameRef = useClipReveal<HTMLDivElement>({ scale: 1.1, shift: 8 });
   const [open, setOpen] = useState(0);
   const [shown, setShown] = useState(0);
+  /* The kinds whose photographs are in the frame: the open one, and any the
+   * pointer has been over, so a picture has started loading before its row
+   * opens. And the picture that was showing before this one. */
+  const [seen, setSeen] = useState([0]);
+  const [under, setUnder] = useState("");
+  const see = (index: number) => setSeen((had) => (had.includes(index) ? had : [...had, index]));
 
   const kind = content.kinds[open];
   const projects = kind?.projects ?? [];
   const project = projects[shown];
   const link = project?.href ? linkTo(project.href) : null;
 
-  const choose = (index: number) => {
-    setOpen(index);
-    setShown(0);
+  const show = (kindAt: number, at: number) => {
+    setUnder(`${open}-${shown}`);
+    see(kindAt);
+    setOpen(kindAt);
+    setShown(at);
   };
+  const choose = (index: number) => show(index, 0);
 
   /* With a mouse the list opens on hover. Opening a row closes another and
    * moves the rows between, which can slide a different row under a pointer
@@ -74,6 +95,7 @@ export function TrustedWith({ content }: { content: ExpertisePage["trusted"] }) 
 
   const hover = (index: number, event: PointerEvent) => {
     if (event.pointerType !== "mouse") return;
+    see(index);
     pointer.current = { x: event.clientX, y: event.clientY };
     if (index === open || intent.current?.index === index) return;
     const last = changedAt.current;
@@ -88,7 +110,7 @@ export function TrustedWith({ content }: { content: ExpertisePage["trusted"] }) 
       }, 110),
     };
   };
-  const step = (by: number) => setShown((at) => (at + by + projects.length) % projects.length);
+  const step = (by: number) => show(open, (shown + by + projects.length) % projects.length);
 
   return (
     <section id="trusted" className={`scroll-mt-24 bg-navy text-white ${SECTION_Y}`}>
@@ -127,7 +149,7 @@ export function TrustedWith({ content }: { content: ExpertisePage["trusted"] }) 
               return (
                 <div
                   key={item.title}
-                  className={`border-t ${isOpen ? "border-white/55" : "border-white/14"}`}
+                  className={`border-t transition-colors ${EASE} ${isOpen ? "border-white/55" : "border-white/14"}`}
                 >
                   <h3>
                     <button
@@ -141,7 +163,7 @@ export function TrustedWith({ content }: { content: ExpertisePage["trusted"] }) 
                       onFocus={() => {
                         if (index !== open) choose(index);
                       }}
-                      className={`flex w-full cursor-pointer items-center text-left transition-colors duration-[var(--dur-short)] ${FOCUS} ${
+                      className={`flex w-full cursor-pointer items-center text-left transition-[color,min-height] ${EASE} ${FOCUS} ${
                         isOpen
                           ? "min-h-[5.375rem] text-white"
                           : "min-h-[4.9375rem] text-white/42 hover:text-white/75"
@@ -152,17 +174,23 @@ export function TrustedWith({ content }: { content: ExpertisePage["trusted"] }) 
                       >
                         {two(index + 1)}
                       </span>
+                      {/* Set at the open size (40px at 1920) and scaled to
+                          the resting one (32px) while shut. */}
                       <span
-                        className={`min-w-0 flex-1 font-display leading-[1.15] font-light tracking-[-0.02em] text-pretty ${
-                          isOpen
-                            ? "text-[clamp(1.625rem,2.08vw,2.5rem)]"
-                            : "text-[clamp(1.375rem,1.67vw,2rem)]"
+                        className={`min-w-0 flex-1 origin-left font-display text-[clamp(1.625rem,2.08vw,2.5rem)] leading-[1.15] font-light tracking-[-0.02em] text-pretty transition-[scale] ${EASE} ${
+                          isOpen ? "" : "scale-[0.82]"
                         }`}
                       >
                         {item.title}
                       </span>
-                      <span aria-hidden="true" className="shrink-0 pl-4 font-display text-lg">
-                        {isOpen ? "—" : "+"}
+                      {/* A plus whose upright turns into the bar and goes. */}
+                      <span aria-hidden="true" className="relative ml-4 block size-3.5 shrink-0">
+                        <span className="absolute inset-x-0 top-1/2 h-px bg-current" />
+                        <span
+                          className={`absolute inset-y-0 left-1/2 w-px bg-current transition-[rotate,opacity] ${EASE} ${
+                            isOpen ? "rotate-90 opacity-0" : ""
+                          }`}
+                        />
                       </span>
                     </button>
                   </h3>
@@ -170,50 +198,58 @@ export function TrustedWith({ content }: { content: ExpertisePage["trusted"] }) 
                     id={`trusted-${index}-panel`}
                     role="region"
                     aria-labelledby={`trusted-${index}-head`}
-                    hidden={!isOpen}
-                    className="pb-[clamp(1.5rem,2.2vw,2.6rem)] pl-[clamp(2.5rem,3.25vw,3.875rem)]"
+                    // Shut, it is still laid out (that is what it grows
+                    // from), so it is taken out of reach instead.
+                    inert={!isOpen}
+                    className={`grid transition-[grid-template-rows,opacity] ${EASE} ${
+                      isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr] opacity-0"
+                    }`}
                   >
-                    <p className="max-w-[29.5rem] font-display text-[clamp(0.9375rem,0.89vw,1.0625rem)] leading-[1.59] text-pretty text-silver">
-                      {item.body}
-                    </p>
-                    {item.projects.length ? (
-                      <>
-                        <p className="mt-[clamp(1rem,1.15vw,1.375rem)] font-display text-[0.6875rem] leading-none font-medium tracking-[0.16em] text-white/55 uppercase">
-                          {content.seenAt} · {two(item.projects.length)}{" "}
-                          {item.projects.length === 1 ? "project" : "projects"}
+                    <div className="min-h-0 overflow-hidden">
+                      <div className="pb-[clamp(1.5rem,2.2vw,2.6rem)] pl-[clamp(2.5rem,3.25vw,3.875rem)]">
+                        <p className="max-w-[29.5rem] font-display text-[clamp(0.9375rem,0.89vw,1.0625rem)] leading-[1.59] text-pretty text-silver">
+                          {item.body}
                         </p>
-                        <ul className="mt-[1.0625rem] grid grid-cols-1 gap-y-3 sm:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-[repeat(2,minmax(0,15.625rem))]">
-                          {item.projects.map((entry, at) => (
-                            <li key={entry.name} className="min-w-0">
-                              <button
-                                type="button"
-                                aria-pressed={at === shown}
-                                onClick={() => setShown(at)}
-                                className={`group flex min-h-11 w-full cursor-pointer items-center gap-3.5 text-left ${FOCUS}`}
-                              >
-                                <span className="shrink-0">
-                                  <Thumb project={entry} />
-                                </span>
-                                <span className="min-w-0">
-                                  <span
-                                    className={`block font-display text-[0.8125rem] leading-[1.38] underline underline-offset-2 ${
-                                      at === shown
-                                        ? "text-white decoration-white"
-                                        : "text-white decoration-white/45 group-hover:decoration-white"
-                                    }`}
+                        {item.projects.length ? (
+                          <>
+                            <p className="mt-[clamp(1rem,1.15vw,1.375rem)] font-display text-[0.6875rem] leading-none font-medium tracking-[0.16em] text-white/55 uppercase">
+                              {content.seenAt} · {two(item.projects.length)}{" "}
+                              {item.projects.length === 1 ? "project" : "projects"}
+                            </p>
+                            <ul className="mt-[1.0625rem] grid grid-cols-1 gap-y-3 sm:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-[repeat(2,minmax(0,15.625rem))]">
+                              {item.projects.map((entry, at) => (
+                                <li key={entry.name} className="min-w-0">
+                                  <button
+                                    type="button"
+                                    aria-pressed={at === shown}
+                                    onClick={() => show(index, at)}
+                                    className={`group flex min-h-11 w-full cursor-pointer items-center gap-3.5 text-left ${FOCUS}`}
                                   >
-                                    {entry.name}
-                                  </span>
-                                  <span className="mt-0.5 block font-display text-xs text-white/55">
-                                    {entry.place}
-                                  </span>
-                                </span>
-                              </button>
-                            </li>
-                          ))}
-                        </ul>
-                      </>
-                    ) : null}
+                                    <span className="shrink-0">
+                                      <Thumb project={entry} />
+                                    </span>
+                                    <span className="min-w-0">
+                                      <span
+                                        className={`block font-display text-[0.8125rem] leading-[1.38] underline underline-offset-2 ${
+                                          at === shown
+                                            ? "text-white decoration-white"
+                                            : "text-white decoration-white/45 group-hover:decoration-white"
+                                        }`}
+                                      >
+                                        {entry.name}
+                                      </span>
+                                      <span className="mt-0.5 block font-display text-xs text-white/55">
+                                        {entry.place}
+                                      </span>
+                                    </span>
+                                  </button>
+                                </li>
+                              ))}
+                            </ul>
+                          </>
+                        ) : null}
+                      </div>
+                    </div>
                   </div>
                 </div>
               );
@@ -229,50 +265,60 @@ export function TrustedWith({ content }: { content: ExpertisePage["trusted"] }) 
               className="relative aspect-[740/840] min-w-0 overflow-hidden bg-[#0d1147]"
             >
               <div data-clip-inner className="absolute inset-0">
-                {projects.map((entry, at) =>
-                  entry.photo ? (
-                    <img
-                      draggable={false}
-                      key={`${open}-${entry.name}`}
-                      {...imageOf(entry.photo.image)}
-                      alt={at === shown ? entry.photo.alt : ""}
-                      aria-hidden={at === shown ? undefined : true}
-                      sizes="(min-width: 1024px) 39vw, 100vw"
-                      loading="lazy"
-                      decoding="async"
-                      className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-[var(--dur-medium)] motion-reduce:transition-none ${
-                        at === shown ? "opacity-100" : "opacity-0"
-                      }`}
-                    />
-                  ) : (
-                    <div
-                      key={`${open}-${entry.name}`}
-                      aria-hidden="true"
-                      className={`absolute inset-0 flex items-center justify-center p-8 text-center ${EMPTY_FRAME} transition-opacity duration-[var(--dur-medium)] motion-reduce:transition-none ${
-                        at === shown ? "opacity-100" : "opacity-0"
-                      }`}
-                    >
-                      <span className={`${SMALL_CAPS} tracking-[0.16em] text-white/60`}>
-                        Photo — {entry.name}
-                      </span>
-                    </div>
-                  ),
+                {seen.flatMap((kindAt) =>
+                  (content.kinds[kindAt]?.projects ?? []).map((entry, at) => {
+                    const key = `${kindAt}-${at}`;
+                    const current = kindAt === open && at === shown;
+                    // The one showing on top, the one before it left whole
+                    // beneath until it is covered, the rest faded away. A
+                    // picture new to the frame starts from clear.
+                    const layer = `absolute inset-0 transition-opacity duration-[var(--dur-medium)] motion-reduce:transition-none starting:opacity-0 ${
+                      current
+                        ? "z-[2] opacity-100"
+                        : key === under
+                          ? "z-[1] opacity-100"
+                          : "opacity-0"
+                    }`;
+                    return entry.photo ? (
+                      <img
+                        draggable={false}
+                        key={key}
+                        {...imageOf(entry.photo.image)}
+                        alt={current ? entry.photo.alt : ""}
+                        aria-hidden={current ? undefined : true}
+                        sizes="(min-width: 1024px) 39vw, 100vw"
+                        loading="lazy"
+                        decoding="async"
+                        className={`h-full w-full object-cover ${layer}`}
+                      />
+                    ) : (
+                      <div
+                        key={key}
+                        aria-hidden="true"
+                        className={`flex items-center justify-center p-8 text-center ${EMPTY_FRAME} ${layer}`}
+                      >
+                        <span className={`${SMALL_CAPS} tracking-[0.16em] text-white/60`}>
+                          Photo — {entry.name}
+                        </span>
+                      </div>
+                    );
+                  }),
                 )}
               </div>
               <div
                 aria-hidden="true"
-                className="absolute inset-x-0 top-0 h-[16.7%] bg-linear-to-b from-navy/55 to-transparent"
+                className="absolute inset-x-0 top-0 z-[3] h-[16.7%] bg-linear-to-b from-navy/55 to-transparent"
               />
               <div
                 aria-hidden="true"
-                className="absolute inset-x-0 bottom-0 h-[23.8%] bg-linear-to-b from-transparent to-navy/75"
+                className="absolute inset-x-0 bottom-0 z-[3] h-[23.8%] bg-linear-to-b from-transparent to-navy/75"
               />
 
               {link && content.viewProject ? (
                 "to" in link ? (
                   <Link
                     {...link}
-                    className={`absolute top-[clamp(0.75rem,1.2vw,1.4rem)] right-[clamp(1rem,1.67vw,2rem)] inline-flex min-h-11 items-center tracking-[0.14em] text-white underline underline-offset-4 ${SMALL_CAPS} ${FOCUS}`}
+                    className={`absolute top-[clamp(0.75rem,1.2vw,1.4rem)] right-[clamp(1rem,1.67vw,2rem)] z-[3] inline-flex min-h-11 items-center tracking-[0.14em] text-white underline underline-offset-4 ${SMALL_CAPS} ${FOCUS}`}
                   >
                     {content.viewProject}&nbsp;<span aria-hidden="true">↗</span>
                     <span className="sr-only">: {project.name}</span>
@@ -280,7 +326,7 @@ export function TrustedWith({ content }: { content: ExpertisePage["trusted"] }) 
                 ) : (
                   <a
                     href={link.href}
-                    className={`absolute top-[clamp(0.75rem,1.2vw,1.4rem)] right-[clamp(1rem,1.67vw,2rem)] inline-flex min-h-11 items-center tracking-[0.14em] text-white underline underline-offset-4 ${SMALL_CAPS} ${FOCUS}`}
+                    className={`absolute top-[clamp(0.75rem,1.2vw,1.4rem)] right-[clamp(1rem,1.67vw,2rem)] z-[3] inline-flex min-h-11 items-center tracking-[0.14em] text-white underline underline-offset-4 ${SMALL_CAPS} ${FOCUS}`}
                   >
                     {content.viewProject}&nbsp;<span aria-hidden="true">↗</span>
                     <span className="sr-only">: {project.name}</span>
@@ -288,7 +334,7 @@ export function TrustedWith({ content }: { content: ExpertisePage["trusted"] }) 
                 )
               ) : null}
 
-              <div className="absolute inset-x-[clamp(1rem,1.67vw,2rem)] bottom-[clamp(1rem,1.56vw,1.875rem)] flex items-end justify-between gap-4">
+              <div className="absolute inset-x-[clamp(1rem,1.67vw,2rem)] bottom-[clamp(1rem,1.56vw,1.875rem)] z-[3] flex items-end justify-between gap-4">
                 <p aria-live="polite" className="min-w-0 pb-0.5">
                   <span className={`block tracking-[0.14em] text-white ${SMALL_CAPS}`}>
                     {project.name}

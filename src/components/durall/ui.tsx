@@ -1,5 +1,7 @@
 import type { CSSProperties, HTMLAttributes, ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
+import { Instagram, Linkedin, Youtube } from "lucide-react";
+import type { Cta } from "@/content/types";
 
 export function ArrowRight({ className = "h-3.5 w-3.5" }: { className?: string }) {
   return (
@@ -21,10 +23,10 @@ export function ArrowLeft({ className = "h-4 w-4" }: { className?: string }) {
  * The line behind a project photograph on hover: the photograph's outline,
  * set up and to the left of it, its top-right corner cut at 45°. On hover or
  * keyboard focus of the card (a `group`) it draws itself, starting at its
- * bottom-left corner and travelling up, across the top and round; on leaving
- * it runs back the same way. Under reduced motion it only fades in.
+ * foot and travelling up and across the top into the cut; on leaving it
+ * runs back the same way. Under reduced motion it only fades in.
  *
- * Five straight pieces grown by `scale` one after another rather than a
+ * Four straight pieces grown by `scale` one after another rather than a
  * dashed SVG stroke: transform only, and the same in every browser at every
  * size. The timings live with `.card-frame` in styles.css.
  *
@@ -33,11 +35,10 @@ export function ArrowLeft({ className = "h-4 w-4" }: { className?: string }) {
 export function CardFrame() {
   return (
     <span aria-hidden="true" className="card-frame">
+      <span data-edge="foot" />
       <span data-edge="left" />
       <span data-edge="top" />
       <span data-edge="cut" />
-      <span data-edge="right" />
-      <span data-edge="bottom" />
     </span>
   );
 }
@@ -193,5 +194,41 @@ export function ViewMore({
     <CtaButton variant="secondary" href={href} to={to} hash={hash}>
       {label}
     </CtaButton>
+  );
+}
+
+const SOCIAL_MARKS: readonly [RegExp, typeof Instagram][] = [
+  [/linkedin/i, Linkedin],
+  [/instagram/i, Instagram],
+  [/youtube/i, Youtube],
+];
+
+/**
+ * A social profile shown as its logo: a link when the profile's address has
+ * been filled in, the bare logo until then. A name with no logo here stays
+ * a word.
+ */
+export function SocialMark({ item, className = "" }: { item: Cta; className?: string }) {
+  const Mark = SOCIAL_MARKS.find(([name]) => name.test(item.label))?.[1];
+  const face = Mark ? <Mark aria-hidden="true" className="size-5" strokeWidth={1.5} /> : item.label;
+  const box = `flex min-h-11 min-w-11 items-center justify-center ${className}`;
+  return item.href ? (
+    <a
+      href={item.href}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={Mark ? item.label : undefined}
+      className={`${box} hover-lift focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current`}
+    >
+      {face}
+    </a>
+  ) : (
+    <span
+      role={Mark ? "img" : undefined}
+      aria-label={Mark ? item.label : undefined}
+      className={box}
+    >
+      {face}
+    </span>
   );
 }

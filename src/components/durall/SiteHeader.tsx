@@ -1,10 +1,9 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Link, useRouter, useRouterState } from "@tanstack/react-router";
 import { lockScroll, unlockScroll } from "@/lib/scroll-lock";
-import { Lines } from "@/content/render";
 import { IMAGES } from "@/assets/images";
 import { useSite } from "@/content/site";
-import { ArrowRight, BUTTON } from "./ui";
+import { ArrowRight, BUTTON, SocialMark } from "./ui";
 
 /* The items come from the admin panel (Navigation). `fullLabel` is the
  * accessible name where it differs from what is drawn: "Partners /
@@ -58,8 +57,12 @@ function linkTarget(href: string) {
  * right, on a bar of frosted glass that floats a little in from the edges
  * of the window (design: 1896 × 79 at 1920, 14px in from the sides and 17px
  * down). What is behind it shows through blurred, so the words on it read
- * whatever passes underneath. The glass is dark with white ink over a
- * photograph or a navy section, pale with navy ink over the page.
+ * whatever passes underneath. The glass is dark with white ink over a navy
+ * section, pale with navy ink over the page.
+ *
+ * Over a page's opening photograph there is no bar at all: the wordmark and
+ * the links stand on the picture in white, as the openings were designed,
+ * and the glass arrives with the first section that slides over it.
  */
 export function SiteHeader() {
   const { settings } = useSite();
@@ -92,14 +95,23 @@ export function SiteHeader() {
   const opensOnPhoto = () => PHOTO_TOP.test(router.state.location.pathname);
   const [darkStart, setDarkStart] = useState(opensOnPhoto);
   const [darkEnd, setDarkEnd] = useState(opensOnPhoto);
+  /* Whether the bar is over a page's opening (`data-hero-pin`), where it is
+   * drawn without its glass. */
+  const [onHero, setOnHero] = useState(opensOnPhoto);
   /* One glass for the whole bar: dark only where both ends are over
    * something dark, so a split section (the page under the wordmark, a
    * photograph under the links) gets the pale glass, on which navy reads
-   * over either. Over the open menu there is no glass at all: the menu is
-   * the bar's ground. */
-  const dark = open || (darkStart && darkEnd);
-  const ink = dark ? "text-white" : "text-navy";
-  const glass = open
+   * over either. Over the open menu and over an opening photograph there is
+   * no glass at all: the menu, or the picture, is the bar's ground. On the
+   * picture the white carries a soft navy halo, which is all that separates
+   * it from a bright sky. */
+  const bare = open || onHero;
+  const dark = bare || (darkStart && darkEnd);
+  const halo = onHero && !open;
+  const ink = dark
+    ? `text-white ${halo ? "[text-shadow:0_0_0.75rem_rgb(5_8_52/0.55)]" : ""}`
+    : "text-navy";
+  const glass = bare
     ? "border-transparent"
     : dark
       ? "border-white/15 bg-navy/50 shadow-[inset_0_1px_0_rgb(255_255_255/0.1)] backdrop-blur-[14px] backdrop-saturate-150"
@@ -144,6 +156,7 @@ export function SiteHeader() {
     const THRESHOLD = 6;
 
     const under: (Element | undefined)[] = [];
+    const hero = [false, false];
     let retry = 0;
     let tries = 0;
     const sample = () => {
@@ -161,6 +174,8 @@ export function SiteHeader() {
         if (hit === under[i]) return;
         under[i] = hit;
         (i ? setDarkEnd : setDarkStart)(onDark(hit));
+        hero[i] = Boolean(hit.closest("[data-hero-pin]"));
+        setOnHero(hero[0]! && hero[1]!);
       });
       /* While one page is opening over another (the circle reveal), the
        * browser is showing pictures of both and nothing in the page can be
@@ -275,13 +290,16 @@ export function SiteHeader() {
         {/* The bar: the same height and in the same place over every
             section, so nothing in it moves when the page starts to scroll. */}
         <div
-          className={`pointer-events-auto mx-auto flex h-[clamp(3.5rem,4.11vw,4.9375rem)] w-full max-w-[118.5rem] items-center justify-between gap-4 border pr-[clamp(0.625rem,1.25vw,1.5rem)] pl-[clamp(0.875rem,1.61vw,1.9375rem)] transition-[background-color,border-color,box-shadow] duration-[var(--dur-short)] ease-[var(--ease-micro)] ${glass}`}
+          className={`pointer-events-auto mx-auto flex h-[clamp(3.5rem,4.11vw,4.9375rem)] w-full max-w-[118.5rem] items-center justify-between gap-4 border pr-[clamp(0.625rem,1.25vw,1.5rem)] pl-[clamp(0.875rem,1.61vw,1.9375rem)] transition-[background-color,border-color,box-shadow,backdrop-filter] duration-[var(--dur-short)] ease-[var(--ease-micro)] ${glass}`}
         >
           <Link
             to="/"
             aria-label={settings.company.name}
             translate="no"
-            className={`flex min-h-11 shrink-0 items-center transition-colors duration-[var(--dur-short)] ease-[var(--ease-micro)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current ${ink}`}
+            className={`flex min-h-11 shrink-0 items-center transition-colors duration-[var(--dur-short)] ease-[var(--ease-micro)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current ${ink} ${
+              // The same halo for the wordmark, which is a mask, not text.
+              halo ? "drop-shadow-[0_0_0.75rem_rgb(5_8_52/0.55)]" : ""
+            }`}
           >
             {/* The wordmark as a mask over the current colour, so it changes
                 ink with the links rather than swapping one file for another. */}
@@ -338,26 +356,29 @@ export function SiteHeader() {
             </ul>
           </nav>
 
+          {/* Three lines and no word: the lines are the sign, the name is
+              for a screen reader. Open, the outer two cross and the middle
+              one goes. */}
           <button
             ref={toggleRef}
             type="button"
             onClick={() => setOpen((v) => !v)}
             aria-expanded={open}
             aria-controls="site-menu"
-            className={`flex min-h-11 min-w-11 items-center justify-center gap-2.5 px-3 font-display text-[0.6875rem] font-bold tracking-eyebrow uppercase transition-colors duration-[var(--dur-short)] ease-[var(--ease-micro)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current lg:hidden ${ink}`}
+            aria-label={open ? "Close menu" : "Menu"}
+            className={`flex size-11 items-center justify-center transition-colors duration-[var(--dur-short)] ease-[var(--ease-micro)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current lg:hidden ${ink}`}
           >
-            <span>{open ? "Close" : "Menu"}</span>
-            <span aria-hidden="true" className="relative block h-3 w-4">
-              <span
-                className={`absolute left-0 block h-px w-4 bg-current transition-[translate,rotate] duration-[var(--dur-short)] ease-[var(--ease-micro)] ${
-                  open ? "top-1.5 rotate-45" : "top-0.5"
-                }`}
-              />
-              <span
-                className={`absolute left-0 block h-px w-4 bg-current transition-[translate,rotate,opacity] duration-[var(--dur-short)] ease-[var(--ease-micro)] ${
-                  open ? "top-1.5 -rotate-45" : "top-2.5"
-                }`}
-              />
+            <span aria-hidden="true" className="relative block h-4 w-[1.375rem]">
+              {(["-translate-y-[0.4375rem]", "", "translate-y-[0.4375rem]"] as const).map(
+                (rest, line) => (
+                  <span
+                    key={line}
+                    className={`absolute top-1/2 left-0 -mt-px block h-[1.5px] w-full bg-current transition-[translate,rotate,opacity] duration-[var(--dur-short)] ease-[var(--ease-micro)] motion-reduce:transition-none ${
+                      open ? ["rotate-45", "opacity-0", "-rotate-45"][line] : rest
+                    }`}
+                  />
+                ),
+              )}
             </span>
           </button>
         </div>
@@ -422,10 +443,24 @@ export function SiteHeader() {
             </Link>
           ) : null}
 
-          <p className="mt-[clamp(2rem,5vh,3rem)] font-display text-[0.6875rem] leading-[2.1] font-medium tracking-eyebrow text-white/60 uppercase">
-            <Lines text={settings.header.menuTagline} />
-          </p>
-          <span aria-hidden="true" className="mt-4 block h-px w-8 bg-accent-blue" />
+          {/* The company's line, and where else to find it. */}
+          <div className="mt-[clamp(2rem,5vh,3rem)] flex items-end justify-between gap-6">
+            <div>
+              <p className="font-display text-[0.6875rem] leading-none font-medium tracking-eyebrow text-white/60 uppercase">
+                {settings.company.tagline}
+              </p>
+              <span aria-hidden="true" className="mt-4 block h-px w-8 bg-accent-blue" />
+            </div>
+            {settings.footer.social.length ? (
+              <ul className="-mr-3 -mb-3 flex items-center text-white/80">
+                {settings.footer.social.map((item) => (
+                  <li key={item.label}>
+                    <SocialMark item={item} className="hover:text-white" />
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+          </div>
         </nav>
       </div>
     </>

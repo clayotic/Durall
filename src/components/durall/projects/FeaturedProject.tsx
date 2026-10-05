@@ -125,6 +125,7 @@ export function FeaturedProject({
 
           <p
             data-reveal
+            data-fx="words"
             className="mt-[clamp(1.25rem,1.8vw,1.5rem)] max-w-[34rem] font-body text-sm leading-relaxed text-slate"
           >
             {FEATURED.description}

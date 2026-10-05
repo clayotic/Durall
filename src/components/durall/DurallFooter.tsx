@@ -5,6 +5,7 @@ import { linkTo } from "@/content/render";
 import type { Cta } from "@/content/types";
 import { ScrollFx } from "@/components/ScrollFx";
 import { useSite } from "@/content/site";
+import { SocialMark } from "./ui";
 import { scrollToY } from "@/lib/scroll-lock";
 import { prefersReducedMotion } from "@/lib/motion-prefs";
 
@@ -164,7 +165,12 @@ export function DurallFooter() {
             © {new Date().getFullYear()} {company.legalName}
           </p>
           <ul className="flex flex-wrap items-center gap-x-[clamp(1rem,1.45vw,1.75rem)] gap-y-1">
-            {[...footer.social, ...footer.legal].map((item) => (
+            {footer.social.map((item) => (
+              <li key={item.label} className="-mx-2.5">
+                <SocialMark item={item} className="hover:text-white" />
+              </li>
+            ))}
+            {footer.legal.map((item) => (
               <li key={item.label}>
                 <FooterLink item={item} className="flex min-h-11 items-center hover:text-white" />
               </li>

@@ -6,6 +6,36 @@ import { PracticeLogo } from "./marks";
 /** Seconds between one practice's frame starting to draw and the next's. */
 const STEP = 0.14;
 
+/** A cell's outline, drawn clockwise from its top-left corner: top, right,
+ *  foot, left, each from the corner the last one ended in. `from` is when
+ *  it starts, in seconds after its group comes on screen. */
+export function FrameEdges({ from }: { from: number }) {
+  return (
+    <>
+      <span
+        aria-hidden="true"
+        className="seq-x absolute inset-x-0 top-0 h-px origin-left bg-navy/28"
+        style={at(from, 0.35)}
+      />
+      <span
+        aria-hidden="true"
+        className="seq-y absolute inset-y-0 right-0 w-px origin-top bg-navy/28"
+        style={at(from + 0.18, 0.35)}
+      />
+      <span
+        aria-hidden="true"
+        className="seq-x absolute inset-x-0 bottom-0 h-px origin-right bg-navy/28"
+        style={at(from + 0.3, 0.35)}
+      />
+      <span
+        aria-hidden="true"
+        className="seq-y absolute inset-y-0 left-0 w-px origin-bottom bg-navy/28"
+        style={at(from + 0.42, 0.35)}
+      />
+    </>
+  );
+}
+
 /**
  * "Trusted alongside leading practices" on a phone. The picture is
  * uncovered left to right behind a dark bar, the way a sliding door opens;
@@ -44,8 +74,8 @@ export function LeadingPracticesMobile({
           style={at(0.45, 0.8)}
         />
         <p
-          className="seq-fade mt-[1.125rem] font-display text-base leading-[1.6] text-slate"
-          style={at(0.55)}
+          data-fx="words"
+          className="mt-[1.125rem] font-display text-base leading-[1.6] text-slate"
         >
           {content.lead}
         </p>
@@ -92,28 +122,7 @@ export function LeadingPracticesMobile({
                 className="seq-fade absolute inset-0 bg-white"
                 style={at(from + 0.55)}
               />
-              {/* The frame: top, right, foot, left, each from the corner the
-                  last one ended in. */}
-              <span
-                aria-hidden="true"
-                className="seq-x absolute inset-x-0 top-0 h-px origin-left bg-navy/28"
-                style={at(from, 0.35)}
-              />
-              <span
-                aria-hidden="true"
-                className="seq-y absolute inset-y-0 right-0 w-px origin-top bg-navy/28"
-                style={at(from + 0.18, 0.35)}
-              />
-              <span
-                aria-hidden="true"
-                className="seq-x absolute inset-x-0 bottom-0 h-px origin-right bg-navy/28"
-                style={at(from + 0.3, 0.35)}
-              />
-              <span
-                aria-hidden="true"
-                className="seq-y absolute inset-y-0 left-0 w-px origin-bottom bg-navy/28"
-                style={at(from + 0.42, 0.35)}
-              />
+              <FrameEdges from={from} />
               <span
                 className="seq-rise relative flex h-10 items-center justify-center [&_img]:max-h-9 [&_img]:max-w-full"
                 style={at(from + 0.5)}

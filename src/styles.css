@@ -303,28 +303,49 @@
 }
 
 /* ── The line behind a project photograph (ui.tsx: CardFrame) ─────────────
- * Five pieces, each grown along its own length, timed so the line travels
- * without a break: up the left side, along the top, down the cut corner,
- * then round behind the photograph to where it began. The delays in the
- * resting state are the same journey backwards, twice as fast, so leaving
- * the card runs the line back to nothing rather than cutting it off.
+ * A hairline frame set up and to the left of the photograph, so only the
+ * strip beside it and the strip above it show. It is drawn as one stroke
+ * from its foot: the short piece at the bottom-left first, then up the left
+ * side, along the top and into the cut corner, each piece grown along its
+ * own length and timed to start as the last one ends, at one speed. The
+ * delays in the resting state are the same journey backwards, twice as
+ * fast, so leaving the card runs the line back to nothing.
+ *
+ * Only what can be seen is drawn. The frame's right side and the rest of
+ * its foot lie behind the photograph; they used to be drawn there anyway,
+ * which left the foot's visible end arriving late and on its own.
  *
  * The cut is 10.5% of the frame's width on both axes, so it stays at 45°
  * whatever the photograph's proportions. */
 .card-frame {
   position: absolute;
   inset: 0;
-  translate: -0.625rem -0.75rem;
+  --dx: 0.625rem;
+  --dy: 0.75rem;
+  translate: calc(-1 * var(--dx)) calc(-1 * var(--dy));
   pointer-events: none;
   container-type: inline-size;
-  --line: 1.5px;
+  --line: 1px;
   --cut: 10.5cqw;
 }
 
 .card-frame > span {
   position: absolute;
-  background-color: var(--color-navy);
+  background-color: rgb(5 8 52 / 0.7);
   transition: scale var(--back) linear var(--back-delay);
+}
+
+/* The foot: from the photograph's edge out to the corner. */
+.card-frame > [data-edge="foot"] {
+  inset: auto auto 0 0;
+  width: var(--dx);
+  height: var(--line);
+  transform-origin: right;
+  scale: 0 1;
+  --draw: 20ms;
+  --draw-delay: 0ms;
+  --back: 10ms;
+  --back-delay: 325ms;
 }
 
 .card-frame > [data-edge="left"] {
@@ -333,9 +354,9 @@
   transform-origin: bottom;
   scale: 1 0;
   --draw: 300ms;
-  --draw-delay: 0ms;
+  --draw-delay: 20ms;
   --back: 150ms;
-  --back-delay: 290ms;
+  --back-delay: 175ms;
 }
 
 .card-frame > [data-edge="top"] {
@@ -344,9 +365,9 @@
   transform-origin: left;
   scale: 0 1;
   --draw: 300ms;
-  --draw-delay: 300ms;
+  --draw-delay: 320ms;
   --back: 150ms;
-  --back-delay: 140ms;
+  --back-delay: 25ms;
 }
 
 .card-frame > [data-edge="cut"] {
@@ -358,31 +379,9 @@
   rotate: 45deg;
   transform-origin: left center;
   scale: 0 1;
-  --draw: 60ms;
-  --draw-delay: 600ms;
-  --back: 40ms;
-  --back-delay: 100ms;
-}
-
-.card-frame > [data-edge="right"] {
-  inset: var(--cut) 0 0 auto;
-  width: var(--line);
-  transform-origin: top;
-  scale: 1 0;
-  --draw: 90ms;
-  --draw-delay: 660ms;
-  --back: 50ms;
-  --back-delay: 50ms;
-}
-
-.card-frame > [data-edge="bottom"] {
-  inset: auto 0 0 0;
-  height: var(--line);
-  transform-origin: right;
-  scale: 0 1;
-  --draw: 90ms;
-  --draw-delay: 750ms;
-  --back: 50ms;
+  --draw: 50ms;
+  --draw-delay: 620ms;
+  --back: 25ms;
   --back-delay: 0ms;
 }
 
@@ -463,6 +462,32 @@
   }
 }
 
+/* ── The home page's stages on a phone (ProcessMobile.tsx) ────────────────
+ * Each stage is a place the scroll comes to rest, so one flick lands on the
+ * next stage and cannot run through all five. `proximity`, so the rest of
+ * the page scrolls as it always does; touch screens only, where the scroll
+ * is the browser's own (a wheel's is smoothed by a script, which a snap
+ * point would fight).
+ *
+ * `proximity` only acts on a scroll that would end near a stage, so a hard
+ * flick from one stage would sail past the rest. While the page rests among
+ * the stages the scene marks the root `stage-held` and the snapping is
+ * strict; the two exits then give a flick past either end somewhere to
+ * land, clear of the section, where the mark comes off again. */
+@media (max-width: 63.999rem) and (min-height: 31rem) and (pointer: coarse) {
+  html:has([data-stage-snap]) {
+    scroll-snap-type: y proximity;
+  }
+
+  html.stage-held {
+    scroll-snap-type: y mandatory;
+  }
+
+  html.stage-held [data-stage-exit] {
+    scroll-snap-align: start;
+  }
+}
+
 /* ── Sequences played on arrival ──────────────────────────────────────────
  * For the phone layouts whose parts come in one after another (About's
  * "Our approach", the Partners sections). A `.seq` group's parts wait in
@@ -528,26 +553,11 @@
   .seq.is-in .seq-ring {
     animation: seq-ring 2.8s ease-out var(--d, 0s) infinite;
   }
-
-  /* Not tied to a group: a line drawn each time it is put on the page, and
-     a dot that keeps sending out a ring (the Partners map on a phone). */
-  .draw-once {
-    stroke-dasharray: 1;
-    stroke-dashoffset: 1;
-    animation: seq-draw 0.9s cubic-bezier(0.65, 0, 0.35, 1) forwards;
-  }
-
-  .ring-out {
-    transform-box: fill-box;
-    transform-origin: center;
-    animation: ring-out 1.8s ease-out infinite;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .seq-pulse,
-  .seq-slide,
-  .ring-out {
+  .seq-slide {
     display: none;
   }
 }
@@ -602,17 +612,6 @@
   70%,
   100% {
     scale: 1.08;
-    opacity: 0;
-  }
-}
-
-@keyframes ring-out {
-  from {
-    scale: 1;
-    opacity: 0.6;
-  }
-  to {
-    scale: 3.2;
     opacity: 0;
   }
 }
@@ -854,12 +853,12 @@ html.intro-bailout .site-intro {
 
 /* The home page's opening plays its film across this much scroll before the
  * page starts over it (Hero.tsx; lib/anim heroCover waits for it too). Only
- * where the opening is held as above, and only on a screen wide enough to
- * have the doors in the picture: an upright one shows the middle of the
- * room and nothing of them. The shadow is navy below the opening, for a
- * browser whose toolbar folds away mid-scroll and leaves the window taller
- * than the opening is. */
-@media (min-height: 40rem) and (orientation: landscape) and (prefers-reduced-motion: no-preference) {
+ * where the opening is held as above. An upright screen shows a narrow cut
+ * of the picture, so there the picture is set to its right-hand side, where
+ * one of the doors is (Hero.tsx). The shadow is navy below the opening, for
+ * a browser whose toolbar folds away mid-scroll and leaves the window
+ * taller than the opening is. */
+@media (min-height: 40rem) and (prefers-reduced-motion: no-preference) {
   main > [data-hero-runway] {
     margin-bottom: 90svh;
     box-shadow: 0 8rem 0 var(--color-navy);
@@ -1168,40 +1167,9 @@ html.intro-bailout .site-intro {
   outline: none;
 }
 
-/* Next project: on hover each line of the title slides up out of its mask
- * as an identical copy rises in behind it. */
-.roll-line {
-  translate: 0 0;
-  transition: translate 0.8s var(--ease-glide);
-  transition-delay: var(--roll-delay, 0ms);
-}
-
-.roll-line--copy {
-  translate: 0 105%;
-}
-
-@media (hover: hover) {
-  .group:hover .roll-line {
-    translate: 0 -105%;
-  }
-
-  .group:hover .roll-line--copy {
-    translate: 0 0;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .gallery-pill,
-  .roll-line {
+  .gallery-pill {
     transition: none;
-  }
-
-  .group:hover .roll-line {
-    translate: 0 0;
-  }
-
-  .group:hover .roll-line--copy {
-    translate: 0 105%;
   }
 }
 

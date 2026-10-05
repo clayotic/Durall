@@ -152,6 +152,7 @@ import logoBedmar from "./partners/bedmar.webp";
 import logoBrombal from "./partners/brombal.webp";
 import logoEcoid from "./partners/ecoid.svg";
 import logoGlasmarte from "./partners/glasmarte.svg";
+import logoJofebar from "./partners/jofebar.svg";
 import logoMeshtec from "./partners/meshtec.webp";
 import logoNomadic from "./partners/nomadic.webp";
 import logoPalagina from "./partners/palagina.webp";
@@ -691,6 +692,7 @@ export const IMAGES = {
   /* Partner and practice logos (partners page), each at its own file's
    * dimensions. How tall each is drawn is set per partner in the content. */
   logoGlasmarte: one(logoGlasmarte, 185, 35),
+  logoJofebar: one(logoJofebar, 330, 115),
   logoMeshtec: one(logoMeshtec, 352, 77),
   logoAgor: one(logoAgor, 148, 95),
   logoAdl: one(logoAdl, 92, 40),

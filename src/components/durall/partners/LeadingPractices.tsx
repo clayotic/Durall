@@ -59,12 +59,14 @@ export function LeadingPractices({
           />
           <p
             data-reveal
+            data-fx="words"
             className="mt-[clamp(1rem,1.6vw,1.625rem)] max-w-[28rem] font-display text-[clamp(0.75rem,0.754vw,0.875rem)] leading-[1.56] text-slate"
           >
             {content.lead}
           </p>
           <p
             data-reveal
+            data-fx="words"
             className="mt-[clamp(0.625rem,0.82vw,0.875rem)] max-w-[28rem] font-display text-[clamp(0.6875rem,0.645vw,0.75rem)] leading-[1.56] text-slate/80"
           >
             {content.note}

@@ -44,6 +44,7 @@ export function InternationalNetwork({
         </h2>
         <p
           data-reveal
+          data-fx="words"
           className="mt-[clamp(1rem,2vw,1.5rem)] max-w-[32rem] font-body text-[clamp(0.8125rem,1vw,0.9375rem)] leading-relaxed text-slate"
         >
           {content.body}

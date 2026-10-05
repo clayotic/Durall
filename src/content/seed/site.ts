@@ -60,7 +60,6 @@ export const SETTINGS_SEED: SiteSettings = {
       { label: "Career", fullLabel: "", href: "/careers", visible: true },
     ],
     cta: { label: "Contact Us", href: "/contact" },
-    menuTagline: "Architecture\nstarts with\na conversation.",
   },
   footer: {
     blurb:

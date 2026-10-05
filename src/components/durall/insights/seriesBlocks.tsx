@@ -222,6 +222,7 @@ function Block({
     case "lead":
       return (
         <p
+          data-fx="words"
           className={`${TEXT} font-display text-[1.375rem] leading-[1.42] font-light text-navy lg:text-[1.6875rem]`}
         >
           {block.text}
@@ -245,10 +246,15 @@ function Block({
         </h2>
       );
     case "callout":
-      return <p className={`${P} border-l-2 border-navy pl-5 text-navy`}>{block.text}</p>;
+      return (
+        <p data-fx="words" className={`${P} border-l-2 border-navy pl-5 text-navy`}>
+          {block.text}
+        </p>
+      );
     case "statement":
       return (
         <p
+          data-fx="words"
           className={`${TEXT} my-2 border-t-2 border-b border-navy border-b-navy/14 pt-[1.625rem] pb-6 font-display text-[1.875rem] leading-[1.12] font-light tracking-[-0.02em] text-navy lg:my-[1.375rem] lg:pt-9 lg:pb-[2.125rem] lg:text-[2.875rem]`}
         >
           {/* The design's pale grey, darkened to 3:1 on the paper. */}
@@ -266,6 +272,7 @@ function Block({
     case "closing":
       return (
         <p
+          data-fx="words"
           className={`${TEXT} bg-navy p-6 font-display text-xl leading-[1.4] font-light text-white lg:px-[2.125rem] lg:py-8 lg:text-[1.5625rem]`}
         >
           {block.text}

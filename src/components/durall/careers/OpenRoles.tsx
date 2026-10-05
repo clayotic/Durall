@@ -188,7 +188,10 @@ export function OpenRoles({
             <h2 className="font-display text-[clamp(1.75rem,2.08vw,2.5rem)] leading-[1.15] font-light tracking-[-0.02em] text-navy">
               {open.heading}
             </h2>
-            <p className="mt-[1.1875rem] font-display text-[clamp(1rem,0.89vw,1.0625rem)] leading-[1.53] text-pretty text-slate">
+            <p
+              data-fx="words"
+              className="mt-[1.1875rem] font-display text-[clamp(1rem,0.89vw,1.0625rem)] leading-[1.53] text-pretty text-slate"
+            >
               {open.body}
             </p>
           </div>

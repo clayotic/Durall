@@ -26,7 +26,6 @@ export const NAVIGATION_FORM: SectionSpec[] = [
         text("label", "Label"),
         link("href", "Goes to"),
       ]),
-      lines("header.menuTagline", "Line in the phone menu"),
     ],
   },
   {

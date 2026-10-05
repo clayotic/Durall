@@ -20,6 +20,9 @@ const FRAMES = Object.entries(
   .sort(([a], [b]) => a.localeCompare(b))
   .map(([, url]) => url);
 
+/** On an upright screen: the part of the picture kept in view, the same for
+ *  the still and the film drawn over it. */
+const PORTRAIT = "portrait:object-[88%_50%]";
 /** How closely the film keeps up with the scroll: the share of the distance
  *  left that it covers each second, as an exponent. */
 const FOLLOW = 9;
@@ -48,9 +51,14 @@ const HINT = { every: 6000, length: 2800, reach: 0.14 };
  * The frames are asked for once the page has loaded, at low priority, and
  * coarsely first: every eighth, then the ones between. The doors can
  * travel their whole way on the first few to arrive and get finer as the
- * rest do. Until any has, and where there is no such stretch (an upright
- * screen, a short window, reduced motion, a data saver), there is only the
- * still and the page scrolls over it.
+ * rest do. Until any has, and where there is no such stretch (a short
+ * window, reduced motion, a data saver), there is only the still and the
+ * page scrolls over it.
+ *
+ * A phone held upright sees only a narrow cut of the room, so still and
+ * film are both set to the right of the picture there (`PORTRAIT`), where
+ * the door is. It also takes every other frame, half the download; the mix
+ * between frames covers the difference at that size.
  */
 function useHeroFilm(sectionRef: React.RefObject<HTMLElement | null>) {
   useEffect(() => {
@@ -163,7 +171,8 @@ function useHeroFilm(sectionRef: React.RefObject<HTMLElement | null>) {
     const ask = () => {
       asked = true;
       const order: number[] = [];
-      for (const step of [8, 4, 2, 1])
+      const small = window.matchMedia("(max-width: 47.999rem)").matches;
+      for (const step of small ? [8, 4, 2] : [8, 4, 2, 1])
         for (let n = step; n <= count; n += step) if (!order.includes(n)) order.push(n);
       for (const n of order) {
         const image = new Image();
@@ -241,7 +250,7 @@ export function Hero({ content }: { content: HomePage["hero"] }) {
             sizes="100vw"
             fetchPriority="high"
             decoding="async"
-            className="h-full w-full object-cover"
+            className={`h-full w-full object-cover ${PORTRAIT}`}
           />
           {/* The film, drawn over the still by useHeroFilm. */}
           <canvas
@@ -249,7 +258,7 @@ export function Hero({ content }: { content: HomePage["hero"] }) {
             width={1600}
             height={900}
             aria-hidden="true"
-            className="pointer-events-none absolute inset-0 h-full w-full object-cover"
+            className={`pointer-events-none absolute inset-0 h-full w-full object-cover ${PORTRAIT}`}
           />
         </div>
       </div>

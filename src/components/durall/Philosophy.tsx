@@ -25,10 +25,8 @@ import { UnderlineLink } from "./ui";
  * photograph. Now the photograph keeps its 45% whatever the text does.
  *
  * On a phone (below `md`) it follows the phone design instead: the
- * statement at 36px, the photograph 7:6 under it with a hairline frame a
- * little larger than itself, and a line dropping from that frame's right
- * edge into the projects section below, where it runs on down the page's
- * right-hand side (Projects.tsx).
+ * statement at 36px, and the photograph 7:6 under it with a hairline frame
+ * a little larger than itself.
  */
 export function Philosophy({ content }: { content: HomePage["philosophy"] }) {
   const [lead, ...rest] = content.paragraphs;
@@ -84,15 +82,10 @@ export function Philosophy({ content }: { content: HomePage["philosophy"] }) {
               className="absolute top-[1.354cqw] right-[1.302cqw] -bottom-[1.302cqw] -left-[1.146cqw] hidden border border-navy lg:block"
             />
             {/* On a phone: a hairline frame a little larger than the
-                photograph, and the line that drops from its right edge
-                into the projects section. */}
+                photograph. */}
             <div
               aria-hidden="true"
               className="absolute -inset-y-3 -right-2 -left-2.5 border border-navy/28 md:hidden"
-            />
-            <div
-              aria-hidden="true"
-              className="absolute top-[calc(100%+0.75rem)] -right-2 h-16 w-px bg-navy/28 md:hidden"
             />
             {/* The connector line in the projects section starts at this
                 photograph's foot. */}

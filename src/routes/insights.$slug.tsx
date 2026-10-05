@@ -370,6 +370,7 @@ function PlainArticlePage() {
               </h1>
               <p
                 data-anim
+                data-fx="words"
                 className="mt-[clamp(1.25rem,2vw,2rem)] max-w-[38rem] font-serif text-[clamp(1.125rem,1.5vw,1.375rem)] leading-[1.55] text-pretty text-slate"
               >
                 {article.excerpt}
