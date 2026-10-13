@@ -4,10 +4,8 @@ import { Link } from "@tanstack/react-router";
 import { useReveal, useClipReveal } from "@/lib/anim";
 import { useReducedMotion } from "@/lib/motion-prefs";
 import { ArrowRight } from "../ui";
-import { PlayMark } from "../insights/media";
 import { imageOf, Lines } from "@/content/render";
 import type { ProjectFeature } from "@/content/types";
-import { embedOf } from "@/content/video";
 import { transition } from "@/lib/motion-tokens";
 
 const INTERVAL = 5000;
@@ -39,24 +37,17 @@ export function FeaturedProject({
 
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
-  // The project's film takes the slideshow's place once its play button is
-  // pressed. Nothing loads from YouTube or Vimeo before that.
-  const film = embedOf(FEATURED.film);
-  const [playing, setPlaying] = useState(false);
-  const name = FEATURED.title.join(" ");
-  // The play button the player replaces had the focus; hand it on.
-  const takeFocus = useCallback((frame: HTMLIFrameElement | null) => frame?.focus(), []);
   const total = FEATURED_GALLERY.length;
   const advance = useCallback(() => setActive((i) => (i + 1) % total), [total]);
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
-    if (reduced || paused || playing) return;
+    if (reduced || paused) return;
     timer.current = setInterval(advance, INTERVAL);
     return () => {
       if (timer.current) clearInterval(timer.current);
     };
-  }, [advance, paused, playing, reduced]);
+  }, [advance, paused, reduced]);
 
   const current = FEATURED_GALLERY[active] ?? FEATURED_GALLERY[0]!;
 
@@ -204,48 +195,23 @@ export function FeaturedProject({
             data-clip-inner
             className="relative aspect-[1153/721] w-full xl:h-full xl:aspect-auto"
           >
-            {film && playing ? (
-              <iframe
-                ref={takeFocus}
-                src={film.src}
-                title={`${name}: the film`}
-                className="absolute inset-0 h-full w-full bg-navy"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
-                referrerPolicy="strict-origin-when-cross-origin"
+            <AnimatePresence initial={false} mode="sync">
+              <motion.img
+                draggable={false}
+                key={current.image.src}
+                {...current.image}
+                alt={current.alt}
+                sizes="(min-width: 80rem) 55vw, 100vw"
+                className="absolute inset-0 h-full w-full object-cover"
+                initial={reduced ? { opacity: 1 } : { opacity: 0, scale: 1.04 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={reduced ? { opacity: 1 } : { opacity: 0 }}
+                transition={transition("cinematic", reduced)}
               />
-            ) : (
-              <AnimatePresence initial={false} mode="sync">
-                <motion.img
-                  draggable={false}
-                  key={current.image.src}
-                  {...current.image}
-                  alt={current.alt}
-                  sizes="(min-width: 80rem) 55vw, 100vw"
-                  className="absolute inset-0 h-full w-full object-cover"
-                  initial={reduced ? { opacity: 1 } : { opacity: 0, scale: 1.04 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={reduced ? { opacity: 1 } : { opacity: 0 }}
-                  transition={transition("cinematic", reduced)}
-                />
-              </AnimatePresence>
-            )}
+            </AnimatePresence>
           </div>
 
-          {film && !playing ? (
-            <button
-              type="button"
-              onClick={() => setPlaying(true)}
-              aria-label={`Play the film of ${name}`}
-              className="group absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 cursor-pointer rounded-full outline-none"
-            >
-              <PlayMark size="lg" />
-            </button>
-          ) : null}
-
-          <div
-            className={`absolute bottom-[clamp(1rem,2vw,2.25rem)] left-[clamp(1rem,2.5vw,3rem)] items-center gap-4 ${playing ? "hidden" : "flex"}`}
-          >
+          <div className="absolute bottom-[clamp(1rem,2vw,2.25rem)] left-[clamp(1rem,2.5vw,3rem)] flex items-center gap-4">
             <p className="font-display text-xs font-bold tracking-[0.0625rem] tabular-nums text-white">
               {String(active + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
             </p>

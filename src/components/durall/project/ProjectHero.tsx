@@ -1,10 +1,12 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Volume2, VolumeX } from "lucide-react";
 import { isIntroPending } from "@/lib/intro";
 import { heroCover, loadGsap, markAnimReady, playAfterIntro, splitToLines } from "@/lib/anim";
 import { Lines } from "@/content/render";
 import { prefersReducedMotion } from "@/lib/motion-prefs";
 import { LANDING } from "./motion";
 import type { ProjectsPage } from "@/content/types";
+import { ownFilm } from "@/content/video";
 import type { ProjectDetail } from "./data";
 
 /** How many full turns each odometer column makes before it lands. */
@@ -64,6 +66,14 @@ function Odometer({ value, unit }: { value: number; unit?: string | undefined })
   );
 }
 
+/** Less motion or less data asked for: the film then waits for its play button. */
+const holdsBack = () =>
+  prefersReducedMotion() ||
+  (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData === true;
+
+const FILM_CONTROL =
+  "flex h-11 items-center justify-center rounded-full transition-colors hover:bg-white/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white";
+
 /**
  * The arrival.
  *
@@ -80,6 +90,12 @@ function Odometer({ value, unit }: { value: number; unit?: string | undefined })
  *
  * Scrolling on, the page slides up over the photograph, which pushes in and
  * darkens underneath it (lib/anim heroCover).
+ *
+ * A project with a film of its own plays it here in the photograph's place:
+ * the photograph is what arrives, and the film comes up over it, without
+ * sound, once it is running, and stops when the page has covered the
+ * opening. A visitor who asked for less motion or less data keeps the
+ * photograph and is given the play button.
  */
 export function ProjectHero({
   project,
@@ -90,6 +106,50 @@ export function ProjectHero({
 }) {
   const sectionRef = useRef<HTMLElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
+
+  const film = ownFilm(project.film);
+  const filmRef = useRef<HTMLVideoElement>(null);
+  const [muted, setMuted] = useState(true);
+  const [running, setRunning] = useState(false);
+  // Whether the film has started yet: until it has, the photograph shows.
+  const [started, setStarted] = useState(false);
+  // What the visitor last asked for with the play button. Until they press
+  // it, the film plays unless held back.
+  const [wanted, setWanted] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const el = filmRef.current;
+    if (!el) return;
+    if (!(wanted ?? !holdsBack())) {
+      el.pause();
+      return;
+    }
+    // The opening stays in the window, behind the page that slides over it,
+    // so whether it can be seen is read from the scroll and not from where
+    // it is: the film runs until the page has all but covered it.
+    let on: boolean | null = null;
+    const check = () => {
+      const next = window.scrollY < window.innerHeight * 0.9;
+      if (next === on) return;
+      on = next;
+      // A refusal (a browser saving power) leaves the photograph and the play button.
+      if (on) void el.play().catch(() => {});
+      else el.pause();
+    };
+    check();
+    window.addEventListener("scroll", check, { passive: true });
+    return () => window.removeEventListener("scroll", check);
+  }, [wanted]);
+
+  const toggleFilm = () => {
+    const el = filmRef.current;
+    if (!el) return;
+    setWanted(el.paused);
+    // Straight from the press, which a browser that refused to start the
+    // film by itself requires.
+    if (el.paused) void el.play().catch(() => {});
+    else el.pause();
+  };
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -185,6 +245,18 @@ export function ProjectHero({
     };
   }, []);
 
+  const figure = project.figure ? (
+    <div data-hero-hold data-anim-hide className="shrink-0 md:text-right">
+      <p
+        data-hero-rise
+        className="mb-2 font-display text-[0.6875rem] font-bold tracking-[0.2em] text-white/70 uppercase"
+      >
+        {project.figure.label}
+      </p>
+      <Odometer value={project.figure.value} unit={project.figure.unit} />
+    </div>
+  ) : null;
+
   return (
     <section
       ref={sectionRef}
@@ -194,16 +266,34 @@ export function ProjectHero({
       <div data-hero-curtain data-anim-hide className="absolute inset-0 overflow-hidden">
         <div data-hero-counter className="absolute inset-0">
           <div data-hero-media className="absolute inset-0">
-            <img
-              draggable={false}
-              data-hero-photo
-              {...project.hero.image}
-              alt={project.hero.alt}
-              sizes="100vw"
-              fetchPriority="high"
-              decoding="async"
-              className="h-full w-full object-cover"
-            />
+            {/* The entrance settles this wrapper, so the photograph and the
+                film over it land as one. */}
+            <div data-hero-photo className="relative h-full w-full">
+              <img
+                draggable={false}
+                {...project.hero.image}
+                alt={project.hero.alt}
+                sizes="100vw"
+                fetchPriority="high"
+                decoding="async"
+                className="h-full w-full object-cover"
+              />
+              {film ? (
+                <video
+                  ref={filmRef}
+                  src={film}
+                  muted={muted}
+                  loop
+                  playsInline
+                  preload="none"
+                  onPlay={() => setRunning(true)}
+                  onPause={() => setRunning(false)}
+                  onPlaying={() => setStarted(true)}
+                  aria-label={`${project.name}: the film`}
+                  className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-[var(--dur-long)] motion-reduce:transition-none ${started ? "opacity-100" : "opacity-0"}`}
+                />
+              ) : null}
+            </div>
           </div>
         </div>
       </div>
@@ -248,17 +338,44 @@ export function ProjectHero({
           </p>
         </div>
 
-        {project.figure ? (
-          <div data-hero-hold data-anim-hide className="shrink-0 md:text-right">
-            <p
+        {film ? (
+          <div className="flex shrink-0 flex-col gap-[clamp(1rem,3vh,2rem)] md:items-end">
+            <div
               data-hero-rise
-              className="mb-2 font-display text-[0.6875rem] font-bold tracking-[0.2em] text-white/70 uppercase"
+              data-anim-hide
+              className="-ml-3.5 flex items-center gap-1 md:-mr-3 md:ml-0"
             >
-              {project.figure.label}
-            </p>
-            <Odometer value={project.figure.value} unit={project.figure.unit} />
+              <button
+                type="button"
+                onClick={toggleFilm}
+                aria-label={running ? "Pause the film" : "Play the film"}
+                className={`${FILM_CONTROL} w-11`}
+              >
+                <svg viewBox="0 0 16 16" fill="none" aria-hidden="true" className="h-3.5 w-3.5">
+                  <path
+                    d={running ? "M4.5 2.5h2.5v11H4.5zM9 2.5h2.5v11H9z" : "M4 2.5l9 5.5-9 5.5V2.5Z"}
+                    fill="currentColor"
+                  />
+                </svg>
+              </button>
+              <button
+                type="button"
+                onClick={() => setMuted((now) => !now)}
+                className={`${FILM_CONTROL} gap-2 px-3 font-display text-[0.6875rem] font-bold tracking-[0.2em] uppercase`}
+              >
+                {muted ? (
+                  <VolumeX aria-hidden="true" className="h-4 w-4" strokeWidth={1.75} />
+                ) : (
+                  <Volume2 aria-hidden="true" className="h-4 w-4" strokeWidth={1.75} />
+                )}
+                {muted ? "Unmute" : "Mute"}
+              </button>
+            </div>
+            {figure}
           </div>
-        ) : null}
+        ) : (
+          figure
+        )}
       </div>
     </section>
   );

@@ -43,14 +43,14 @@ export const seedStore: ContentStore = {
 
 type Row = { data: unknown } & Record<string, unknown>;
 
-/* What a stored project is laid over. The featured film was added after the
+/* What a stored project is laid over. The project's film was added after the
  * site was stored, so a project saved before then takes it from the bundled
  * copy of the same project; once saved from the panel, the stored link (or
  * its absence) stands. */
 function projectDefaults(id: string): ProjectDoc {
   const blank = blankProject();
-  const film = SEED.projects.find((project) => project.id === id)?.feature.film ?? "";
-  return { ...blank, feature: { ...blank.feature, film } };
+  const film = SEED.projects.find((project) => project.id === id)?.film ?? "";
+  return { ...blank, film };
 }
 
 async function rows(db: SupabaseClient, table: string, order: string): Promise<Row[]> {

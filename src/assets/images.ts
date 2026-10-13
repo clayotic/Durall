@@ -104,8 +104,8 @@ import parikramaPalms1440 from "./parikrama/palms-1440w.webp";
 import parikramaPalms from "./parikrama/palms-1674w.webp";
 import parikramaPavilion800 from "./parikrama/pavilion-800w.webp";
 import parikramaPavilion from "./parikrama/pavilion-1674w.webp";
-import parikramaVeranda560 from "./parikrama/veranda-560w.webp";
-import parikramaVeranda from "./parikrama/veranda-789w.webp";
+import parikramaLiving800 from "./parikrama/living-800w.webp";
+import parikramaLiving from "./parikrama/living-1500w.webp";
 import parikramaGarden640 from "./parikrama/garden-640w.webp";
 import parikramaGarden from "./parikrama/garden-1010w.webp";
 import parikramaGrove800 from "./parikrama/grove-800w.webp";
@@ -116,8 +116,6 @@ import parikramaSteps560 from "./parikrama/steps-560w.webp";
 import parikramaSteps from "./parikrama/steps-886w.webp";
 import parikramaDining640 from "./parikrama/dining-640w.webp";
 import parikramaDining from "./parikrama/dining-1010w.webp";
-import parikramaVerandaOpen640 from "./parikrama/veranda-open-640w.webp";
-import parikramaVerandaOpen from "./parikrama/veranda-open-992w.webp";
 import parikramaPavilionOpen640 from "./parikrama/pavilion-open-640w.webp";
 import parikramaPavilionOpen from "./parikrama/pavilion-open-1136w.webp";
 import parikramaBedroomEvening640 from "./parikrama/bedroom-evening-640w.webp";
@@ -572,12 +570,15 @@ export const IMAGES = {
     ],
     1116,
   ),
+  // The veranda, whole, from the architects' own photographs. It stands
+  // under both of the names the two smaller cuts of this room had, which
+  // stored pages still refer to.
   parikramaVeranda: set(
     [
-      [parikramaVeranda560, 560],
-      [parikramaVeranda, 789],
+      [parikramaLiving800, 800],
+      [parikramaLiving, 1500],
     ],
-    986,
+    1000,
   ),
   parikramaGarden: set(
     [
@@ -616,10 +617,10 @@ export const IMAGES = {
   ),
   parikramaVerandaOpen: set(
     [
-      [parikramaVerandaOpen640, 640],
-      [parikramaVerandaOpen, 992],
+      [parikramaLiving800, 800],
+      [parikramaLiving, 1500],
     ],
-    1057,
+    1000,
   ),
   parikramaPavilionOpen: set(
     [

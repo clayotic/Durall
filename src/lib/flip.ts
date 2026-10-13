@@ -115,7 +115,21 @@ const MEDIA_PROPS = [
 
 export function flip(
   items: FlipItem[],
-  { duration = 0.9, ease = glide }: { duration?: number; ease?: (t: number) => number } = {},
+  {
+    duration = 0.9,
+    ease = glide,
+    hold = false,
+  }: {
+    duration?: number;
+    ease?: (t: number) => number;
+    /**
+     * Leave everything where it landed instead of putting it back in its
+     * layout box. For a flight that ends with the element being removed:
+     * put back, it would be drawn at full size for the frame or two before
+     * React takes it away.
+     */
+    hold?: boolean;
+  } = {},
 ): Flight {
   const prepared: Prepared[] = [];
 
@@ -184,6 +198,10 @@ export function flip(
 
   const cleanup = () => {
     cancelAnimationFrame(frame);
+    if (hold) {
+      settle();
+      return;
+    }
     for (const { item } of prepared) {
       item.el.style.transform = "";
       item.el.style.transformOrigin = "";

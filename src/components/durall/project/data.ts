@@ -37,6 +37,8 @@ export type ProjectDetail = {
   card?: Photo;
   facts: ReadonlyArray<readonly [label: string, value: string]>;
   intro: { heading: string; paragraphs: readonly string[] };
+  /** A film file kept on the site, played in the opening, or "". */
+  film: string;
   plates: readonly Plate[];
   scope: Photo & {
     heading: string;
@@ -77,6 +79,7 @@ export function detailOf(doc: ProjectDoc): ProjectDetail {
     ...(doc.card ? { card: resolve(doc.card) } : {}),
     facts: rows(doc.facts),
     intro: doc.intro,
+    film: doc.film,
     plates: doc.plates.map((plate) => ({ ...resolve(plate), caption: plate.caption })),
     scope: {
       ...resolve(doc.scope),

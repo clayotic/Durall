@@ -174,8 +174,6 @@ export type ProjectFeature = {
   specs: Fact[];
   award: { name: string; year: string } | null;
   gallery: Photo[];
-  /** A YouTube or Vimeo address, played in the slideshow's frame. "" for none. */
-  film: string;
 };
 
 export type ProjectDoc = {
@@ -203,6 +201,12 @@ export type ProjectDoc = {
   card: Photo | null;
   facts: Fact[];
   intro: { heading: string; paragraphs: string[] };
+  /**
+   * The project's film, which plays in the opening of its page in place of
+   * the photograph: a file kept on this site ("/films/….mp4", see ownFilm in
+   * content/video.ts). "" for none.
+   */
+  film: string;
   plates: Plate[];
   scope: Photo & { heading: string; paragraphs: string[]; facts: Fact[] };
   system: Photo & { title: string[]; body: string; points: string[] };

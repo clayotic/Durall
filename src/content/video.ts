@@ -81,3 +81,13 @@ export function embedOf(address: string | null | undefined): Embed | null {
   if (VIMEO_HOSTS.has(host)) return vimeo(url);
   return null;
 }
+
+/**
+ * A film kept on this site itself ("/films/parikrama-house.mp4", a file in
+ * public/films), or null. Such a film plays in place with the browser's own
+ * player and nothing from outside.
+ */
+export function ownFilm(address: string | null | undefined): string | null {
+  const path = address?.trim() ?? "";
+  return /^\/(?!\/)[^?#\s]+\.(?:mp4|webm)$/i.test(path) ? path : null;
+}

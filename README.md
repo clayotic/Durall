@@ -35,6 +35,7 @@ never committed. The service key is for the server only: never put it in a
 | `src/admin/`                       | The admin panel: screens, forms, and its server functions (`api/`)       |
 | `src/server/`                      | Server-only code: database access, sign-in checks, caching, rate limits  |
 | `src/server.ts`                    | The one place every response passes through: redirects, security headers |
+| `public/films/`                    | Films kept on the site, played in a project page's opening               |
 | `supabase/migrations/`             | The database, to run in order in the Supabase SQL editor                 |
 | `docs/admin-panel.md`              | Setting up and running the admin panel                                   |
 | `docs/web-interface-guidelines.md` | The rules all interface work follows                                     |

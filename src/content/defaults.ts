@@ -34,6 +34,7 @@ export function blankProject(id = "", order = 0): ProjectDoc {
       { label: "System", value: "" },
     ],
     intro: { heading: "", paragraphs: [""] },
+    film: "",
     plates: [],
     scope: { ...placeholderPhoto(), heading: "", paragraphs: [""], facts: [] },
     system: { ...placeholderPhoto(), title: [""], body: "", points: [] },
@@ -50,7 +51,6 @@ export function blankProject(id = "", order = 0): ProjectDoc {
       specs: [],
       award: null,
       gallery: [],
-      film: "",
     },
   };
 }

@@ -244,10 +244,10 @@ export function GalleryViewer({
           aspect: aspectOf(plates[index]!),
         },
       ],
-      { duration: CLOSE_S },
+      // Held at its landing spot until its own frame is showing again
+      // underneath and the viewer is gone, so nothing blinks on the way out.
+      { duration: CLOSE_S, hold: true },
     );
-    // Held at its landing spot until its own frame is showing again
-    // underneath, so nothing blinks on the way out.
     void flight.current.finished.then(finish);
   }, [closing, frames, index, onClosed, plates, reduced]);
 
