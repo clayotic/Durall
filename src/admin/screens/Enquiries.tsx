@@ -124,7 +124,7 @@ export function EnquiriesScreen({ enquiries: initial }: { enquiries: Enquiry[] }
     <>
       <PageHeader
         title="Enquiries"
-        description="Messages from the enquiry forms on the Home, About and Contact pages."
+        description="Messages from the enquiry forms on the Home, Partners and Contact pages."
         actions={
           <Button onClick={exportCsv} disabled={!shown.length}>
             <Download className="h-4 w-4" aria-hidden="true" />

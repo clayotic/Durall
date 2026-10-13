@@ -314,8 +314,8 @@ function PreviewBanner() {
       ? "Preview: editing is switched off for now. The site is running on the content in its code, so you can look around but nothing can be saved."
       : "Preview: the database is not connected, so you can look around but nothing can be saved. See the Dashboard for the setup steps."
     : member?.role === "owner"
-      ? "Read-only until the site’s content is imported. Import it from the Dashboard to start editing."
-      : "Read-only until the owner imports the site’s content.";
+      ? "Read-only until the current site is stored in the database. Do that from the Dashboard to start editing."
+      : "Read-only until the owner stores the current site in the database.";
   return (
     <div
       role="status"

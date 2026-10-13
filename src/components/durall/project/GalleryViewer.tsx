@@ -8,21 +8,20 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { ArrowLeft, ArrowRight, X } from "lucide-react";
-import { boxOf, flip, type Box, type Flight, type FlipItem } from "@/lib/flip";
+import { boxOf, flip, type Box, type Flight } from "@/lib/flip";
 import { lockScroll, scrollToY, unlockScroll } from "@/lib/scroll-lock";
 import { prefersReducedMotion } from "@/lib/motion-prefs";
 import { BUTTON } from "../ui";
 import type { Plate } from "./data";
 
 const OPEN_S = 0.9;
-const SWITCH_S = 0.85;
 const CLOSE_S = 0.8;
 
 function aspectOf(plate: Plate) {
   return plate.image.width / plate.image.height;
 }
 
-/** The smallest variant in a srcset — already in cache from the thumbnails. */
+/** The smallest variant in a srcset — already in cache from the gallery. */
 function smallest(plate: Plate) {
   const first = plate.image.srcSet?.split(",")[0]?.trim().split(" ")[0];
   return first ?? plate.image.src;
@@ -41,9 +40,9 @@ function nearEdge(box: Box): Box {
 }
 
 /**
- * Two layers: the small variant the thumbnail already loaded, instantly, and
+ * Two layers: the small variant the gallery already loaded, instantly, and
  * the full-size one over it once it arrives. A photograph therefore always
- * has something to fly with, and sharpens as it lands.
+ * has something to show, and sharpens as it settles.
  */
 function Layers({ plate, sizes }: { plate: Plate; sizes: string }) {
   return (
@@ -66,8 +65,6 @@ function Layers({ plate, sizes }: { plate: Plate; sizes: string }) {
     </>
   );
 }
-
-type Ghost = { index: number; box: Box };
 
 function fadeOpacity(
   el: HTMLElement | null,
@@ -94,30 +91,28 @@ function fadeOpacity(
  * The full-screen viewer.
  *
  * Opening, the photograph that was clicked grows out of its place in the
- * gallery to fill the stage, and every other photograph flies from wherever
- * it sits on the page into a thumbnail rail — the page empties into the
- * viewer rather than being covered by it. Choosing a thumbnail grows it into
- * the stage while the photograph it replaces shrinks back into its own slot.
- * Closing reverses the whole thing, after quietly scrolling the page behind
- * so the photograph being viewed lands back where it lives.
+ * gallery to fill the stage, at its own proportions, so it is seen whole
+ * however its frame in the gallery crops it. The arrows, the arrow keys and
+ * a swipe step through the set, and the photograph simply changes: there is
+ * no line-up of thumbnails and nothing flies between one photograph and the
+ * next. Closing sends the photograph on show back to its place, after
+ * quietly scrolling the page behind so that place is in view.
  *
- * A modal dialog: focus moves in and is held there, Escape closes, the arrow
- * keys step through the set, and focus returns to the photograph's own
- * button afterwards. Under reduced motion every flight is skipped.
+ * A modal dialog: focus moves in and is held there, Escape closes, and focus
+ * returns to the photograph's own button afterwards. Under reduced motion
+ * the two flights are skipped.
  */
 export function GalleryViewer({
   title,
   plates,
   startIndex,
   frames,
-  setPlatesHidden,
   onClosed,
 }: {
   title: string;
   plates: readonly Plate[];
   startIndex: number;
   frames: () => HTMLElement[];
-  setPlatesHidden: (hidden: boolean) => void;
   onClosed: (index: number) => void;
 }) {
   // Read directly rather than through useReducedMotion(), whose first render
@@ -125,66 +120,52 @@ export function GalleryViewer({
   // client, and does all of its opening work in that first render.
   const [reduced] = useState(prefersReducedMotion);
   const [index, setIndex] = useState(startIndex);
-  const [ghost, setGhost] = useState<Ghost | null>(null);
   const [closing, setClosing] = useState(false);
 
   const dialogRef = useRef<HTMLDivElement>(null);
   const backdropRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const stageMediaRef = useRef<HTMLDivElement>(null);
-  const ghostRef = useRef<HTMLDivElement>(null);
-  const ghostMediaRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
-  const thumbRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const railRef = useRef<HTMLUListElement>(null);
   const flight = useRef<Flight | null>(null);
   const locked = useRef(false);
-  const pendingSwitch = useRef<{ from: Box; ghostTo: Box } | null>(null);
+  const away = useRef<HTMLElement | null>(null);
 
   const plate = plates[index]!;
 
   const fade = (el: HTMLElement | null, from: number, to: number, ms: number, delay = 0) =>
     fadeOpacity(el, from, to, ms, delay, reduced);
 
+  /** The photograph on show is out of the gallery while the viewer has it:
+   * its place there is left empty, and every other one stays where it is. */
+  const takeFromGallery = (frame: HTMLElement | null | undefined) => {
+    if (away.current) away.current.style.visibility = "";
+    away.current = frame ?? null;
+    if (frame) frame.style.visibility = "hidden";
+  };
+
   /* ── Open ──────────────────────────────────────────────────────────── */
   useLayoutEffect(() => {
-    const plateFrames = frames();
-    const origins = plateFrames.map((frame) => nearEdge(boxOf(frame)));
-    setPlatesHidden(true);
+    const home = frames()[startIndex];
+    const origin = home ? nearEdge(boxOf(home)) : undefined;
+    takeFromGallery(home);
     lockScroll();
     locked.current = true;
     fade(backdropRef.current, 0, 1, 450);
     fade(dialogRef.current?.querySelector("[data-viewer-chrome]") ?? null, 0, 1, 500, 250);
 
-    if (!reduced && stageRef.current) {
-      const thumbs = thumbRefs.current;
-      const rail = railRef.current;
-      rail?.setAttribute("data-flying", "");
+    if (!reduced && stageRef.current && origin) {
       flight.current = flip(
         [
           {
             el: stageRef.current,
-            from: origins[startIndex],
+            from: origin,
             media: stageMediaRef.current,
             aspect: aspectOf(plates[startIndex]!),
           },
-          ...thumbs.flatMap((thumb, i) =>
-            thumb
-              ? [
-                  {
-                    el: thumb,
-                    from: origins[i],
-                    media: thumb.querySelector<HTMLElement>("[data-thumb-media]"),
-                    aspect: aspectOf(plates[i]!),
-                    delay: 0.04 + Math.abs(i - startIndex) * 0.025,
-                  },
-                ]
-              : [],
-          ),
         ],
         { duration: OPEN_S },
       );
-      void flight.current.finished.then(() => rail?.removeAttribute("data-flying"));
     }
     closeRef.current?.focus({ preventScroll: true });
     // Mount-only: the open choreography runs exactly once.
@@ -196,73 +177,36 @@ export function GalleryViewer({
   useEffect(
     () => () => {
       flight.current?.cancel();
+      if (away.current) away.current.style.visibility = "";
       if (locked.current) unlockScroll();
       locked.current = false;
     },
     [],
   );
 
-  /* ── Switch ────────────────────────────────────────────────────────── */
+  /* ── Switch: the photograph changes, and that is all ───────────────── */
   const go = useCallback(
     (next: number) => {
       if (closing) return;
       const target = (next + plates.length) % plates.length;
       if (target === index) return;
+      // An opening flight still under way is landed, not carried over.
       flight.current?.cancel();
-      const stage = stageRef.current;
-      const nextThumb = thumbRefs.current[target];
-      const thisThumb = thumbRefs.current[index];
-      if (!reduced && stage && nextThumb && thisThumb) {
-        pendingSwitch.current = { from: boxOf(nextThumb), ghostTo: boxOf(thisThumb) };
-        setGhost({ index, box: boxOf(stage) });
-      }
+      takeFromGallery(frames()[target]);
       setIndex(target);
-      thumbRefs.current[target]?.scrollIntoView({ block: "nearest", inline: "nearest" });
     },
-    [closing, index, plates.length, reduced],
+    [closing, frames, index, plates.length],
   );
-
-  useLayoutEffect(() => {
-    const pending = pendingSwitch.current;
-    pendingSwitch.current = null;
-    if (!pending || !stageRef.current) return;
-    const items: FlipItem[] = [
-      {
-        el: stageRef.current,
-        from: pending.from,
-        media: stageMediaRef.current,
-        aspect: aspectOf(plates[index]!),
-      },
-    ];
-    if (ghostRef.current && ghost) {
-      // The ghost is laid out where the old photograph was and only has
-      // somewhere to go, so it takes `to` rather than `from`.
-      items.push({
-        el: ghostRef.current,
-        to: pending.ghostTo,
-        fadeOut: true,
-        media: ghostMediaRef.current,
-        aspect: aspectOf(plates[ghost.index]!),
-      });
-    }
-    const current = flip(items, { duration: SWITCH_S });
-    flight.current = current;
-    void current.finished.then(() => {
-      if (flight.current === current) setGhost(null);
-    });
-  }, [index, ghost, plates]);
 
   /* ── Close ─────────────────────────────────────────────────────────── */
   const close = useCallback(() => {
     if (closing) return;
     setClosing(true);
     flight.current?.cancel();
-    setGhost(null);
     unlockScroll();
     locked.current = false;
 
-    const plateFrames = frames();
-    const home = plateFrames[index];
+    const home = frames()[index];
     if (home) {
       const box = boxOf(home);
       const vh = window.innerHeight;
@@ -283,40 +227,29 @@ export function GalleryViewer({
     );
 
     const finish = () => {
-      setPlatesHidden(false);
+      takeFromGallery(null);
       onClosed(index);
     };
-    if (reduced || !stageRef.current) {
+    if (reduced || !stageRef.current || !home) {
       finish();
       return;
     }
 
-    const targets = plateFrames.map((frame) => nearEdge(boxOf(frame)));
-    const thumbs = thumbRefs.current;
-    railRef.current?.setAttribute("data-flying", "");
-    const items: FlipItem[] = [
-      {
-        el: stageRef.current,
-        to: targets[index],
-        media: stageMediaRef.current,
-        aspect: aspectOf(plates[index]!),
-      },
-    ];
-    thumbs.forEach((thumb, i) => {
-      if (!thumb) return;
-      items.push({
-        el: thumb,
-        to: targets[i],
-        media: thumb.querySelector<HTMLElement>("[data-thumb-media]"),
-        aspect: aspectOf(plates[i]!),
-        delay: Math.abs(i - index) * 0.02,
-      });
-    });
-    flight.current = flip(items, { duration: CLOSE_S });
-    // Hold everything at its landing spot until the plates are showing
-    // again underneath, so nothing blinks on the way out.
+    flight.current = flip(
+      [
+        {
+          el: stageRef.current,
+          to: nearEdge(boxOf(home)),
+          media: stageMediaRef.current,
+          aspect: aspectOf(plates[index]!),
+        },
+      ],
+      { duration: CLOSE_S },
+    );
+    // Held at its landing spot until its own frame is showing again
+    // underneath, so nothing blinks on the way out.
     void flight.current.finished.then(finish);
-  }, [closing, frames, index, onClosed, plates, reduced, setPlatesHidden]);
+  }, [closing, frames, index, onClosed, plates, reduced]);
 
   /* ── Keyboard: Escape, arrows, and a focus trap ────────────────────── */
   const onKeyDown = (event: React.KeyboardEvent) => {
@@ -362,7 +295,6 @@ export function GalleryViewer({
   };
 
   const counter = `${String(index + 1).padStart(2, "0")} / ${String(plates.length).padStart(2, "0")}`;
-  const ghostPlate = ghost ? plates[ghost.index] : undefined;
 
   return createPortal(
     <div
@@ -375,48 +307,7 @@ export function GalleryViewer({
     >
       <div ref={backdropRef} aria-hidden="true" className="absolute inset-0 bg-white" />
 
-      <div className="relative flex h-full flex-col-reverse md:flex-row">
-        <nav
-          aria-label="All photographs"
-          className="relative z-10 shrink-0 md:flex md:items-center"
-        >
-          <ul
-            ref={railRef}
-            data-viewer-rail
-            data-lenis-prevent
-            className="flex gap-2.5 overflow-x-auto px-[clamp(1rem,4vw,1.5rem)] pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] [scrollbar-width:none] md:max-h-[80vh] md:flex-col md:overflow-x-visible md:overflow-y-auto md:py-2 md:pr-0 md:pl-[clamp(1rem,2vw,1.875rem)]"
-          >
-            {plates.map((item, i) => (
-              <li key={i} className="shrink-0">
-                <button
-                  ref={(el) => {
-                    thumbRefs.current[i] = el;
-                  }}
-                  type="button"
-                  aria-label={`Photograph ${i + 1} of ${plates.length}: ${item.alt}`}
-                  aria-current={i === index ? "true" : undefined}
-                  onClick={() => go(i)}
-                  style={
-                    {
-                      ["--ar" as string]: `${item.image.width} / ${item.image.height}`,
-                    } as CSSProperties
-                  }
-                  className="viewer-thumb relative block overflow-hidden bg-mist outline-offset-2 transition-[opacity] duration-[var(--dur-short)] hover:opacity-100 focus-visible:outline-2 focus-visible:outline-accent-blue"
-                >
-                  <span data-thumb-media className="absolute inset-0 block">
-                    <img
-                      src={smallest(item)}
-                      alt=""
-                      draggable={false}
-                      className="h-full w-full object-cover"
-                    />
-                  </span>
-                </button>
-              </li>
-            ))}
-          </ul>
-        </nav>
-
+      <div className="relative h-full">
         <div
           data-viewer-stage
           onPointerDown={onPointerDown}
@@ -424,7 +315,7 @@ export function GalleryViewer({
           onClick={(event) => {
             if (event.target === event.currentTarget) close();
           }}
-          className="relative min-h-0 min-w-0 flex-1 touch-pan-y"
+          className="relative h-full touch-pan-y"
         >
           <div className="pointer-events-none absolute inset-x-[clamp(1rem,4vw,4rem)] inset-y-[clamp(4.25rem,9vh,5.5rem)] grid place-items-center [container-type:size]">
             <figure
@@ -440,24 +331,6 @@ export function GalleryViewer({
           </div>
         </div>
       </div>
-
-      {ghost && ghostPlate ? (
-        <div
-          ref={ghostRef}
-          aria-hidden="true"
-          className="pointer-events-none fixed overflow-hidden"
-          style={{
-            left: ghost.box.left,
-            top: ghost.box.top,
-            width: ghost.box.width,
-            height: ghost.box.height,
-          }}
-        >
-          <div ref={ghostMediaRef} className="absolute inset-0">
-            <Layers plate={ghostPlate} sizes="(min-width: 48rem) 80vw, 100vw" />
-          </div>
-        </div>
-      ) : null}
 
       <div
         data-viewer-chrome

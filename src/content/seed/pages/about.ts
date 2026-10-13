@@ -37,21 +37,6 @@ export const ABOUT_SEED: AboutPage = {
     ],
     photo: photo("aboutVilla", "A contemporary villa wrapped in full-height Durall glazing"),
   },
-  spec: {
-    photo: photo("aboutProfile", "Cutaway of a Durall aluminium profile"),
-    value: "16",
-    unit: "MM",
-    label: "Glass thickness",
-    note: "Optimised for structural performance and acoustic comfort.",
-    drawing: photo("aboutSectionDrawing", "Technical section drawing of the glazing system"),
-    metrics: [
-      { icon: "wind", label: "Air Tightness", value: "Class 4" },
-      { icon: "droplet", label: "Water Tightness", value: "E1200" },
-      { icon: "cpu", label: "Wind Load Resistance", value: "Up to 4.0 kPa" },
-    ],
-    captionLeft: "Profile / Material / Performance",
-    captionRight: "D/S — Engineered to Endure",
-  },
   meets: {
     heading: "Where architecture meets engineering.",
     paragraphs: [

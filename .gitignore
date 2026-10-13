@@ -38,3 +38,6 @@ dist-ssr
 .env
 .env.*
 !.env.example
+
+# Build output: the server function Netlify builds on every deploy.
+.netlify

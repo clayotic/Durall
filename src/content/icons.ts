@@ -72,8 +72,6 @@ export const ICONS = {
   wrench: Wrench,
 } satisfies Record<string, LucideIcon>;
 
-export type IconName = keyof typeof ICONS;
-
 /** The icon for a stored name; an unknown name draws a neutral mark rather than nothing. */
 export function iconOf(name: string): LucideIcon {
   return (ICONS as Record<string, LucideIcon>)[name] ?? Sparkles;

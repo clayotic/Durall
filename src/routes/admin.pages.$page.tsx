@@ -1,7 +1,7 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
-import { loadPage, loadShared, savePage, saveShared } from "@/admin/api/content";
+import { listArticles, loadPage, loadShared, savePage, saveShared } from "@/admin/api/content";
 import { SectionedEditor } from "@/admin/screens/SectionedEditor";
-import { PAGE_FORMS, SHARED_FORM } from "@/admin/specs/pages";
+import { pageForm, SHARED_FORM } from "@/admin/specs/pages";
 import { ScreenSkeleton } from "@/admin/ui/controls";
 import { isPageKey, PAGES } from "@/content/pages";
 import type { PageKey, PageMap, SharedContent } from "@/content/types";
@@ -14,8 +14,22 @@ export const Route = createFileRoute("/admin/pages/$page")({
       return { kind: "shared" as const, content: shared };
     }
     if (!isPageKey(params.page)) throw notFound();
-    const { page } = await loadPage({ data: params.page });
-    return { kind: "page" as const, key: params.page, content: page };
+    // The Insights form depends on which articles there are (pageForm). A
+    // member without access to Insights gets the whole form instead.
+    const [{ page }, articles] = await Promise.all([
+      loadPage({ data: params.page }),
+      params.page === "insights"
+        ? listArticles().then(
+            (list) =>
+              list.articles.map((article) => ({
+                inSeries: Boolean(article.series),
+                film: article.format === "video",
+              })),
+            () => undefined,
+          )
+        : undefined,
+    ]);
+    return { kind: "page" as const, key: params.page, content: page, articles };
   },
   head: ({ params }) => ({
     meta: [
@@ -50,7 +64,7 @@ function PageEditor() {
       key={key}
       title={`${page.label} Page`}
       back={{ to: "/admin/pages", label: "All pages" }}
-      sections={PAGE_FORMS[key]}
+      sections={pageForm(key, data.articles)}
       initial={data.content}
       viewPath={page.path}
       save={async (content) => (await savePage({ data: { key, content } })).page}

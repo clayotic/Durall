@@ -147,6 +147,13 @@ export async function splitToLines(el: HTMLElement, lineClass: string): Promise<
     line.appendChild(inner);
     return inner;
   });
+  // Under the opening curtain, a first-screen heading's lines are drawn once
+  // before the caller hides them. They are new elements, and the browser
+  // counts an element towards the page's largest paint (LCP) when it is
+  // first drawn: hidden undrawn, a one-line heading that is the largest
+  // thing on its page (the Contact page's) was counted only when it rose,
+  // after the curtain, 3.4 s in.
+  if (inFirstScreen(el)) await paintedUnderCurtain();
   return {
     inners,
     revert: () => split.revert(),

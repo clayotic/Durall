@@ -1,11 +1,20 @@
 import { Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { ArrowRight, Layers } from "lucide-react";
 import { PAGES } from "@/content/pages";
-import { PAGE_FORMS } from "@/admin/specs/pages";
+import { loadAllContent } from "@/admin/api/content";
+import { pageForm } from "@/admin/specs/pages";
 import { Card, PageHeader } from "@/admin/ui/controls";
 
 /** Every page on the site, and the sections several pages share. */
 export function PagesIndex() {
+  // The same request the dashboard makes, so usually already answered. Each
+  // card lists the sections its form will show (pageForm).
+  const content = useQuery({ queryKey: ["admin", "all-content"], queryFn: () => loadAllContent() });
+  const articles = content.data?.articles.map((article) => ({
+    inSeries: Boolean(article.series),
+    film: article.format === "video",
+  }));
   return (
     <>
       <PageHeader
@@ -14,7 +23,9 @@ export function PagesIndex() {
       />
       <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {PAGES.map((page) => {
-          const sections = PAGE_FORMS[page.key].filter((s) => s.fields.length && s.id !== "seo");
+          const sections = pageForm(page.key, articles).filter(
+            (s) => s.fields.length && s.id !== "seo",
+          );
           return (
             <li key={page.key}>
               <Link
@@ -43,7 +54,7 @@ export function PagesIndex() {
       <div className="mt-6">
         <Card
           title="Shared Sections"
-          description="Sections that appear on more than one page, so they are edited once: the five-stage process (Home and Expertise) and the enquiry band (Home, About, Partners and Expertise)."
+          description="Sections that appear on more than one page, so they are edited once: the five-stage process (Home and Expertise) and the enquiry band (Home and Partners)."
           actions={
             <Link
               to="/admin/pages/$page"

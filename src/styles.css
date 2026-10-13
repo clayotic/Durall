@@ -1238,14 +1238,8 @@ html.intro-bailout .site-intro {
 }
 
 /* In flight, nothing may clip a photograph on its way somewhere else. */
-[data-gallery-list][data-flipping],
-[data-viewer-rail][data-flying] {
+[data-gallery-list][data-flipping] {
   overflow: visible;
-}
-
-/* While the viewer is open its copies stand in for the plates. */
-[data-gallery-list][data-viewing] [data-plate-frame] {
-  visibility: hidden;
 }
 
 /* The layout pill slides up from below the fold while the gallery is on
@@ -1265,35 +1259,6 @@ html.intro-bailout .site-intro {
 .viewer-frame {
   width: min(100cqw, calc(100cqh * var(--ar)));
   aspect-ratio: var(--ar);
-}
-
-/* 3.5rem tall on phones keeps even the portrait thumbnails 44px wide. */
-.viewer-thumb {
-  height: 3.5rem;
-  aspect-ratio: var(--ar);
-  opacity: 0.45;
-}
-
-.viewer-thumb[aria-current="true"] {
-  opacity: 1;
-  outline: 1px solid var(--color-navy);
-  outline-offset: 2px;
-}
-
-@media (min-width: 48rem) {
-  .viewer-thumb {
-    width: 3.5rem;
-    height: auto;
-  }
-}
-
-/* A thumbnail in flight is a photograph on its way to or from the page: it
- * travels at full strength and without the rail's outlines, which the
- * flight's scale would otherwise blow up into thick frames. It dims to its
- * rail state only once it has landed. */
-[data-viewer-rail][data-flying] .viewer-thumb {
-  opacity: 1;
-  outline: none;
 }
 
 @media (prefers-reduced-motion: reduce) {

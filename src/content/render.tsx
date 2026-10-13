@@ -15,7 +15,7 @@ const MISSING: ImageAsset = {
 
 export type ImageKey = keyof typeof IMAGES;
 
-export function isImageKey(key: string): key is ImageKey {
+function isImageKey(key: string): key is ImageKey {
   return Object.prototype.hasOwnProperty.call(IMAGES, key);
 }
 

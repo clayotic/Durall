@@ -6,7 +6,8 @@ import reactRefresh from "eslint-plugin-react-refresh";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
-  { ignores: ["dist", ".output", ".vinxi"] },
+  // Build output, and local tooling: worktrees under .claude, browser-test scratch files.
+  { ignores: ["dist", ".output", ".vinxi", ".netlify", ".claude", ".playwright-mcp"] },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
     files: ["**/*.{ts,tsx}"],

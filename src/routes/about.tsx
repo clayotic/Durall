@@ -2,10 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { SiteHeader } from "@/components/durall/SiteHeader";
 import { PhotoHero } from "@/components/durall/PhotoHero";
 import { AboutPhilosophy } from "@/components/durall/about/AboutPhilosophy";
-import { SystemSpec } from "@/components/durall/about/SystemSpec";
 import { MeetsEngineering } from "@/components/durall/about/MeetsEngineering";
 import { OurApproach } from "@/components/durall/about/OurApproach";
-import { EnquiryBand } from "@/components/durall/EnquiryBand";
 import { DurallFooter } from "@/components/durall/DurallFooter";
 import { seoHead } from "@/content/head";
 import { fetchPage } from "@/content/api";
@@ -25,9 +23,7 @@ function About() {
         <PhotoHero content={page.opening} wash={{ left: 1 }} />
         <OurApproach content={page.approach} />
         <AboutPhilosophy content={page.philosophy} />
-        <SystemSpec content={page.spec} />
         <MeetsEngineering content={page.meets} />
-        <EnquiryBand source="about" />
       </main>
       <DurallFooter />
     </div>

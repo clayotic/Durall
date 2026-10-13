@@ -175,7 +175,7 @@ export function ProjectGrid({
                   <div className="relative aspect-[848/565] w-full">
                     {/* The same line as the home page's cards, drawn on hover. */}
                     <CardFrame />
-                    <div className="relative h-full w-full overflow-hidden rounded-sm bg-mist">
+                    <div className="relative h-full w-full overflow-hidden bg-mist">
                       <div data-fx="parallax" className="h-full w-full">
                         <img
                           draggable={false}

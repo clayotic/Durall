@@ -3,8 +3,8 @@
 @AGENTS.md
 
 ## Stack
-TanStack Start + React + TypeScript + Tailwind CSS, shadcn/ui components in `src/components/ui`.
-Site sections live in `src/components/durall/`, pages in `src/routes/`.
+TanStack Start + React + TypeScript + Tailwind CSS.
+Site sections live in `src/components/durall/`, pages in `src/routes/`, the admin panel in `src/admin/`.
 
 ## UI quality bar
 All UI work in this project follows the Web Interface Guidelines in

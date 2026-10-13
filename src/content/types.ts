@@ -174,6 +174,8 @@ export type ProjectFeature = {
   specs: Fact[];
   award: { name: string; year: string } | null;
   gallery: Photo[];
+  /** A YouTube or Vimeo address, played in the slideshow's frame. "" for none. */
+  film: string;
 };
 
 export type ProjectDoc = {
@@ -222,8 +224,8 @@ export type ArticleBlock =
   /** A YouTube or Vimeo film inside the text. */
   | { type: "video"; url: string; caption: string }
   /* The blocks below are the laid-out pieces of a series article (the
-   * Premium Glazing Series). They are written in the seed, not in the
-   * admin panel's block editor, which shows them as fixed. */
+   * Premium Glazing Series). Only a series part's page draws them; the
+   * admin panel's block editor offers them there (screens/Articles.tsx). */
   /** The opening paragraph, set large. */
   | { type: "lead"; text: string }
   /** A paragraph marked out with a rule down its left side. */
@@ -369,17 +371,6 @@ export type AboutPage = {
     link: Cta;
     features: IconItem[];
     photo: Photo;
-  };
-  spec: {
-    photo: Photo;
-    value: string;
-    unit: string;
-    label: string;
-    note: string;
-    drawing: Photo;
-    metrics: { icon: string; label: string; value: string }[];
-    captionLeft: string;
-    captionRight: string;
   };
   meets: { heading: string; paragraphs: string[]; photo: Photo };
   approach: {

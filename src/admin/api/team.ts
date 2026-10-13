@@ -1,10 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
-import { getRequestUrl } from "@tanstack/react-start/server";
 import { z } from "zod";
 import { SECTIONS, type Member, type Section } from "@/admin/permissions";
 import { fail, logActivity, memberOf, requireMember, requireOwner } from "@/server/auth";
 import { isSupabaseConfigured, serviceClient } from "@/server/supabase";
 import { idSchema, input } from "@/server/validate";
+import { setPasswordUrl } from "./session";
 
 /**
  * Accounts. Only the owner reaches any of this: inviting people, choosing
@@ -47,17 +47,13 @@ export const listTeam = createServerFn({ method: "GET" }).handler(async () => {
   };
 });
 
-function redirectTo() {
-  return `${new URL(getRequestUrl()).origin}/admin/set-password`;
-}
-
 export const inviteMember = createServerFn({ method: "POST" })
   .inputValidator(input(access.extend({ email: z.string().trim().toLowerCase().email() })))
   .handler(async ({ data }) => {
     const session = await requireOwner();
     const service = serviceClient();
     const { data: invited, error } = await service.auth.admin.inviteUserByEmail(data.email, {
-      redirectTo: redirectTo(),
+      redirectTo: setPasswordUrl(),
       data: { name: data.name },
     });
     if (error || !invited.user) {
@@ -163,7 +159,7 @@ export const resendInvite = createServerFn({ method: "POST" })
     const session = await requireOwner();
     // For someone who has never signed in, a reset email doubles as a fresh invitation.
     const { error } = await serviceClient().auth.resetPasswordForEmail(data.email, {
-      redirectTo: redirectTo(),
+      redirectTo: setPasswordUrl(),
     });
     if (error) fail(`The email could not be sent: ${error.message}`, 400);
     await logActivity(

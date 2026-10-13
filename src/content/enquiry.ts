@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
-import { getRequestIP } from "@tanstack/react-start/server";
 import { z } from "zod";
+import { clientAddress, tooMany } from "@/server/limit";
 import { serviceClient, supabaseConfig } from "@/server/supabase";
 
 /**
@@ -29,25 +29,8 @@ const enquiry = z.object({
   website: z.string().max(500).default(""),
 });
 
-export type EnquiryInput = z.input<typeof enquiry>;
-
 /** The sources the enquiries table accepted before migration 0002. */
 const LEGACY_SOURCES = new Set(["contact", "home", "about"]);
-
-/* A few messages a minute from one address is plenty for a person. Kept per
- * warm function instance — a speed bump for scripts, not a guarantee. */
-const recent = new Map<string, number[]>();
-const WINDOW_MS = 10 * 60_000;
-const LIMIT = 5;
-
-function tooMany(ip: string): boolean {
-  const now = Date.now();
-  const times = (recent.get(ip) ?? []).filter((t) => now - t < WINDOW_MS);
-  times.push(now);
-  recent.set(ip, times);
-  if (recent.size > 5000) recent.clear();
-  return times.length > LIMIT;
-}
 
 export const sendEnquiry = createServerFn({ method: "POST" })
   .inputValidator((value: unknown) => {
@@ -58,14 +41,8 @@ export const sendEnquiry = createServerFn({ method: "POST" })
   .handler(async ({ data }): Promise<{ ok: true } | { ok: false; message: string }> => {
     // Bots fill every field; pretend it worked and store nothing.
     if (data.website) return { ok: true };
-    const ip = (() => {
-      try {
-        return getRequestIP({ xForwardedFor: true }) ?? "unknown";
-      } catch {
-        return "unknown";
-      }
-    })();
-    if (tooMany(ip)) {
+    // Five messages in ten minutes from one address is plenty for a person.
+    if (tooMany(`enquiry:${clientAddress()}`, 5)) {
       return {
         ok: false,
         message:

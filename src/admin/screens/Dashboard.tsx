@@ -17,7 +17,15 @@ import { importSiteContent, loadAllContent, type AllContent } from "@/admin/api/
 import { countNewEnquiries, listActivity } from "@/admin/api/inbox";
 import { useAdmin } from "@/admin/context";
 import { can } from "@/admin/permissions";
-import { Button, ButtonLink, Card, Notice, PageHeader, Skeleton } from "@/admin/ui/controls";
+import {
+  Button,
+  ButtonLink,
+  Card,
+  Notice,
+  PageHeader,
+  Skeleton,
+  Toggle,
+} from "@/admin/ui/controls";
 import { errorMessage, useConfirm, useToast } from "@/admin/ui/overlay";
 import { ActivityList } from "./Account";
 
@@ -165,44 +173,63 @@ function SetupSteps() {
           to the Netlify site’s environment variables (and to{" "}
           <code className={variable}>.env.local</code> to work locally), then redeploy.
         </li>
-        <li>Sign in at /admin and press “Import the Site’s Content” here.</li>
+        <li>Sign in at /admin and press “Store the Current Site” here.</li>
       </ol>
     </Card>
   );
 }
 
-function ImportCard() {
+/**
+ * The owner's one step between a connected database and a working panel:
+ * the database is started afresh from the site as it is now. Nothing that
+ * was stored before comes back, which is the point of saying so twice.
+ */
+function StartFreshCard() {
   const toast = useToast();
   const confirm = useConfirm();
   const [busy, setBusy] = useState(false);
+  const [enquiries, setEnquiries] = useState(false);
   const run = async () => {
     const ok = await confirm({
-      title: "Import the site’s content?",
-      body: "Copies every page, project, article, role, partner and setting the site shipped with into the database. From then on, what you edit here is what the site shows.",
-      confirmLabel: "Import Content",
+      title: "Delete what is stored and store the current site?",
+      body: `Deleted for good: every page, project, article, role, partner and setting stored before, every image uploaded here before, and the activity log${enquiries ? ", and every enquiry received so far" : ""}. Stored in their place: the site exactly as it is now. Accounts are kept${enquiries ? "" : ", and so are enquiries"}. The site itself does not change.`,
+      confirmLabel: "Delete and Store",
+      danger: true,
     });
     if (!ok) return;
     setBusy(true);
     try {
-      await importSiteContent({ data: { overwrite: false } });
-      toast({ tone: "success", title: "Content imported", body: "Editing is switched on." });
+      await importSiteContent({ data: { overwrite: false, enquiries } });
+      toast({
+        tone: "success",
+        title: "The current site is stored",
+        body: "Nothing from before is left. Editing is switched on.",
+      });
       window.location.reload();
     } catch (error) {
-      toast({ tone: "error", title: "Import failed", body: errorMessage(error) });
+      toast({ tone: "error", title: "Not stored", body: errorMessage(error) });
       setBusy(false);
     }
   };
   return (
     <Card
-      title="One Last Step: Import the Site’s Content"
-      description="The database is connected but empty. Import the content the site shipped with to start editing it."
+      title="One Last Step: Start the Database from the Current Site"
+      description="The database does not hold the site as it is now: it is empty, or it still has a copy from before the site was rebuilt. The site ignores that copy and is showing its own current content. This deletes the old copy, old uploaded images included, and stores the site as it is now. Nothing old is brought back, and the site does not change. From then on, what is edited here is what the site shows."
       actions={
         <Button variant="primary" busy={busy} onClick={() => void run()}>
           <Database className="h-4 w-4" aria-hidden="true" />
-          {busy ? "Importing…" : "Import the Site’s Content"}
+          {busy ? "Storing…" : "Store the Current Site"}
         </Button>
       }
-    />
+    >
+      <Toggle
+        label="Also delete the enquiries received so far"
+        description="For a clean inbox at handover. Leave off to keep them."
+        checked={enquiries}
+        onChange={setEnquiries}
+        disabled={busy}
+      />
+    </Card>
   );
 }
 
@@ -250,10 +277,11 @@ export function Dashboard() {
       <div className="grid gap-5">
         {/* Signed in with the content database off: there is nothing to set up. */}
         {!configured && !member ? <SetupSteps /> : null}
-        {configured && !imported && member?.role === "owner" ? <ImportCard /> : null}
+        {configured && !imported && member?.role === "owner" ? <StartFreshCard /> : null}
         {configured && !imported && member?.role !== "owner" ? (
           <Notice tone="warning">
-            The owner has not imported the site’s content yet, so the panel is read-only.
+            The owner has not stored the current site in the database yet, so the panel is
+            read-only.
           </Notice>
         ) : null}
 

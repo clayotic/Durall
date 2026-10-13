@@ -204,6 +204,9 @@ export const FEATURE_FORM: SectionSpec = {
         max: 12,
       },
     ),
+    text("feature.film", "Film link", {
+      hint: "A YouTube or Vimeo address. A play button appears on the slideshow; leave empty for none.",
+    }),
   ],
 };
 

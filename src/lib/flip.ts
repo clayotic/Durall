@@ -68,7 +68,6 @@ export function cubicBezier(x1: number, y1: number, x2: number, y2: number) {
  * The glide the reference project page uses for every layout change: fast
  * off the mark and a long, soft landing — close to `expo.out`.
  */
-export const GLIDE = "cubic-bezier(0.17, 0.84, 0.44, 1)";
 export const glide = cubicBezier(0.17, 0.84, 0.44, 1);
 
 export type FlipItem = {

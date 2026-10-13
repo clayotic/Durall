@@ -48,5 +48,3 @@ export function can(member: Pick<Member, "role" | "sections"> | null, section: S
   if (member.role === "owner" || member.role === "admin") return true;
   return member.sections.includes(section);
 }
-
-export const isOwner = (member: Pick<Member, "role"> | null) => member?.role === "owner";

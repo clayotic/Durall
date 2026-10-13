@@ -43,6 +43,16 @@ export const seedStore: ContentStore = {
 
 type Row = { data: unknown } & Record<string, unknown>;
 
+/* What a stored project is laid over. The featured film was added after the
+ * site was stored, so a project saved before then takes it from the bundled
+ * copy of the same project; once saved from the panel, the stored link (or
+ * its absence) stands. */
+function projectDefaults(id: string): ProjectDoc {
+  const blank = blankProject();
+  const film = SEED.projects.find((project) => project.id === id)?.feature.film ?? "";
+  return { ...blank, feature: { ...blank.feature, film } };
+}
+
 async function rows(db: SupabaseClient, table: string, order: string): Promise<Row[]> {
   const { data, error } = await db.from(table).select("*").order(order, { ascending: true });
   if (error) throw error;
@@ -67,7 +77,7 @@ export function databaseStore(db: SupabaseClient): ContentStore {
     page: async (key) => withDefaults(SEED.pages[key], await one(db, "pages", key)),
     projects: async () =>
       (await rows(db, "projects", "position")).map((row) => ({
-        ...withDefaults(blankProject(), row.data),
+        ...withDefaults(projectDefaults(String(row["id"])), row.data),
         id: String(row["id"]),
         slug: String(row["slug"]),
         status: row["status"] as ProjectDoc["status"],
@@ -98,18 +108,36 @@ export function databaseStore(db: SupabaseClient): ContentStore {
   };
 }
 
-/* Until the owner has pressed "Import current site content" the tables are
- * empty, and an empty database must not mean an empty website: the site
- * keeps serving the bundled content until the settings row exists. The
- * answer is remembered briefly so a page load does not ask twice. */
+/* The site was rebuilt while the database was switched off (2 to 9 October
+ * 2026, when nothing could be saved to it), so a copy stored before then is
+ * of the old site. The database counts as holding the site only if it was
+ * imported after that began: the import writes the settings row last, and
+ * that row's date is what is read here. Until then the site keeps serving
+ * the bundled content and the panel stays read-only (it cannot save, so it
+ * cannot move that date by accident), exactly as for a database that has
+ * never been imported into. */
+const CONTENT_SINCE = Date.parse("2026-10-06T00:00:00Z");
+
+/** Whether the database holds the site as it is now, rather than nothing or an older copy. */
+export async function holdsCurrentContent(db: SupabaseClient): Promise<boolean> {
+  const { data, error } = await db
+    .from("settings")
+    .select("updated_at")
+    .eq("key", "site")
+    .maybeSingle();
+  if (error) throw error;
+  const at = (data as { updated_at?: string } | null)?.updated_at;
+  return Boolean(at) && Date.parse(at as string) >= CONTENT_SINCE;
+}
+
+/* An empty or outdated database must not mean an empty or outdated website.
+ * The answer is remembered briefly so a page load does not ask twice. */
 let importedAt = 0;
 let imported = false;
 
 async function hasImported(db: SupabaseClient): Promise<boolean> {
   if (imported || Date.now() - importedAt < 30_000) return imported;
-  const { data, error } = await db.from("settings").select("key").eq("key", "site").maybeSingle();
-  if (error) throw error;
-  imported = Boolean(data);
+  imported = await holdsCurrentContent(db);
   importedAt = Date.now();
   return imported;
 }
@@ -121,8 +149,8 @@ export function markImported(value: boolean) {
 }
 
 /**
- * The public site's store: the database when it is configured and has been
- * imported into, the bundled content otherwise — and the bundled content
+ * The public site's store: the database when it is configured and holds the
+ * current site, the bundled content otherwise — and the bundled content
  * again, per call, if the database cannot be reached, so an outage degrades
  * to slightly stale content rather than an error page.
  */

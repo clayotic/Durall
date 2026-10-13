@@ -16,7 +16,7 @@ import { SiteIntro } from "@/components/SiteIntro";
 import { PageTransition } from "@/components/PageTransition";
 import { SmoothScroll } from "@/components/SmoothScroll";
 import { fetchSite } from "@/content/api";
-import { absoluteUrl } from "@/content/head";
+import { absoluteUrl, organizationLd } from "@/content/head";
 import { destination } from "@/content/render";
 import type { SiteSettings } from "@/content/types";
 import { setRevealEnabled } from "@/lib/page-transition";
@@ -194,6 +194,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         { name: "twitter:image", content: shareImage },
         // Matches the navy hero so mobile browser chrome doesn't flash white.
         { name: "theme-color", content: "#050834" },
+        { "script:ld+json": organizationLd(loaderData?.settings) },
       ],
       links: [
         { rel: "canonical", href: canonical },

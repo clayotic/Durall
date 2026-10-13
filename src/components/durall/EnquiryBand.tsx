@@ -14,8 +14,8 @@ import { ArrowRight, BUTTON } from "./ui";
 import { RULES } from "./contact/submit";
 
 /**
- * "Let's frame the view." — the navy band at the foot of Home, About,
- * Partners and Expertise: the enquiry form, and beside it a framed
+ * "Let's frame the view." — the navy band at the foot of Home and
+ * Partners: the enquiry form, and beside it a framed
  * slideshow of the projects. It runs straight into the navy footer, whose
  * top rule closes the design.
  *
@@ -24,7 +24,7 @@ import { RULES } from "./contact/submit";
  * 8.02px); everything else is vw, clamped for small and large screens.
  */
 type Copy = SharedContent["enquiryBand"];
-type Source = "home" | "about" | "partners" | "expertise";
+type Source = "home" | "partners";
 
 export function EnquiryBand({ source }: { source: Source }) {
   const { shared, slides } = useSite();
@@ -37,7 +37,10 @@ export function EnquiryBand({ source }: { source: Source }) {
       id="contact"
       className="relative scroll-mt-24 overflow-hidden bg-navy pt-[clamp(4rem,6.2vw,7.45rem)] pb-[clamp(3rem,5.1vw,6.125rem)] text-white"
     >
-      <div className="relative mx-auto grid w-full max-w-[120rem] grid-cols-1 gap-x-[clamp(2.5rem,4.95vw,5.95rem)] gap-y-[clamp(3rem,8vw,4.5rem)] px-[clamp(1.25rem,5.5vw,6.625rem)] lg:pr-[4.85vw] min-[120rem]:pr-[5.8rem] lg:grid-cols-[minmax(0,801fr)_minmax(0,824fr)] lg:items-start">
+      {/* The page's own width (`shell`), like the footer the band runs into,
+          so the form's left edge and the frame's right edge are the
+          footer's. */}
+      <div className="shell relative grid grid-cols-1 gap-x-[clamp(2.5rem,4.95vw,5.95rem)] gap-y-[clamp(3rem,8vw,4.5rem)] lg:grid-cols-[minmax(0,801fr)_minmax(0,824fr)] lg:items-start">
         <div className="min-w-0 lg:pt-[0.55vw]">
           <div ref={introRef}>
             <h2

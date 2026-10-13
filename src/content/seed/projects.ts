@@ -40,6 +40,7 @@ const featureOf = (
   specs: [],
   award: null,
   gallery: [doc.hero],
+  film: "",
 });
 
 const PARIKRAMA_HERO = photo(
@@ -219,6 +220,7 @@ export const PROJECTS_SEED: ProjectDoc[] = [
         photo("parikramaDining", "The dining pavilion of Parikrama House, open to the hills"),
         photo("parikramaBedroom", "A bedroom of Parikrama House opening onto the garden"),
       ],
+      film: "https://youtu.be/BGThbrrtnVY",
     },
   },
   {

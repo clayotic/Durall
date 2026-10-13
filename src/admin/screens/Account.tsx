@@ -11,7 +11,7 @@ const stamp = new Intl.DateTimeFormat("en-GB", { dateStyle: "medium", timeStyle:
 const relative = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
 
 /** "3 minutes ago", "yesterday", then the date. */
-export function ago(iso: string): string {
+function ago(iso: string): string {
   const seconds = (new Date(iso).getTime() - Date.now()) / 1000;
   const minutes = seconds / 60;
   const hours = minutes / 60;

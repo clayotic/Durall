@@ -6,16 +6,22 @@
 /**
  * The content database, connected or not.
  *
- * Off while the site is still being reworked: every page is served from the
- * bundled content in src/content/seed, so a change made in the code shows at
- * once instead of being overridden by an older copy saved in the database.
- * No page, project, article or setting is read from the database or written
- * to it, by the site or by the panel. The enquiry forms are not affected;
- * they keep saving to the database.
+ * On: the panel saves to the database and the site reads from it, once the
+ * database holds the site as it is now. Until the owner has imported that
+ * (the Dashboard's button), or if what is stored is a copy from before the
+ * site was rebuilt, the site keeps serving the bundled content in
+ * src/content/seed and the panel is read-only: see `holdsCurrentContent` in
+ * src/server/store.ts. So switching this on can never put an older copy of
+ * the site in front of visitors.
  *
- * Set this to `true` to connect the two again. Nothing else needs to change.
+ * Off: every page is served from the bundled content, and nothing is read
+ * from the content tables or written to them, by the site or by the panel.
+ * The enquiry forms are not affected either way; they save to the database.
+ *
+ * Once the database is in use, a change made to src/content/seed no longer
+ * shows on the site for anything already stored: it is edited in the panel.
  */
-export const ADMIN_ENABLED: boolean = false;
+export const ADMIN_ENABLED: boolean = true;
 
 /**
  * Whether /admin can be opened at all. `false`: it answers "page not found".
@@ -23,7 +29,8 @@ export const ADMIN_ENABLED: boolean = false;
 export const ADMIN_VISIBLE: boolean = true;
 
 /**
- * Whether the panel needs a sign-in while the content database is off.
+ * Whether the panel needs a sign-in while the content database is off (with
+ * it on, the panel always does).
  *
  * On: /admin opens only for someone signed in to an active account. Signing
  * in uses the accounts kept in Supabase (its Auth and the `profiles` list)

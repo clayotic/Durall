@@ -5,7 +5,7 @@ import type { ArticleDoc, PartnerDoc, Photo, ProjectDoc, RoleDoc } from "./types
  * admin panel, and the defaults a stored document is merged over when it
  * was saved before a field existed. */
 
-const placeholderPhoto = (): Photo => ({ image: asset("heroParikrama"), alt: "" });
+export const placeholderPhoto = (): Photo => ({ image: asset("heroParikrama"), alt: "" });
 
 export function blankProject(id = "", order = 0): ProjectDoc {
   return {
@@ -50,6 +50,7 @@ export function blankProject(id = "", order = 0): ProjectDoc {
       specs: [],
       award: null,
       gallery: [],
+      film: "",
     },
   };
 }

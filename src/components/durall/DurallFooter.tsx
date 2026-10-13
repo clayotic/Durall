@@ -54,10 +54,9 @@ export function DurallFooter() {
     // Clipped: its contents climb out from behind the section above as it
     // arrives (ScrollFx "rise").
     <footer className="overflow-hidden bg-navy pb-[max(0.5rem,env(safe-area-inset-bottom))] text-white">
-      <div
-        data-fx="rise"
-        className="mx-auto w-full max-w-[120rem] px-[clamp(1.25rem,12.1vw,14.5rem)]"
-      >
+      {/* The page's own width (`shell`), so the footer's edges are the
+          edges of the page above it. */}
+      <div data-fx="rise" className="shell">
         {/* Here, not in the root route: every page ends in this footer, so
             by the time it has mounted the page above it is hydrated and its
             markup is safe to split and transform. */}

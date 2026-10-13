@@ -1,9 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
-import { getRequestUrl } from "@tanstack/react-start/server";
 import { z } from "zod";
 import type { Member } from "@/admin/permissions";
 import { currentMember, fail, logActivity, requireMember } from "@/server/auth";
 import { ADMIN_LOGIN } from "@/admin/enabled";
+import { siteOrigin } from "@/content/head";
+import { clientAddress, tooMany } from "@/server/limit";
 import {
   isLoginConfigured,
   isSupabaseConfigured,
@@ -54,6 +55,11 @@ export const signIn = createServerFn({ method: "POST" })
   .inputValidator(input(credentials))
   .handler(async ({ data }) => {
     if (!isLoginConfigured()) fail("Signing in is not set up on this server yet.", 503);
+    // Ten tries in ten minutes, from one address or at one account: enough
+    // for a mistyped password, far too few to guess one.
+    if (tooMany(`sign-in:${clientAddress()}`, 10) || tooMany(`sign-in:${data.email}`, 10)) {
+      fail("Too many attempts. Wait a few minutes and try again.", 429);
+    }
     const db = sessionClient();
     const { error } = await db.auth.signInWithPassword(data);
     // One message for every failure, so the form does not reveal which
@@ -77,16 +83,18 @@ export const signOut = createServerFn({ method: "POST" }).handler(async () => {
   return { ok: true };
 });
 
-/** Where invite and reset emails send people, on whichever domain this is. */
-function setPasswordUrl() {
-  const url = new URL(getRequestUrl());
-  return `${url.origin}/admin/set-password`;
-}
+/** Where invite and reset emails send people: the site's own address, never
+ * one read from the request that asked for the email. */
+export const setPasswordUrl = () => `${siteOrigin()}/admin/set-password`;
 
 export const requestPasswordReset = createServerFn({ method: "POST" })
   .inputValidator(input(z.object({ email: z.string().trim().toLowerCase().email() })))
   .handler(async ({ data }) => {
     if (!isLoginConfigured()) fail("Signing in is not set up on this server yet.", 503);
+    // The same refusal whether or not the address has an account.
+    if (tooMany(`reset:${clientAddress()}`, 3) || tooMany(`reset:${data.email}`, 3)) {
+      fail("Too many requests. Wait a few minutes and try again.", 429);
+    }
     const { error } = await sessionClient().auth.resetPasswordForEmail(data.email, {
       redirectTo: setPasswordUrl(),
     });
@@ -161,6 +169,9 @@ export const changePassword = createServerFn({ method: "POST" })
     const session = await requireMember();
     const { error } = await session.db.auth.updateUser({ password: data.password });
     if (error) fail(error.message, 400);
+    // Anyone else signed in to this account (a forgotten browser, or a thief)
+    // is signed out; this browser stays in.
+    await session.db.auth.signOut({ scope: "others" });
     await logActivity(session, "password", "account", session.member.id, "Changed their password");
     return { ok: true };
   });

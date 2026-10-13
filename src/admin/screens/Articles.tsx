@@ -1,28 +1,44 @@
-import { useEffect, useId, useMemo, useState } from "react";
+import { useEffect, useId, useMemo, useState, type ComponentType } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import {
   ArrowDown,
   ArrowUp,
+  ChartBar,
+  CheckCheck,
   Clapperboard,
+  Columns2,
   ExternalLink,
+  Flag,
   Heading2,
   ImageIcon,
+  Images,
+  LayoutGrid,
+  LetterText,
   List,
+  ListChecks,
+  Megaphone,
+  Milestone,
   Pilcrow,
   Pin,
   Plus,
   Quote,
+  Route,
   Search,
+  TextQuote,
   Trash2,
+  Workflow,
+  type LucideProps,
 } from "lucide-react";
-import { blankArticle, slugify } from "@/content/defaults";
+import { blankArticle, placeholderPhoto, slugify } from "@/content/defaults";
 import { imageOf } from "@/content/render";
 import { formatDate, readingTimeOf } from "@/content/select";
-import type { ArticleBlock, ArticleDoc } from "@/content/types";
+import type { ArticleBlock, ArticleDoc, ArticleSeries } from "@/content/types";
 import { embedOf } from "@/content/video";
 import { deleteArticle, saveArticle } from "@/admin/api/content";
 import { useAdmin } from "@/admin/context";
-import { FieldControl, PhotoField } from "@/admin/form/fields";
+import { FieldControl, FieldGrid, PhotoField } from "@/admin/form/fields";
+import type { FieldSpec } from "@/admin/form/spec";
+import { area, list, number, photo, strings, text } from "@/admin/specs/build";
 import { SaveBar, useEditor } from "@/admin/lib/editor";
 import {
   Badge,
@@ -351,9 +367,31 @@ export function ArticleEditor({
           </Card>
           <Card
             title="Body"
-            description="Headings start new sections. Paragraphs, lists and quotes take **bold**, *italic* and [links](https://…)."
+            description={
+              doc.series
+                ? "Headings start new sections. Paragraphs, lists and quotes take **bold**, *italic* and [links](https://…). The laid-out pieces are the ones designed for the series."
+                : "Headings start new sections. Paragraphs, lists and quotes take **bold**, *italic* and [links](https://…)."
+            }
           >
-            <BlockEditor blocks={doc.body} onChange={(body) => set({ body })} />
+            <BlockEditor
+              blocks={doc.body}
+              laidOut={Boolean(doc.series)}
+              onChange={(body) => set({ body })}
+            />
+          </Card>
+          <Card
+            title="Premium Glazing Series"
+            description="A part of the series has the series’ own page: its number, its place on the project line, and an opening picture. It is also listed at the top of the Insights page, in order."
+          >
+            <FieldControl
+              spec={SERIES_FIELD}
+              value={doc.series ?? null}
+              onChange={(next) => {
+                // Not in the series means the field is absent, not empty.
+                const { series: _was, ...rest } = doc;
+                editor.setDraft(next ? { ...rest, series: next as ArticleSeries } : rest);
+              }}
+            />
           </Card>
         </div>
         <div className="grid gap-5 xl:sticky xl:top-20">
@@ -485,57 +523,318 @@ export function newArticle(): ArticleDoc {
 
 /* ── Body blocks ─────────────────────────────────────────────────────────── */
 
-const BLOCKS = [
-  { type: "heading", label: "Heading", icon: Heading2 },
-  { type: "paragraph", label: "Paragraph", icon: Pilcrow },
-  { type: "list", label: "List", icon: List },
-  { type: "quote", label: "Quote", icon: Quote },
-  { type: "image", label: "Image", icon: ImageIcon },
-  { type: "video", label: "Film", icon: Clapperboard },
-] as const;
+/* A project's stages, as the series' line names them (SeriesIndex.tsx). */
+const SERIES_STAGES = [
+  "Enquiry",
+  "Feasibility",
+  "Mock-Up",
+  "Scope & Quotation",
+  "Engineering",
+  "Procurement",
+  "Production",
+  "Installation",
+  "Inspection & Handover",
+];
 
-function createBlock(type: ArticleBlock["type"]): ArticleBlock {
-  switch (type) {
-    case "heading":
-      return { type, text: "" };
-    case "paragraph":
-      return { type, text: "" };
-    case "quote":
-      return { type, text: "" };
-    case "list":
-      return { type, items: [""] };
-    case "image":
-      return {
-        type,
-        photo: { image: { kind: "asset", key: "heroParikrama" }, alt: "" },
-        caption: "",
-      };
-    case "video":
-      return { type, url: "", caption: "" };
-    // The laid-out blocks of a series article are written in the seed and
-    // are not on offer here.
-    default:
-      return { type: "paragraph", text: "" };
-  }
-}
+const SERIES_FIELD: FieldSpec = {
+  kind: "optional",
+  path: "",
+  label: "Series",
+  toggleLabel: "Part of the series",
+  create: (): ArticleSeries => ({
+    part: 1,
+    kicker: "",
+    at: 0,
+    stage: "Enquiry",
+    opening: "photo",
+    openingLabel: "",
+    openingNote: "",
+    caption: "",
+    focus: "50% 50%",
+    pull: "",
+  }),
+  fields: [
+    number("part", "Part number", { min: 1, max: 99, hint: "Its place in the series: 1, 2, 3…" }),
+    text("kicker", "Line beside the number", { hint: "For example: Where it begins" }),
+    {
+      kind: "select",
+      path: "stage",
+      label: "Project stage",
+      hint: "Named on the line across the top of the part.",
+      options: SERIES_STAGES.map((stage) => ({ value: stage, label: stage })),
+    },
+    number("at", "Place on the project line", {
+      min: 0,
+      max: 1,
+      step: 0.05,
+      hint: "0 is the enquiry, 1 the handover.",
+    }),
+    {
+      kind: "select",
+      path: "opening",
+      label: "Opening picture",
+      hint: "The cover photograph, or a drawing on the blueprint ground.",
+      options: [
+        { value: "photo", label: "The cover photograph" },
+        { value: "drawing", label: "A drawing" },
+      ],
+    },
+    text("focus", "Part of the photograph to keep in view", {
+      hint: "Across and down, for example 50% 40%.",
+    }),
+    text("openingLabel", "Label on the opening picture"),
+    text("openingNote", "Note on the opening picture"),
+    text("caption", "Caption under the opening picture", { wide: true }),
+    area("pull", "Line quoted on the Insights page", { rows: 2 }),
+  ],
+};
+
+type BlockKind = {
+  type: ArticleBlock["type"];
+  label: string;
+  icon: ComponentType<LucideProps>;
+  create: () => ArticleBlock;
+  /** The block's form, for the kinds drawn by the form kit. The six plain
+   *  kinds have their own, lighter controls (BlockBody). */
+  fields?: FieldSpec[];
+};
+
+const points = (label: string) => strings("items", label, { addLabel: "Add Point", min: 1 });
+
+/* Every kind of block the site can draw: the plain ones any article is
+ * written in, then the laid-out pieces designed for the series
+ * (components/durall/insights/seriesBlocks.tsx). */
+const BLOCKS: BlockKind[] = [
+  {
+    type: "heading",
+    label: "Heading",
+    icon: Heading2,
+    create: () => ({ type: "heading", text: "" }),
+  },
+  {
+    type: "paragraph",
+    label: "Paragraph",
+    icon: Pilcrow,
+    create: () => ({ type: "paragraph", text: "" }),
+  },
+  { type: "list", label: "List", icon: List, create: () => ({ type: "list", items: [""] }) },
+  { type: "quote", label: "Quote", icon: Quote, create: () => ({ type: "quote", text: "" }) },
+  {
+    type: "image",
+    label: "Image",
+    icon: ImageIcon,
+    create: () => ({ type: "image", photo: placeholderPhoto(), caption: "" }),
+  },
+  {
+    type: "video",
+    label: "Film",
+    icon: Clapperboard,
+    create: () => ({ type: "video", url: "", caption: "" }),
+  },
+  {
+    type: "lead",
+    label: "Opening Paragraph",
+    icon: LetterText,
+    create: () => ({ type: "lead", text: "" }),
+    fields: [area("text", "The first paragraph, set large", { rows: 4 })],
+  },
+  {
+    type: "callout",
+    label: "Marked Paragraph",
+    icon: TextQuote,
+    create: () => ({ type: "callout", text: "" }),
+    fields: [area("text", "A paragraph with a rule down its left side", { rows: 3 })],
+  },
+  {
+    type: "statement",
+    label: "Large Line",
+    icon: Megaphone,
+    create: () => ({ type: "statement", text: "", muted: "" }),
+    fields: [
+      text("text", "Line", { wide: true }),
+      text("muted", "Second clause, set paler", { wide: true }),
+    ],
+  },
+  {
+    type: "figures",
+    label: "Photographs Side by Side",
+    icon: Images,
+    create: () => ({
+      type: "figures",
+      items: [{ label: "", photo: placeholderPhoto(), caption: "" }],
+    }),
+    fields: [
+      list<{ label: string }>(
+        "items",
+        "Photographs",
+        [text("label", "Label above"), text("caption", "Caption"), photo("photo", "Photograph")],
+        (item) => item.label,
+        { create: () => ({ label: "", photo: placeholderPhoto(), caption: "" }), max: 4 },
+      ),
+    ],
+  },
+  {
+    type: "checks",
+    label: "Numbered Points",
+    icon: ListChecks,
+    create: () => ({ type: "checks", items: [""] }),
+    fields: [points("Points, as numbered tiles")],
+  },
+  {
+    type: "cards",
+    label: "Numbered Cards",
+    icon: LayoutGrid,
+    create: () => ({ type: "cards", items: [{ title: "", body: "" }] }),
+    fields: [
+      list<{ title: string }>(
+        "items",
+        "Cards",
+        [text("title", "Title"), area("body", "Text", { rows: 2 })],
+        (item) => item.title,
+        { create: () => ({ title: "", body: "" }), max: 12 },
+      ),
+    ],
+  },
+  {
+    type: "steps",
+    label: "Stages on a Line",
+    icon: Milestone,
+    create: () => ({ type: "steps", items: [""] }),
+    fields: [strings("items", "Stages, in order", { addLabel: "Add Stage", min: 1 })],
+  },
+  {
+    type: "ticks",
+    label: "Ticked Points",
+    icon: CheckCheck,
+    create: () => ({ type: "ticks", items: [""] }),
+    fields: [points("Points, each with a tick")],
+  },
+  {
+    type: "split",
+    label: "Photograph and List",
+    icon: Columns2,
+    create: () => ({
+      type: "split",
+      photo: placeholderPhoto(),
+      caption: "",
+      intro: "",
+      items: [""],
+    }),
+    fields: [
+      photo("photo", "Photograph"),
+      text("caption", "Caption", { wide: true }),
+      text("intro", "Line above the list", { wide: true }),
+      points("Points, numbered"),
+    ],
+  },
+  {
+    type: "bars",
+    label: "Bars Compared",
+    icon: ChartBar,
+    create: () => ({
+      type: "bars",
+      title: "",
+      rows: [{ label: "", value: "", share: 0.5 }],
+      ticks: [],
+    }),
+    fields: [
+      text("title", "Title", { wide: true }),
+      list<{ label: string }>(
+        "rows",
+        "Bars",
+        [
+          text("label", "Label"),
+          text("value", "Figure shown at its end"),
+          number("share", "Length", {
+            min: 0,
+            max: 1,
+            step: 0.05,
+            hint: "From 0 to 1 of the full width.",
+          }),
+        ],
+        (item) => item.label,
+        { create: () => ({ label: "", value: "", share: 0.5 }), max: 12 },
+      ),
+      strings("ticks", "Marks along the scale", { addLabel: "Add Mark" }),
+    ],
+  },
+  {
+    type: "diagram",
+    label: "Diagram",
+    icon: Workflow,
+    create: () => ({ type: "diagram", name: "approval", title: "", alt: "" }),
+    fields: [
+      {
+        kind: "select",
+        path: "name",
+        label: "Which diagram",
+        hint: "The diagrams are drawn by the site; these are the two it has.",
+        options: [
+          { value: "approval", label: "The approval loop" },
+          { value: "materials", label: "The flow of materials" },
+        ],
+      },
+      text("title", "Title"),
+      area("alt", "What it shows, for people who cannot see it", { rows: 2 }),
+    ],
+  },
+  {
+    type: "stages",
+    label: "Stages to Step Through",
+    icon: Route,
+    create: () => ({ type: "stages", caption: "", items: [{ label: "", text: "", photo: null }] }),
+    fields: [
+      text("caption", "Caption", { wide: true }),
+      list<{ label: string }>(
+        "items",
+        "Stages",
+        [
+          text("label", "Name"),
+          area("text", "Text", { rows: 2 }),
+          {
+            kind: "optional",
+            path: "photo",
+            label: "Photograph",
+            toggleLabel: "Has a photograph",
+            create: placeholderPhoto,
+            fields: [photo("", "Photograph")],
+          },
+        ],
+        (item) => item.label,
+        { create: () => ({ label: "", text: "", photo: null }), max: 12 },
+      ),
+    ],
+  },
+  {
+    type: "closing",
+    label: "Closing Line",
+    icon: Flag,
+    create: () => ({ type: "closing", text: "" }),
+    fields: [area("text", "The last line, white on navy", { rows: 2 })],
+  },
+];
+/** The kinds any article is written in; the rest are the series' own. */
+const PLAIN = 6;
 
 /**
- * The article body as a column of blocks. Deliberately plain: headings,
- * paragraphs, lists, quotes and images, each moved with buttons rather than
- * dragged, so it works the same with a keyboard, a mouse or a phone.
+ * The article body as a column of blocks, each moved with buttons rather
+ * than dragged, so it works the same with a keyboard, a mouse or a phone.
  */
 function BlockEditor({
   blocks,
+  laidOut,
   onChange,
 }: {
   blocks: ArticleBlock[];
+  /** A part of the series: its page draws the laid-out pieces too. */
+  laidOut: boolean;
   onChange: (next: ArticleBlock[]) => void;
 }) {
   const update = (index: number, next: ArticleBlock) =>
     onChange(blocks.map((b, i) => (i === index ? next : b)));
   const insert = (index: number, type: ArticleBlock["type"]) => {
     const copy = [...blocks];
-    copy.splice(index, 0, createBlock(type));
+    copy.splice(index, 0, (BLOCKS.find((b) => b.type === type) ?? BLOCKS[1]!).create());
     onChange(copy);
   };
   const move = (from: number, to: number) => {
@@ -554,9 +853,7 @@ function BlockEditor({
       ) : null}
       <ol className="grid gap-3">
         {blocks.map((block, index) => {
-          // A laid-out block of a series article has no entry: it is
-          // shown under the paragraph's sign and cannot be edited here.
-          const meta = BLOCKS.find((b) => b.type === block.type) ?? BLOCKS[1];
+          const meta = BLOCKS.find((b) => b.type === block.type) ?? BLOCKS[1]!;
           const Icon = meta.icon;
           return (
             <li
@@ -596,20 +893,43 @@ function BlockEditor({
                 </div>
               </div>
               <div className="p-3">
-                <BlockBody block={block} onChange={(next) => update(index, next)} />
+                {meta.fields ? (
+                  <FieldGrid
+                    fields={meta.fields}
+                    value={block}
+                    onChange={(next) => update(index, next as ArticleBlock)}
+                  />
+                ) : (
+                  <BlockBody block={block} onChange={(next) => update(index, next)} />
+                )}
               </div>
             </li>
           );
         })}
       </ol>
-      <div className="flex flex-wrap items-center gap-2 rounded-xl border border-dashed border-navy/15 p-2">
-        <span className="px-2 text-xs text-slate">Add</span>
-        {BLOCKS.map(({ type, label, icon: Icon }) => (
-          <Button key={type} size="sm" variant="ghost" onClick={() => insert(blocks.length, type)}>
-            <Icon className="h-3.5 w-3.5" aria-hidden="true" />
-            {label}
-          </Button>
-        ))}
+      <div className="grid gap-1 rounded-xl border border-dashed border-navy/15 p-2">
+        {[
+          { name: "Add", kinds: BLOCKS.slice(0, PLAIN) },
+          // Only a part of the series has a page that draws these.
+          { name: "Add a laid-out piece", kinds: laidOut ? BLOCKS.slice(PLAIN) : [] },
+        ]
+          .filter((group) => group.kinds.length)
+          .map((group) => (
+            <div key={group.name} className="flex flex-wrap items-center gap-2">
+              <span className="px-2 text-xs text-slate">{group.name}</span>
+              {group.kinds.map(({ type, label, icon: Icon }) => (
+                <Button
+                  key={type}
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => insert(blocks.length, type)}
+                >
+                  <Icon className="h-3.5 w-3.5" aria-hidden="true" />
+                  {label}
+                </Button>
+              ))}
+            </div>
+          ))}
       </div>
     </div>
   );

@@ -20,8 +20,14 @@ import { ADMIN_LOGIN } from "@/admin/enabled";
 import { can, type Member, type Section } from "@/admin/permissions";
 import { currentMember, fail, logActivity, requireMember, requireOwner } from "@/server/auth";
 import { purgeContentCache } from "@/server/cache";
-import { databaseStore, markImported, seedStore, type ContentStore } from "@/server/store";
-import { isSupabaseConfigured } from "@/server/supabase";
+import {
+  databaseStore,
+  holdsCurrentContent,
+  markImported,
+  seedStore,
+  type ContentStore,
+} from "@/server/store";
+import { isSupabaseConfigured, serviceClient, supabaseConfig } from "@/server/supabase";
 import { docSchema, idSchema, input, parse, slugSchema } from "@/server/validate";
 
 /**
@@ -36,11 +42,9 @@ import { docSchema, idSchema, input, parse, slugSchema } from "@/server/validate
 
 type Session = NonNullable<Awaited<ReturnType<typeof currentMember>>>;
 
-async function isImported(db: SupabaseClient) {
-  const { data, error } = await db.from("settings").select("key").eq("key", "site").maybeSingle();
-  if (error) throw error;
-  return Boolean(data);
-}
+/* "Imported" means the database holds the site as it is now: an older copy
+ * counts the same as none (server/store.ts). */
+const isImported = holdsCurrentContent;
 
 /** The store the panel reads from, and whether what it shows can be saved. */
 async function adminStore(
@@ -85,41 +89,120 @@ export const getContentStatus = createServerFn({ method: "GET" }).handler(async 
   return { configured: true, imported: await isImported(db) };
 });
 
+/* The images uploaded through the panel: files in the storage bucket, each
+ * upload in its own folder, and a row in `media` for each. */
+const UPLOADS = { bucket: "media", folder: "uploads" };
+
 /**
- * Copies the bundled content into the database — the owner's first step
- * after connecting it. Refuses to overwrite unless asked to, since after the
- * first import the database is where the real content lives.
+ * Removes every uploaded image's files. Storage has no "empty this folder":
+ * each upload's folder is listed and its files removed, a hundred folders
+ * at a time, until none are left.
+ */
+async function removeUploadedFiles() {
+  const storage = serviceClient().storage.from(UPLOADS.bucket);
+  // ponytail: 50 rounds of 100 folders. More uploads than that and the
+  // owner is told to run it again, rather than this running unbounded.
+  for (let round = 0; round < 50; round++) {
+    const { data: folders, error } = await storage.list(UPLOADS.folder, { limit: 100 });
+    if (error) fail(`The old uploads could not be listed: ${error.message}`, 500);
+    // Only an upload's own folder (its id), never anything else in the bucket.
+    const own = (folders ?? []).filter((folder) => /^[0-9a-f-]{36}$/.test(folder.name));
+    if (!own.length) return;
+    for (const folder of own) {
+      const path = `${UPLOADS.folder}/${folder.name}`;
+      const { data: files, error: listError } = await storage.list(path);
+      if (listError) fail(`The old uploads could not be listed: ${listError.message}`, 500);
+      const { error: removeError } = await storage.remove(
+        (files ?? []).map((file) => `${path}/${file.name}`),
+      );
+      if (removeError) fail(`An old upload could not be removed: ${removeError.message}`, 500);
+    }
+  }
+  fail("There are more old uploads than one run removes. Run it again.", 500);
+}
+
+/**
+ * Starts the database afresh from the site exactly as it is in the code: the
+ * owner's first step after connecting it, and again after the site was
+ * rebuilt while the database was switched off. Nothing stored before is
+ * carried over. The pages, projects, articles, roles, partners and settings
+ * are replaced by the site's own; the images uploaded before and the
+ * activity log are deleted, and the enquiries too if asked. Accounts stay,
+ * or nobody could sign in.
+ *
+ * Refuses once the database is current unless asked to overwrite, since
+ * from then on the database is where the real content lives. Overwriting a
+ * current database puts the content back to the code's and clears nothing
+ * else.
  */
 export const importSiteContent = createServerFn({ method: "POST" })
-  .inputValidator(input(z.object({ overwrite: z.boolean() })))
+  .inputValidator(
+    input(z.object({ overwrite: z.boolean(), enquiries: z.boolean().default(false) })),
+  )
   .handler(async ({ data }) => {
     const session = await requireOwner();
     const { db, member } = session;
-    if ((await isImported(db)) && !data.overwrite) {
+    const fresh = !(await isImported(db));
+    if (!fresh && !data.overwrite) {
       fail("The site's content is already in the database.", 409);
     }
-    const by = member.id;
-    const steps = [
-      db.from("settings").upsert([
-        { key: "site", content: SEED.settings, updated_by: by },
-        { key: "shared", content: SEED.shared, updated_by: by },
-      ]),
-      db
-        .from("pages")
-        .upsert(
-          PAGES.map((page) => ({ key: page.key, content: SEED.pages[page.key], updated_by: by })),
-        ),
-      db.from("projects").upsert(SEED.projects.map((p) => projectRow(p, by))),
-      db.from("articles").upsert(SEED.articles.map((a) => articleRow(a, by))),
-      db.from("career_roles").upsert(SEED.roles.map((r) => roleRow(r, by))),
-      db.from("partners").upsert(SEED.partners.map((p) => partnerRow(p, by))),
-    ];
-    for (const step of steps) {
-      const { error } = await step;
-      dbError(error, "import");
+    // Clearing uploads, the log and enquiries is beyond what a member may
+    // do through row-level security: it takes the server's own key.
+    if (fresh && !supabaseConfig().serviceKey) {
+      fail("The server needs its Supabase service key to clear what was stored before.", 503);
     }
+    const by = member.id;
+    const at = new Date().toISOString();
+    const lists: [string, { id: string }[]][] = [
+      ["projects", SEED.projects.map((p) => projectRow(p, by))],
+      ["articles", SEED.articles.map((a) => articleRow(a, by))],
+      ["career_roles", SEED.roles.map((r) => roleRow(r, by))],
+      ["partners", SEED.partners.map((p) => partnerRow(p, by))],
+    ];
+    for (const [table, rows] of lists) {
+      // What is not on the site goes first: an older entry under another id
+      // may hold the web address one of these needs.
+      const keep = `(${rows.map((row) => JSON.stringify(row.id)).join(",")})`;
+      const { error: gone } = await db.from(table).delete().not("id", "in", keep);
+      dbError(gone, "content");
+      const { error } = await db.from(table).upsert(rows);
+      dbError(error, "content");
+    }
+    const keys = `(${PAGES.map((page) => JSON.stringify(page.key)).join(",")})`;
+    const { error: strays } = await db.from("pages").delete().not("key", "in", keys);
+    dbError(strays, "content");
+    const { error: pages } = await db.from("pages").upsert(
+      PAGES.map((page) => ({
+        key: page.key,
+        content: SEED.pages[page.key],
+        updated_by: by,
+        updated_at: at,
+      })),
+    );
+    dbError(pages, "content");
+    if (fresh) {
+      // The site's own content uses no uploaded image, so none is in use.
+      await removeUploadedFiles();
+      const service = serviceClient();
+      const { error: media } = await service.from("media").delete().lte("created_at", at);
+      dbError(media, "old uploads");
+      const { error: log } = await service.from("activity").delete().lte("at", at);
+      dbError(log, "activity log");
+      if (data.enquiries) {
+        const { error: inbox } = await service.from("enquiries").delete().lte("created_at", at);
+        dbError(inbox, "enquiries");
+      }
+    }
+    // Last, because this row's date is what says the database is current
+    // (holdsCurrentContent): if a step above fails, the site stays on the
+    // bundled content and this can simply be run again.
+    const { error: settings } = await db.from("settings").upsert([
+      { key: "shared", content: SEED.shared, updated_by: by, updated_at: at },
+      { key: "site", content: SEED.settings, updated_by: by, updated_at: at },
+    ]);
+    dbError(settings, "content");
     markImported(true);
-    await saved(session, "import", "site", "", "Imported the site's current content");
+    await saved(session, "import", "site", "", "Stored the current site in the database");
     return { ok: true };
   });
 

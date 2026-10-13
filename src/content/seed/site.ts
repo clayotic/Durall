@@ -80,10 +80,14 @@ export const SETTINGS_SEED: SiteSettings = {
     officeHeading: "Head Office",
     contactHeading: "Talk to Us",
     hours: "Weekdays, 9:30–18:00 IST · Visits by appointment",
-    // TODO — no real profile URLs yet: plain text until they are added.
+    // The Facebook address is the share link Durall gave; the page's own
+    // address would be better once known. Sharing codes were left off the
+    // Instagram and Pinterest ones.
     social: [
-      { label: "LinkedIn", href: "" },
-      { label: "Instagram", href: "" },
+      { label: "LinkedIn", href: "https://www.linkedin.com/company/durall-systems-pvt-ltd/" },
+      { label: "Instagram", href: "https://www.instagram.com/durallsystems" },
+      { label: "Facebook", href: "https://www.facebook.com/share/19LX47mxNY/" },
+      { label: "Pinterest", href: "https://www.pinterest.com/durallsystemsofficial/" },
     ],
     legal: [
       { label: "Privacy Policy", href: "/privacy" },

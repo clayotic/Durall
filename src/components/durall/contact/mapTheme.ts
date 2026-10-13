@@ -12,6 +12,14 @@ import type { LayerSpecification, StyleSpecification } from "maplibre-gl";
  */
 export const STYLE_URL = "https://tiles.openfreemap.org/styles/positron";
 
+/**
+ * The credit line under the map, as the tile service words it, kept here
+ * rather than taken from the service each time (see OfficeMap.tsx for why).
+ * If OpenFreeMap changes its credit, change it here.
+ */
+export const MAP_CREDIT =
+  '<a href="https://openfreemap.org" target="_blank">OpenFreeMap</a> <a href="https://www.openmaptiles.org/" target="_blank">&copy; OpenMapTiles</a> Data from <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>';
+
 const INK = {
   land: "#f3f4f3",
   residential: "#eceeed",

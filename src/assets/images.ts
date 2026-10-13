@@ -91,8 +91,6 @@ import aboutVilla from "./about-villa.webp";
 import aboutLake from "./about-lake.webp";
 import aboutPlateLeft from "./about-plate-left.webp";
 import aboutPlateRight from "./about-plate-right.webp";
-import aboutProfile from "./about-profile.webp";
-import aboutSectionDrawing from "./about-section-drawing.webp";
 import aboutLineHouse from "./about-line-house.webp";
 import aboutDurallMark from "./about-durall-mark.webp";
 
@@ -549,8 +547,6 @@ export const IMAGES = {
   aboutLake: one(aboutLake, 1400, 820),
   aboutPlateLeft: one(aboutPlateLeft, 462, 523),
   aboutPlateRight: one(aboutPlateRight, 438, 523),
-  aboutProfile: one(aboutProfile, 570, 432),
-  aboutSectionDrawing: one(aboutSectionDrawing, 772, 434),
   aboutLineHouse: one(aboutLineHouse, 578, 404),
   aboutDurallMark: one(aboutDurallMark, 394, 122),
 

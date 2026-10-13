@@ -48,6 +48,52 @@ function aspectOf(plate: Plate) {
   return plate.image.width / plate.image.height;
 }
 
+/**
+ * How wide a plate's photograph is drawn, for the browser to pick a file by.
+ * One figure for every plate had each small one fetch the file a large one
+ * needs, and left a wide photograph cropped into a tall frame short of
+ * pixels.
+ *
+ * In the detail layout it is worked out from the plate's frame and the
+ * photograph's own shape, since the photograph is scaled to cover the frame.
+ * The frames are the ones the gallery's CSS draws (styles.css):
+ *
+ * - from 48rem, a 12-column grid in the page shell (92.5vw wide), 1.5vw
+ *   between columns and rows, rows 4.4vw tall;
+ * - below it, two columns in the shell (the screen less 2.5rem) with 0.75rem
+ *   between them: a full plate is 4:3, a half plate 3:4.
+ *
+ * On a phone with a very dense screen the figure is cut by a third. The
+ * plates are previews, a tap opens the photograph at full size, and at twice
+ * the screen's width in pixels instead of three times a preview looks the
+ * same for less than half the download.
+ *
+ * The other two layouts are a button's press away, on wider screens only,
+ * and take the general figure.
+ */
+function plateSizes(plate: Plate, index: number, mode: Mode): string {
+  if (mode !== "detail") return "(min-width: 64rem) 50vw, (min-width: 48rem) 60vw, 100vw";
+  const detail = DETAIL[index % DETAIL.length]!;
+  const shape = aspectOf(plate);
+  const span = (line: string) => {
+    const [from = 1, to = 2] = line.split(" / ").map(Number);
+    return to - from;
+  };
+  const width = span(detail.col) * 7.833 - 1.5;
+  const height = span(detail.row) * 5.9 - 1.5;
+  const wide = Math.ceil(Math.max(width, height * shape) * 10) / 10;
+
+  const full = detail.phone === "full";
+  const frame = full ? "100vw - 2.5rem" : "50vw - 1.625rem";
+  const cover = Math.max(1, (full ? 3 / 4 : 4 / 3) * shape);
+  const phone = (share: number) => `calc((${frame}) * ${Math.ceil(cover * share * 1000) / 1000})`;
+  return [
+    `(min-width: 48rem) ${wide}vw`,
+    `(min-resolution: 2.5dppx) ${phone(2 / 3)}`,
+    phone(1),
+  ].join(", ");
+}
+
 function plateStyle(plate: Plate, index: number): CSSProperties {
   const detail = DETAIL[index % DETAIL.length]!;
   return {
@@ -67,8 +113,7 @@ function plateStyle(plate: Plate, index: number): CSSProperties {
  * scatter, a three-column masonry and a horizontal slider. Switching doesn't
  * cut: every photograph flies from where it was to where it now belongs,
  * resizing and re-cropping on the way without ever stretching (see
- * src/lib/flip.ts). Clicking a photograph opens it full screen, and the rest
- * of the set flies into a thumbnail rail beside it.
+ * src/lib/flip.ts). Clicking a photograph opens it full screen and whole.
  *
  * Each photograph arrives once, the first time it comes into view: a white
  * shutter lifts off it from the bottom edge while the image settles out of
@@ -278,13 +323,6 @@ export function ProjectGallery({
     if (mode === "slider") onListScroll();
   }, [mode]);
 
-  const setPlatesHidden = useCallback((hidden: boolean) => {
-    const list = listRef.current;
-    if (!list) return;
-    if (hidden) list.setAttribute("data-viewing", "");
-    else list.removeAttribute("data-viewing");
-  }, []);
-
   const onViewerClosed = useCallback(
     (index: number) => {
       setViewing(null);
@@ -386,7 +424,7 @@ export function ProjectGallery({
                   data-plate-img
                   {...plate.image}
                   alt=""
-                  sizes="(min-width: 64rem) 50vw, (min-width: 48rem) 60vw, 100vw"
+                  sizes={plateSizes(plate, index, mode)}
                   loading="lazy"
                   decoding="async"
                   draggable={false}
@@ -420,7 +458,6 @@ export function ProjectGallery({
           plates={plates}
           startIndex={viewing}
           frames={frames}
-          setPlatesHidden={setPlatesHidden}
           onClosed={onViewerClosed}
         />
       ) : null}

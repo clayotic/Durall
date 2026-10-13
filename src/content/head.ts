@@ -1,7 +1,7 @@
 import { createIsomorphicFn } from "@tanstack/react-start";
 import { getRequestUrl } from "@tanstack/react-start/server";
 import { imageOf } from "./render";
-import type { Seo } from "./types";
+import type { ArticleDoc, Seo, SiteSettings } from "./types";
 
 /**
  * The site's public address. On the server that is Netlify's primary URL
@@ -26,7 +26,78 @@ export function absoluteUrl(path: string) {
   return path.startsWith("/") ? siteOrigin() + path : path;
 }
 
-type Meta = { title?: string; name?: string; property?: string; content?: string };
+type Meta = {
+  title?: string;
+  name?: string;
+  property?: string;
+  content?: string;
+  /** Structured data for search engines, written out as a JSON-LD script. */
+  "script:ld+json"?: Record<string, unknown>;
+};
+
+/* A contact detail still holding the placeholder the site shipped with is
+ * not something to tell a search engine. */
+const PLACEHOLDER = /example\.com|\+00|0000/;
+
+/**
+ * Who the site belongs to, for search engines: the company, where it is,
+ * and its profiles elsewhere. Built from the site settings, so a change
+ * made in the admin panel (an address, a new profile) is carried here.
+ */
+export function organizationLd(settings: SiteSettings | undefined): Record<string, unknown> {
+  const origin = siteOrigin();
+  if (!settings) return { "@context": "https://schema.org", "@type": "WebSite", url: origin };
+  const { company, office, contact, footer } = settings;
+  const detail = (icon: string) => {
+    const found = contact.details.find((item) => item.icon === icon);
+    return found && !PLACEHOLDER.test(`${found.value} ${found.href}`) ? found.value : undefined;
+  };
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": `${origin}/#organization`,
+        name: company.name,
+        legalName: company.legalName,
+        slogan: company.tagline,
+        url: origin,
+        logo: `${origin}/apple-touch-icon.png`,
+        address: office.lines.join(", "),
+        email: detail("mail"),
+        telephone: detail("phone"),
+        sameAs: footer.social
+          .map((profile) => profile.href)
+          .filter((href) => /^https?:/.test(href)),
+      },
+      {
+        "@type": "WebSite",
+        "@id": `${origin}/#website`,
+        name: company.name,
+        url: origin,
+        publisher: { "@id": `${origin}/#organization` },
+      },
+    ],
+  };
+}
+
+/** An article, for search engines: what it is, when, and whose. */
+export function articleLd(
+  article: Pick<ArticleDoc, "slug" | "title" | "excerpt" | "publishedAt" | "cover">,
+): Record<string, unknown> {
+  const origin = siteOrigin();
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: article.title,
+    description: article.excerpt,
+    image: [absoluteUrl(imageOf(article.cover.image).src)],
+    datePublished: article.publishedAt,
+    mainEntityOfPage: `${origin}/insights/${article.slug}`,
+    author: { "@id": `${origin}/#organization` },
+    publisher: { "@id": `${origin}/#organization` },
+  };
+}
 
 /**
  * A page's <head> from its SEO fields. The share image falls back to the

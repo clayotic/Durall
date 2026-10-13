@@ -40,7 +40,11 @@ export const Route = createFileRoute("/projects/$slug")({
     const project = loaderData?.project;
     if (!project) return {};
     return seoHead(
-      { title: `${project.name} | Durall Systems`, description: project.description },
+      {
+        title: `${project.name} | Durall Systems`,
+        description: project.description,
+        image: project.hero,
+      },
       { type: "article" },
     );
   },

@@ -5,7 +5,7 @@ import { prefersReducedMotion } from "@/lib/motion-prefs";
 import { useSite } from "@/content/site";
 import type { ContactPage } from "@/content/types";
 import { BUTTON } from "../ui";
-import { durallMapStyle, STYLE_URL } from "./mapTheme";
+import { durallMapStyle, MAP_CREDIT, STYLE_URL } from "./mapTheme";
 
 /** Mumbai at a glance: where the camera starts before it flies in. */
 const WIDE = { zoom: 11.2, pitch: 0, bearing: 0 };
@@ -137,6 +137,20 @@ export function OfficeMap({ labels }: { labels: ContactPage["map"] }) {
           resizeObserver.observe(frame);
           map.touchZoomRotate.disableRotation();
           map.keyboard.disableRotation();
+          // The map library writes each tile source's credit into the page
+          // as HTML, and the filter it puts it through (before 6.4.1) can be
+          // slipped past: GHSA-jrc7-96c5-q579. So the credit shown is this
+          // site's own copy of it, whatever the tile service sends. This
+          // listener is added before the control, so it runs first each
+          // time a source arrives. Still wanted after the library is
+          // updated: a credit line is not something to take on trust.
+          const loading = map;
+          loading.on("sourcedata", ({ sourceId }) => {
+            const source = loading.getSource(sourceId);
+            if (source && "attribution" in source && source.attribution) {
+              source.attribution = MAP_CREDIT;
+            }
+          });
           map.addControl(new maplibregl.AttributionControl(), "bottom-left");
           map
             .getCanvas()

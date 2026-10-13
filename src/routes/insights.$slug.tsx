@@ -14,7 +14,7 @@ import {
 } from "@/components/durall/insights/ArticleRail";
 import { useClipReveal, useReveal, useSectionIntro } from "@/lib/anim";
 import { fetchArticle } from "@/content/api";
-import { seoHead } from "@/content/head";
+import { articleLd, seoHead } from "@/content/head";
 import { imageOf, RichText } from "@/content/render";
 import { formatDate, lengthOf, topicKey, type ArticleCard } from "@/content/select";
 import type { ArticleBlock, InsightsPage } from "@/content/types";
@@ -32,13 +32,18 @@ export const Route = createFileRoute("/insights/$slug")({
     if (!article) return {};
     return seoHead(
       {
-        title: `${article.title} — Durall Systems`,
+        // Search results cut a title at about sixty characters: a long
+        // headline is left to stand without the site's name after it.
+        title: article.title.length > 48 ? article.title : `${article.title} — Durall Systems`,
         description: article.excerpt,
         image: article.cover,
       },
       {
         type: "article",
-        extra: [{ property: "article:published_time", content: article.publishedAt }],
+        extra: [
+          { property: "article:published_time", content: article.publishedAt },
+          { "script:ld+json": articleLd(article) },
+        ],
       },
     );
   },

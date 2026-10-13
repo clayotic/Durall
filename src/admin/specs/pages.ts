@@ -116,33 +116,6 @@ export const PAGE_FORMS: Record<PageKey, SectionSpec[]> = {
       ],
     },
     {
-      id: "spec",
-      title: "System Specification",
-      description:
-        "The card with the profile photograph, the 16 MM figure and the performance ratings.",
-      fields: [
-        photo("spec.photo", "Profile photograph"),
-        text("spec.value", "Figure"),
-        text("spec.unit", "Unit"),
-        text("spec.label", "Figure label"),
-        area("spec.note", "Note", { rows: 2 }),
-        photo("spec.drawing", "Section drawing"),
-        list<{ label: string }>(
-          "spec.metrics",
-          "Ratings",
-          [
-            { kind: "icon", path: "icon", label: "Icon" },
-            text("label", "Label"),
-            text("value", "Value"),
-          ],
-          (item) => item.label,
-          { fixed: true },
-        ),
-        text("spec.captionLeft", "Caption (left)"),
-        text("spec.captionRight", "Caption (right)"),
-      ],
-    },
-    {
       id: "meets",
       title: "Where Architecture Meets Engineering",
       fields: [
@@ -411,7 +384,7 @@ export const PAGE_FORMS: Record<PageKey, SectionSpec[]> = {
     {
       id: "article",
       title: "Article Pages",
-      description: "The words around every article.",
+      description: "The words around an article that is not a part of the series.",
       fields: [
         text("article.backLabel", "Back link"),
         text("article.moreHeading", "“More” heading"),
@@ -419,8 +392,13 @@ export const PAGE_FORMS: Record<PageKey, SectionSpec[]> = {
         text("article.share", "Share heading"),
         text("article.copyLink", "Copy-link button"),
         text("article.copied", "Message once the link is copied"),
-        group("", "Closing band", ctaBand("article.cta")),
       ],
+    },
+    {
+      id: "article-cta",
+      title: "Closing Band of Articles",
+      description: "The navy band at the foot of every article.",
+      fields: ctaBand("article.cta"),
     },
     SEO,
   ],
@@ -525,6 +503,38 @@ export const PAGE_FORMS: Record<PageKey, SectionSpec[]> = {
 };
 
 /** The sections that appear on more than one page. */
+/* Sections of the Insights page that only an article outside the series
+ * brings onto the site: the list under the series with its filters and card
+ * words, and the words round such an article's own page. */
+const FOR_PLAIN_ARTICLES = new Set(["index", "labels", "article"]);
+
+/**
+ * A page's form, for the site as it stands. Sections that would change
+ * nothing a visitor can see are left out, so the form is the page:
+ *
+ * - Insights: while every article is a part of the series, the list, card
+ *   and article words for plain articles are not on the site. The films
+ *   band is drawn only when there is no series at all, and a film to show.
+ *
+ * `articles` is every article, drafts included: someone writing a plain
+ * article sees its words before it is published. Without it (the reader
+ * may not open Insights) nothing is left out.
+ */
+export function pageForm(
+  key: PageKey,
+  articles?: readonly { inSeries: boolean; film: boolean }[],
+): SectionSpec[] {
+  const sections = PAGE_FORMS[key];
+  if (key !== "insights" || !articles) return sections;
+  const plain = articles.some((article) => !article.inSeries);
+  const films =
+    articles.every((article) => !article.inSeries) && articles.some((article) => article.film);
+  return sections.filter(
+    (section) =>
+      (plain || !FOR_PLAIN_ARTICLES.has(section.id)) && (films || section.id !== "films"),
+  );
+}
+
 export const SHARED_FORM: SectionSpec[] = [
   {
     id: "process",
@@ -553,7 +563,7 @@ export const SHARED_FORM: SectionSpec[] = [
     id: "enquiryBand",
     title: "Enquiry Band",
     description:
-      "“Let’s frame the view.” — the navy band with the enquiry form and a slideshow of every published project, at the foot of Home, About, Partners and Expertise. Messages sent with it arrive under Enquiries.",
+      "“Let’s frame the view.” — the navy band with the enquiry form and a slideshow of every published project, at the foot of Home and Partners. Messages sent with it arrive under Enquiries.",
     fields: [
       text("enquiryBand.heading", "Heading"),
       text("enquiryBand.lede", "Text"),
