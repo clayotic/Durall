@@ -91,21 +91,32 @@ export async function requireOwner() {
   return session;
 }
 
-/** A line in the activity log. Never fails the save it describes. */
+/**
+ * A line in the activity log, and its number there (null if it could not be
+ * written). Never fails the save it describes.
+ */
 export async function logActivity(
   session: { member: Member; db: SupabaseClient },
   action: string,
   entity: string,
   entityId: string,
   summary: string,
-) {
-  const { error } = await session.db.from("activity").insert({
-    user_id: session.member.id,
-    user_email: session.member.email,
-    action,
-    entity,
-    entity_id: entityId,
-    summary: summary.slice(0, 300),
-  });
-  if (error) console.warn("[activity] could not log", error.message);
+): Promise<number | null> {
+  const { data, error } = await session.db
+    .from("activity")
+    .insert({
+      user_id: session.member.id,
+      user_email: session.member.email,
+      action,
+      entity,
+      entity_id: entityId,
+      summary: summary.slice(0, 300),
+    })
+    .select("id")
+    .single();
+  if (error) {
+    console.warn("[activity] could not log", error.message);
+    return null;
+  }
+  return Number((data as { id: number | string }).id);
 }

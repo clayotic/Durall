@@ -1,13 +1,24 @@
 import { useState, type FormEvent } from "react";
-import { History } from "lucide-react";
-import type { ActivityEntry } from "@/admin/api/inbox";
+import { useRouter } from "@tanstack/react-router";
+import { History, Undo2 } from "lucide-react";
+import { undoChange, type ActivityEntry } from "@/admin/api/inbox";
 import { changePassword, updateOwnName } from "@/admin/api/session";
 import { useAdmin } from "@/admin/context";
 import { ROLES, SECTIONS } from "@/admin/permissions";
-import { Badge, Button, Card, EmptyState, Field, PageHeader, TextInput } from "@/admin/ui/controls";
-import { errorMessage, useToast } from "@/admin/ui/overlay";
+import {
+  Badge,
+  Button,
+  Card,
+  EmptyState,
+  Field,
+  Notice,
+  PageHeader,
+  TextInput,
+} from "@/admin/ui/controls";
+import { errorMessage, useConfirm, useToast } from "@/admin/ui/overlay";
 
 const stamp = new Intl.DateTimeFormat("en-GB", { dateStyle: "medium", timeStyle: "short" });
+const day = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short" });
 const relative = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
 
 /** "3 minutes ago", "yesterday", then the date. */
@@ -26,9 +37,15 @@ function ago(iso: string): string {
 export function ActivityList({
   entries,
   compact,
+  onUndo,
+  undoing,
 }: {
   entries: ActivityEntry[];
   compact?: boolean;
+  /** Given on the owner's Activity screen: puts an Undo beside each change that still has one. */
+  onUndo?: (entry: ActivityEntry) => void;
+  /** The change being undone right now, if any. */
+  undoing?: number | null;
 }) {
   if (!entries.length) {
     return (
@@ -56,18 +73,95 @@ export function ActivityList({
             {entry.summary}
             {!compact ? <span className="text-slate"> — {entry.userEmail}</span> : null}
           </span>
+          {onUndo && entry.undo ? (
+            <span className="flex shrink-0 items-center gap-3 self-center">
+              {entry.undo.state === "done" ? (
+                <Badge>Undone</Badge>
+              ) : entry.undo.state === "later" ? (
+                <span className="text-xs text-slate">Undo the later change first</span>
+              ) : (
+                <>
+                  <span className="hidden text-xs text-slate sm:inline">
+                    until {day.format(new Date(entry.undo.until))}
+                  </span>
+                  <Button
+                    size="sm"
+                    onClick={() => onUndo(entry)}
+                    busy={undoing === entry.id}
+                    disabled={undoing != null}
+                  >
+                    <Undo2 className="h-3.5 w-3.5" aria-hidden="true" />
+                    Undo
+                  </Button>
+                </>
+              )}
+            </span>
+          ) : null}
         </li>
       ))}
     </ol>
   );
 }
 
-export function ActivityScreen({ entries }: { entries: ActivityEntry[] }) {
+export function ActivityScreen({
+  entries,
+  undoReady,
+}: {
+  entries: ActivityEntry[];
+  /** For the owner: whether the database can keep the copies undo needs. Absent for everyone else. */
+  undoReady?: boolean | undefined;
+}) {
+  const { member } = useAdmin();
+  const router = useRouter();
+  const toast = useToast();
+  const confirm = useConfirm();
+  const [undoing, setUndoing] = useState<number | null>(null);
+  const owner = member?.role === "owner";
+
+  const undo = async (entry: ActivityEntry) => {
+    const ok = await confirm({
+      title: "Undo this change?",
+      body: `“${entry.summary}” by ${entry.userEmail}. The content it changed goes back to how it was just before, on the live site.`,
+      confirmLabel: "Undo Change",
+      danger: true,
+    });
+    if (!ok) return;
+    setUndoing(entry.id);
+    try {
+      await undoChange({ data: { id: entry.id } });
+      toast({ tone: "success", title: "Change undone" });
+      await router.invalidate();
+    } catch (error) {
+      toast({ tone: "error", title: "Not undone", body: errorMessage(error) });
+    } finally {
+      setUndoing(null);
+    }
+  };
+
   return (
     <>
-      <PageHeader title="Activity" description="The latest 200 changes, newest first." />
+      <PageHeader
+        title="Activity"
+        description={
+          owner && undoReady
+            ? "The latest 200 changes, newest first. A change to the site’s content can be undone for 15 days; after that it stays."
+            : "The latest 200 changes, newest first."
+        }
+      />
+      {owner && undoReady === false ? (
+        <div className="mb-5">
+          <Notice tone="warning" title="Undo is not switched on yet">
+            Run supabase/migrations/0004_undo.sql in the Supabase SQL editor. Changes made after
+            that can be undone from here for 15 days.
+          </Notice>
+        </div>
+      ) : null}
       <Card>
-        <ActivityList entries={entries} />
+        {owner && undoReady ? (
+          <ActivityList entries={entries} onUndo={undo} undoing={undoing} />
+        ) : (
+          <ActivityList entries={entries} />
+        )}
       </Card>
     </>
   );

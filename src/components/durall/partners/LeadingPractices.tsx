@@ -1,10 +1,21 @@
-import { REVEAL_WINDOW, useReveal, useSplitLines } from "@/lib/anim";
-import { imageOf } from "@/content/render";
+import { useReveal, useSplitLines } from "@/lib/anim";
 import type { PartnerDoc, PartnersPage } from "@/content/types";
 import { Interactive } from "../ui";
 import { LeadingPracticesMobile } from "./LeadingPracticesMobile";
 import { PracticeLogo } from "./marks";
+import { PracticesMap } from "./PracticesMap";
 
+/**
+ * "Architects & Design Practices": the heading, the dotted world map with a
+ * mark on each country the practices work from, then the practices' logos
+ * with their countries, and the closing line.
+ *
+ * It took the place of the "International Systems" section, which the
+ * client removed with its partner brands; the world map that sat faintly
+ * behind those logos stays, now marking where the architects are. The
+ * drawing of a house that stood beside the heading, and the line of
+ * description under each practice, went at the same time.
+ */
 export function LeadingPractices({
   content,
   practices,
@@ -14,84 +25,62 @@ export function LeadingPractices({
 }) {
   const headingRef = useSplitLines<HTMLHeadingElement>();
   const introRef = useReveal<HTMLDivElement>({ selector: "[data-reveal]", y: 16 });
-  const imageRef = useReveal<HTMLDivElement>({ y: 32, start: REVEAL_WINDOW.start });
+  const mapRef = useReveal<HTMLDivElement>({ y: 24 });
   const gridRef = useReveal<HTMLUListElement>({ selector: "[data-cell]", y: 32, stagger: 0.08 });
   const closingRef = useReveal<HTMLDivElement>({ y: 16 });
 
   return (
     <section
       id="practices"
-      className="relative overflow-hidden bg-white max-md:bg-[#fdfdfb] md:pb-[clamp(3.5rem,8vw,7.5rem)]"
+      className="relative overflow-hidden bg-white max-md:bg-[#fdfdfb] md:pt-[clamp(3.5rem,8vw,7.5rem)] md:pb-[clamp(3.5rem,8vw,7.5rem)]"
     >
       {/* On a phone the section is laid out differently altogether; the
           three blocks after this are for `md` and up. */}
       <LeadingPracticesMobile content={content} practices={practices} />
-      {/* The intro, with the house drawn large to its right. From lg up the
-          picture is taken out of flow: it hangs from just under the outline
-          that closes the section above, runs off the right edge of the page,
-          and fades into the white at its foot, as in the design. The row is
-          given the picture's height (69vw at 1365 × 648, less the faded
-          foot) so the logos below start where it has faded out. */}
-      <div className="relative max-md:hidden lg:min-h-[31vw]">
-        <div
-          ref={introRef}
-          className="shell-about relative z-[1] min-w-0 pt-[clamp(3rem,6.4vw,6.5rem)]"
+      <div ref={introRef} className="shell-about relative min-w-0 max-md:hidden">
+        <p
+          data-reveal
+          className="flex items-center gap-2.5 font-display text-[0.625rem] font-bold tracking-eyebrow text-accent-blue uppercase"
         >
-          <p
-            data-reveal
-            className="flex items-center gap-2.5 font-display text-[0.625rem] font-bold tracking-eyebrow text-accent-blue uppercase"
-          >
-            {content.eyebrow}
-            <span aria-hidden="true" className="h-0 w-6 border-t border-accent-blue/60" />
-          </p>
-          {/* 1.105, not the design's 1.2: split into lines for the reveal, each
-              line carries 0.1em of padding whose negative margins only
-              partly collapse, which puts that back between the lines. */}
-          <h2
-            ref={headingRef}
-            className="mt-[clamp(1rem,1.7vw,1.75rem)] max-w-[14ch] font-display text-[clamp(1.75rem,2.59vw,2.75rem)] leading-[1.105] font-normal tracking-section text-balance text-navy"
-          >
-            {content.heading}
-          </h2>
-          <span
-            aria-hidden="true"
-            className="mt-[clamp(0.5rem,1vw,1rem)] block h-0 w-[2.3rem] border-t-2 border-accent-blue"
-          />
-          <p
-            data-reveal
-            data-fx="words"
-            className="mt-[clamp(1rem,1.6vw,1.625rem)] max-w-[28rem] font-display text-[clamp(0.75rem,0.754vw,0.875rem)] leading-[1.56] text-slate"
-          >
-            {content.lead}
-          </p>
-          <p
-            data-reveal
-            data-fx="words"
-            className="mt-[clamp(0.625rem,0.82vw,0.875rem)] max-w-[28rem] font-display text-[clamp(0.6875rem,0.645vw,0.75rem)] leading-[1.56] text-slate/80"
-          >
-            {content.note}
-          </p>
-        </div>
+          {content.eyebrow}
+          <span aria-hidden="true" className="h-0 w-6 border-t border-accent-blue/60" />
+        </p>
+        {/* 1.105, not the design's 1.2: split into lines for the reveal, each
+            line carries 0.1em of padding whose negative margins only
+            partly collapse, which puts that back between the lines. */}
+        <h2
+          ref={headingRef}
+          className="mt-[clamp(1rem,1.7vw,1.75rem)] max-w-[14ch] font-display text-[clamp(1.75rem,2.59vw,2.75rem)] leading-[1.105] font-normal tracking-section text-balance text-navy"
+        >
+          {content.heading}
+        </h2>
+        <span
+          aria-hidden="true"
+          className="mt-[clamp(0.5rem,1vw,1rem)] block h-0 w-[2.3rem] border-t-2 border-accent-blue"
+        />
+        <p
+          data-reveal
+          data-fx="words"
+          className="mt-[clamp(1rem,1.6vw,1.625rem)] max-w-[28rem] font-display text-[clamp(0.75rem,0.754vw,0.875rem)] leading-[1.56] text-slate"
+        >
+          {content.lead}
+        </p>
+        <p
+          data-reveal
+          data-fx="words"
+          className="mt-[clamp(0.625rem,0.82vw,0.875rem)] max-w-[28rem] font-display text-[clamp(0.6875rem,0.645vw,0.75rem)] leading-[1.56] text-slate/80"
+        >
+          {content.note}
+        </p>
+      </div>
 
-        <div
-          ref={imageRef}
-          className="relative mt-[clamp(2rem,4vw,3rem)] min-w-0 lg:absolute lg:top-[1.3rem] lg:right-0 lg:mt-0 lg:w-[69vw]"
-        >
-          <img
-            draggable={false}
-            {...imageOf(content.photo.image)}
-            alt={content.photo.alt}
-            sizes="(min-width: 64rem) 69vw, 100vw"
-            loading="lazy"
-            decoding="async"
-            className="w-full object-contain [mask-image:linear-gradient(to_bottom,black_60%,transparent_92%)]"
-          />
-        </div>
+      <div ref={mapRef} className="shell-about mt-[clamp(2rem,4vw,3.5rem)] max-md:hidden">
+        <PracticesMap practices={practices} />
       </div>
 
       <ul
         ref={gridRef}
-        className="shell-about relative mt-[clamp(2.5rem,5vw,4.5rem)] grid grid-cols-1 gap-y-[clamp(2rem,4vw,3rem)] max-md:hidden sm:grid-cols-2 lg:grid-cols-4"
+        className="shell-about relative mt-[clamp(2rem,4vw,3.5rem)] grid grid-cols-1 gap-y-[clamp(2rem,4vw,3rem)] max-md:hidden sm:grid-cols-2 lg:grid-cols-4"
       >
         {practices.map((practice) => (
           <li key={practice.id} data-cell className="min-w-0">
@@ -105,9 +94,6 @@ export function LeadingPractices({
               </span>
               <span className="mt-[clamp(0.875rem,1.8vw,1.5rem)] font-display text-[0.625rem] font-bold tracking-eyebrow text-slate uppercase">
                 {practice.country}
-              </span>
-              <span className="mt-[clamp(0.875rem,1.8vw,1.5rem)] max-w-[11rem] font-body text-xs leading-snug text-navy">
-                {practice.description}
               </span>
             </Interactive>
           </li>

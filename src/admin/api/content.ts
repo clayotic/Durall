@@ -28,6 +28,7 @@ import {
   type ContentStore,
 } from "@/server/store";
 import { isSupabaseConfigured, serviceClient, supabaseConfig } from "@/server/supabase";
+import { copyBefore, keepCopy, type Copy } from "@/server/undo";
 import { docSchema, idSchema, input, parse, slugSchema } from "@/server/validate";
 
 /**
@@ -62,15 +63,36 @@ async function adminStore(
   return { store: databaseStore(db), editable: true, member };
 }
 
+/**
+ * After a save: its line in the log, the copy of what was there before it
+ * (filed under that line, for the owner's undo: server/undo.ts), and the
+ * CDN's copies of the site cleared.
+ */
 async function saved(
   session: Session,
   action: string,
   entity: string,
   id: string,
   summary: string,
+  before: Copy | null,
 ) {
-  await logActivity(session, action, entity, id, summary);
+  const line = await logActivity(session, action, entity, id, summary);
+  if (line !== null && before) {
+    try {
+      await keepCopy(serviceClient(), line, before);
+    } catch (error) {
+      // No service key: the change is saved, and simply cannot be undone.
+      console.warn("[undo] copy not kept", error);
+    }
+  }
   await purgeContentCache();
+}
+
+/** "Deleted project “X”": the copy taken before the delete knows the name. */
+function deleted(what: string, before: Copy | null, field: string): string {
+  const data = (before?.rows[0] as { data?: Record<string, unknown> } | undefined)?.data;
+  const name = typeof data?.[field] === "string" ? (data[field] as string).trim() : "";
+  return name ? `Deleted ${what} "${name}"` : `Deleted ${what === "article" ? "an" : "a"} ${what}`;
 }
 
 function dbError(error: { message: string; code?: string } | null, what: string): void {
@@ -202,7 +224,8 @@ export const importSiteContent = createServerFn({ method: "POST" })
     ]);
     dbError(settings, "content");
     markImported(true);
-    await saved(session, "import", "site", "", "Stored the current site in the database");
+    // Storing the whole site is not a change to undo.
+    await saved(session, "import", "site", "", "Stored the current site in the database", null);
     return { ok: true };
   });
 
@@ -265,6 +288,7 @@ export const saveSettingsParts = createServerFn({ method: "POST" })
     for (const name of names) {
       content[name] = withDefaults(SEED.settings[name] as unknown, data.parts[name]);
     }
+    const before = await copyBefore(session.db, { table: "settings", only: ["site"] });
     const { error } = await session.db.from("settings").upsert({
       key: "site",
       content,
@@ -272,7 +296,14 @@ export const saveSettingsParts = createServerFn({ method: "POST" })
       updated_at: new Date().toISOString(),
     });
     dbError(error, "settings");
-    await saved(session, "update", "settings", names.join(","), `Updated ${names.join(", ")}`);
+    await saved(
+      session,
+      "update",
+      "settings",
+      names.join(","),
+      `Updated ${names.join(", ")}`,
+      before,
+    );
     return { settings: withDefaults(SEED.settings, content) };
   });
 
@@ -286,6 +317,7 @@ export const saveShared = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const session = await requireMember("pages");
     const next: SharedContent = withDefaults(SEED.shared, data.content);
+    const before = await copyBefore(session.db, { table: "settings", only: ["shared"] });
     const { error } = await session.db.from("settings").upsert({
       key: "shared",
       content: next,
@@ -293,7 +325,7 @@ export const saveShared = createServerFn({ method: "POST" })
       updated_at: new Date().toISOString(),
     });
     dbError(error, "shared sections");
-    await saved(session, "update", "page", "shared", "Updated the shared sections");
+    await saved(session, "update", "page", "shared", "Updated the shared sections", before);
     return { shared: next };
   });
 
@@ -313,6 +345,7 @@ export const savePage = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const session = await requireMember("pages");
     const next = withDefaults(SEED.pages[data.key], data.content);
+    const before = await copyBefore(session.db, { table: "pages", only: [data.key] });
     const { error } = await session.db.from("pages").upsert({
       key: data.key,
       content: next,
@@ -321,7 +354,7 @@ export const savePage = createServerFn({ method: "POST" })
     });
     dbError(error, "page");
     const label = PAGES.find((page) => page.key === data.key)?.label ?? data.key;
-    await saved(session, "update", "page", data.key, `Updated the ${label} page`);
+    await saved(session, "update", "page", data.key, `Updated the ${label} page`, before);
     return { page: next as PageMap[PageKey] };
   });
 
@@ -391,21 +424,24 @@ export const saveProject = createServerFn({ method: "POST" })
     doc.id ||= newId();
     doc.slug = parse(slugSchema, doc.slug);
     if (!doc.name.trim()) fail("Give the project a name.");
+    // Only one project leads the portfolio: featuring this one takes the
+    // flag off the others, so they are part of what this save changes.
+    const others = doc.isFeatured
+      ? (await databaseStore(session.db).projects()).filter((p) => p.isFeatured && p.id !== doc.id)
+      : [];
+    const before = await copyBefore(session.db, {
+      table: "projects",
+      only: [doc.id, ...others.map((other) => other.id)],
+    });
     const { error } = await session.db.from("projects").upsert(projectRow(doc, session.member.id));
     dbError(error, "project");
-    // Only one project leads the portfolio.
-    if (doc.isFeatured) {
-      const others = (await databaseStore(session.db).projects()).filter(
-        (p) => p.isFeatured && p.id !== doc.id,
-      );
-      for (const other of others) {
-        await session.db
-          .from("projects")
-          .update({ data: { ...other, isFeatured: false } })
-          .eq("id", other.id);
-      }
+    for (const other of others) {
+      await session.db
+        .from("projects")
+        .update({ data: { ...other, isFeatured: false } })
+        .eq("id", other.id);
     }
-    await saved(session, "save", "project", doc.id, `Saved project "${doc.name}"`);
+    await saved(session, "save", "project", doc.id, `Saved project "${doc.name}"`, before);
     return { doc };
   });
 
@@ -413,9 +449,10 @@ export const deleteProject = createServerFn({ method: "POST" })
   .inputValidator(input(z.object({ id: idSchema })))
   .handler(async ({ data }) => {
     const session = await requireMember("projects");
+    const before = await copyBefore(session.db, { table: "projects", only: [data.id] });
     const { error } = await session.db.from("projects").delete().eq("id", data.id);
     dbError(error, "project");
-    await saved(session, "delete", "project", data.id, "Deleted a project");
+    await saved(session, "delete", "project", data.id, deleted("project", before, "name"), before);
     return { ok: true };
   });
 
@@ -436,9 +473,10 @@ export const saveArticle = createServerFn({ method: "POST" })
     if (!doc.title.trim()) fail("Give the article a title.");
     if (!/^\d{4}-\d{2}-\d{2}$/.test(doc.publishedAt)) fail("Choose a publication date.");
     if (data.autoReadingTime) doc.readingTime = readingTimeOf(doc);
+    const before = await copyBefore(session.db, { table: "articles", only: [doc.id] });
     const { error } = await session.db.from("articles").upsert(articleRow(doc, session.member.id));
     dbError(error, "article");
-    await saved(session, "save", "article", doc.id, `Saved article "${doc.title}"`);
+    await saved(session, "save", "article", doc.id, `Saved article "${doc.title}"`, before);
     return { doc };
   });
 
@@ -446,9 +484,10 @@ export const deleteArticle = createServerFn({ method: "POST" })
   .inputValidator(input(z.object({ id: idSchema })))
   .handler(async ({ data }) => {
     const session = await requireMember("insights");
+    const before = await copyBefore(session.db, { table: "articles", only: [data.id] });
     const { error } = await session.db.from("articles").delete().eq("id", data.id);
     dbError(error, "article");
-    await saved(session, "delete", "article", data.id, "Deleted an article");
+    await saved(session, "delete", "article", data.id, deleted("article", before, "title"), before);
     return { ok: true };
   });
 
@@ -470,12 +509,13 @@ export const saveRoles = createServerFn({ method: "POST" })
       if (!role.title.trim()) fail(`Role ${index + 1} needs a title.`);
       return role;
     });
+    const before = await copyBefore(session.db, { table: "career_roles" });
     await replaceList(
       session,
       "career_roles",
       roles.map((r) => roleRow(r, session.member.id)),
     );
-    await saved(session, "update", "careers", "", `Updated open roles (${roles.length})`);
+    await saved(session, "update", "careers", "", `Updated open roles (${roles.length})`, before);
     return { roles };
   });
 
@@ -505,14 +545,23 @@ export const savePartners = createServerFn({ method: "POST" })
       if (!item.name.trim()) fail(`Entry ${index + 1} needs a name.`);
       return item;
     });
+    const kind = { column: "kind", value: data.kind };
+    const before = await copyBefore(session.db, { table: "partners", where: kind });
     await replaceList(
       session,
       "partners",
       items.map((p) => partnerRow(p, session.member.id)),
-      { column: "kind", value: data.kind },
+      kind,
     );
     const label = data.kind === "partner" ? "international partners" : "design practices";
-    await saved(session, "update", "partners", data.kind, `Updated ${label} (${items.length})`);
+    await saved(
+      session,
+      "update",
+      "partners",
+      data.kind,
+      `Updated ${label} (${items.length})`,
+      before,
+    );
     return { items };
   });
 
@@ -550,6 +599,7 @@ export const reorderProjects = createServerFn({ method: "POST" })
   .inputValidator(input(z.object({ ids: z.array(idSchema).max(500) })))
   .handler(async ({ data }) => {
     const session = await requireMember("projects");
+    const before = await copyBefore(session.db, { table: "projects" });
     for (const [position, id] of data.ids.entries()) {
       const { data: row, error } = await session.db
         .from("projects")
@@ -564,7 +614,7 @@ export const reorderProjects = createServerFn({ method: "POST" })
         .eq("id", id);
       dbError(updateError, "project");
     }
-    await saved(session, "reorder", "project", "", "Reordered projects");
+    await saved(session, "reorder", "project", "", "Reordered projects", before);
     return { ok: true };
   });
 

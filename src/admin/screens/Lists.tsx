@@ -1,4 +1,3 @@
-import { useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { blankPartner, blankRole } from "@/content/defaults";
 import type { PartnerDoc, RoleDoc } from "@/content/types";
@@ -6,9 +5,8 @@ import { savePartners, saveRoles } from "@/admin/api/content";
 import { FieldControl } from "@/admin/form/fields";
 import type { FieldSpec } from "@/admin/form/spec";
 import { SaveBar, useEditor } from "@/admin/lib/editor";
-import { partnerFields, ROLE_FIELDS } from "@/admin/specs/collections";
+import { PRACTICE_FIELDS, ROLE_FIELDS } from "@/admin/specs/collections";
 import { Card, Notice, PageHeader } from "@/admin/ui/controls";
-import { cn } from "@/lib/utils";
 
 /* Careers and Partners: short lists edited and saved as a whole. */
 
@@ -71,37 +69,29 @@ export function CareersScreen({ roles }: { roles: RoleDoc[] }) {
   );
 }
 
-type PartnerLists = { partner: PartnerDoc[]; practice: PartnerDoc[] };
-
+/**
+ * The architects and design practices on the Partners page. The partner
+ * brands' list ("International Systems") was taken off the site; those rows
+ * stay in the database untouched, but are no longer shown or edited.
+ */
 export function PartnersScreen({ partners }: { partners: PartnerDoc[] }) {
-  const initial: PartnerLists = {
-    partner: partners.filter((p) => p.kind === "partner"),
-    practice: partners.filter((p) => p.kind === "practice"),
-  };
-  const [tab, setTab] = useState<"partner" | "practice">("partner");
-  // Only the list that changed is sent, so each save logs what it touched.
-  const lastSaved = useRef(initial);
-  const editor = useEditor(initial, async (value: PartnerLists): Promise<PartnerLists> => {
-    const next: PartnerLists = { ...value };
-    for (const kind of ["partner", "practice"] as const) {
-      if (JSON.stringify(value[kind]) === JSON.stringify(lastSaved.current[kind])) continue;
-      next[kind] = (await savePartners({ data: { kind, items: value[kind] } })).items;
-    }
-    lastSaved.current = next;
-    return next;
-  });
+  const editor = useEditor(
+    partners.filter((p) => p.kind === "practice"),
+    async (practices: PartnerDoc[]) =>
+      (await savePartners({ data: { kind: "practice", items: practices } })).items,
+  );
 
-  const spec = (kind: "partner" | "practice"): FieldSpec => ({
+  const spec: FieldSpec = {
     kind: "list",
-    path: kind,
-    label: kind === "partner" ? "International partners" : "Design practices",
-    fields: partnerFields(kind),
+    path: "practices",
+    label: "Architects & design practices",
+    fields: PRACTICE_FIELDS,
     itemTitle: ((item: PartnerDoc) =>
       `${item.name || "Untitled"}${item.visible ? "" : " (hidden)"}`) as (item: never) => string,
-    create: () => blankPartner("", kind),
-    addLabel: kind === "partner" ? "Add Partner" : "Add Practice",
+    create: () => blankPartner("", "practice"),
+    addLabel: "Add Practice",
     max: 40,
-  });
+  };
 
   return (
     <>
@@ -115,47 +105,14 @@ export function PartnersScreen({ partners }: { partners: PartnerDoc[] }) {
       />
       <PageHeader
         title="Partners"
-        description="The two logo grids on the Partners page, in the order they appear."
+        description="The architects and design practices on the Partners page, in the order they appear. Each one's country is marked on the world map above the logos."
       />
-      <div
-        className="mb-4 inline-flex rounded-full bg-navy/6 p-1"
-        role="tablist"
-        aria-label="Which list"
-      >
-        {(
-          [
-            ["partner", `International partners (${editor.draft.partner.length})`],
-            ["practice", `Design practices (${editor.draft.practice.length})`],
-          ] as const
-        ).map(([key, label]) => (
-          <button
-            key={key}
-            type="button"
-            role="tab"
-            aria-selected={tab === key}
-            onClick={() => setTab(key)}
-            className={cn(
-              "admin-focus min-h-8 rounded-full px-3.5 text-xs font-medium transition-colors duration-150",
-              tab === key ? "bg-white text-navy shadow-sm" : "text-slate hover:text-navy",
-            )}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
-      <Card
-        description={
-          tab === "partner"
-            ? "“A network built around specialised systems.” Logos are drawn at the height you set, so marks of different shapes carry the same weight."
-            : "“Trusted alongside leading practices.”"
-        }
-      >
+      <Card>
         <fieldset disabled={!editor.editable}>
           <FieldControl
-            key={tab}
-            spec={spec(tab)}
-            value={editor.draft[tab]}
-            onChange={(next) => editor.setDraft({ ...editor.draft, [tab]: next as PartnerDoc[] })}
+            spec={spec}
+            value={editor.draft}
+            onChange={(next) => editor.setDraft(next as PartnerDoc[])}
           />
         </fieldset>
       </Card>

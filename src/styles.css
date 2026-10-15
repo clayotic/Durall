@@ -1153,104 +1153,29 @@ html.intro-bailout .site-intro {
   transform: scaleY(1) !important;
 }
 
-/* Gallery: one list, three arrangements. The same elements are laid out
- * differently per mode, which is what lets each photograph fly from its old
- * place to its new one. */
+/* Gallery: a masonry of whole photographs, two columns, three from 64rem.
+ * Each plate takes its photograph's own shape (`--ar`), so nothing is cut. */
 [data-gallery] {
   --gallery-gap: clamp(0.75rem, 1.5vw, 1.5rem);
 }
 
 [data-gallery-list] {
   position: relative;
-}
-
-[data-gallery-list] > [data-plate] {
-  display: block;
-}
-
-[data-gallery-list][data-mode="detail"] {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--gallery-gap);
-}
-
-[data-gallery-list][data-mode="detail"] > [data-plate] {
-  grid-column: var(--phone-span);
-  aspect-ratio: var(--phone-ar);
-}
-
-@media (min-width: 48rem) {
-  /* Rows track the width, capped where the shell stops growing, so the
-   * scatter keeps its proportions from a tablet to an ultrawide. */
-  [data-gallery-list][data-mode="detail"] {
-    grid-template-columns: repeat(12, minmax(0, 1fr));
-    grid-auto-rows: clamp(2rem, 4.4vw, 5.3rem);
-  }
-
-  [data-gallery-list][data-mode="detail"] > [data-plate] {
-    grid-column: var(--col);
-    grid-row: var(--row);
-    aspect-ratio: auto;
-  }
-}
-
-[data-gallery-list][data-mode="masonry"] {
   columns: 2;
   column-gap: var(--gallery-gap);
 }
 
 @media (min-width: 64rem) {
-  [data-gallery-list][data-mode="masonry"] {
+  [data-gallery-list] {
     columns: 3;
   }
 }
 
-[data-gallery-list][data-mode="masonry"] > [data-plate] {
+[data-gallery-list] > [data-plate] {
+  display: block;
   break-inside: avoid;
   margin-bottom: var(--gallery-gap);
   aspect-ratio: var(--ar);
-}
-
-[data-gallery-list][data-mode="slider"] {
-  display: flex;
-  gap: var(--gallery-gap);
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  scrollbar-width: none;
-}
-
-[data-gallery-list][data-mode="slider"]::-webkit-scrollbar {
-  display: none;
-}
-
-[data-gallery-list][data-mode="slider"] > [data-plate] {
-  flex: none;
-  height: clamp(16rem, 62svh, 36rem);
-  aspect-ratio: var(--ar);
-}
-
-[data-gallery-list][data-mode="slider"] [data-plate-frame] {
-  cursor: grab;
-}
-
-[data-gallery-list][data-dragging] [data-plate-frame] {
-  cursor: grabbing;
-}
-
-/* In flight, nothing may clip a photograph on its way somewhere else. */
-[data-gallery-list][data-flipping] {
-  overflow: visible;
-}
-
-/* The layout pill slides up from below the fold while the gallery is on
- * screen and back down when it isn't. */
-.gallery-pill {
-  translate: 0 calc(100% + 2.5rem);
-  transition: translate 0.6s var(--ease-glide);
-}
-
-.gallery-pill[data-show="true"] {
-  translate: 0 0;
 }
 
 /* Viewer: the stage frame is the largest box of the photograph's own
@@ -1259,12 +1184,6 @@ html.intro-bailout .site-intro {
 .viewer-frame {
   width: min(100cqw, calc(100cqh * var(--ar)));
   aspect-ratio: var(--ar);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .gallery-pill {
-    transition: none;
-  }
 }
 
 /* ── Contact: office map ──────────────────────────────────────────────────
@@ -1325,9 +1244,10 @@ html.intro-bailout .site-intro {
   color: var(--color-navy);
 }
 
+/* The DS mark is wide (23 × 10.4), so it is sized by its width. */
 .office-pin__mark svg {
-  width: 0.95rem;
-  height: 0.95rem;
+  width: 1.1rem;
+  height: auto;
 }
 
 .office-pin__stem {

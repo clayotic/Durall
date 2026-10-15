@@ -306,29 +306,15 @@ export const PAGE_FORMS: Record<PageKey, SectionSpec[]> = {
   partners: [
     photoHero("The full-width photograph and heading at the top of the Partners page."),
     {
-      id: "network",
-      title: "International Systems",
-      description:
-        "The heading over the partner logos. The partners themselves are edited under Partners.",
-      fields: [
-        text("network.eyebrow", "Small heading"),
-        text("network.heading", "Heading"),
-        area("network.body", "Text", { rows: 3 }),
-        image("network.map", "Map behind the logos", {
-          hint: "Drawn faintly behind the grid; decorative, so it needs no description.",
-        }),
-        area("network.quote", "Closing statement", { rows: 3 }),
-      ],
-    },
-    {
       id: "practices",
       title: "Architects & Design Practices",
+      description:
+        "The words around the world map and the practices' logos. The map marks each practice's country by itself; the practices are edited under Partners.",
       fields: [
         text("practices.eyebrow", "Small heading"),
         text("practices.heading", "Heading"),
         area("practices.lead", "Text", { rows: 3 }),
         area("practices.note", "Smaller text", { rows: 2 }),
-        photo("practices.photo", "Drawing of the house"),
         text("practices.tagline", "Line under the logos"),
       ],
     },

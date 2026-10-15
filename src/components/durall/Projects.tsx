@@ -63,14 +63,15 @@ export function Projects({
   cards: readonly HomeCard[];
 }) {
   const headRef = useSectionIntro<HTMLDivElement>();
-  /* The grid gets a wider window than the header above it — the cascade is
-   * the point — but it ends on the grid's own top rather than its bottom, so
-   * the last card is opaque while the grid is still arriving instead of
-   * after the reader has scrolled past it. */
+  /* The grid gets a wider window than the header above it, ending on the
+   * grid's own top rather than its bottom, so the cards are opaque while the
+   * grid is still arriving instead of after the reader has scrolled past it.
+   * No stagger: the cards rise together, so a row is never out of line while
+   * it arrives (the client saw a staggered row as misaligned). */
   const gridRef = useReveal<HTMLUListElement>({
     selector: "[data-card]",
     y: TRAVEL.md,
-    stagger: 0.08,
+    stagger: 0,
     start: "clamp(top 92%)",
     end: "clamp(top 45%)",
     scrub: 0.8,
@@ -122,15 +123,10 @@ export function Projects({
               data-active={index === slides.active}
               className="group/slide min-w-0 max-md:w-[300px] max-md:shrink-0 max-md:snap-start"
             >
-              {/* The three columns travel at slightly different rates, so
-                  the grid opens out as it passes rather than moving as one
-                  sheet (ScrollFx, from `lg`). */}
-              <article
-                {...(index % 3
-                  ? { "data-fx": "drift", "data-fx-by": index % 3 === 1 ? 30 : 16 }
-                  : {})}
-                className="group relative flex flex-col items-start text-left"
-              >
+              {/* The cards move as one sheet. They used to travel at
+                  different rates by column, which left each row out of line
+                  wherever the scroll stopped. */}
+              <article className="group relative flex flex-col items-start text-left">
                 <div className="relative aspect-square w-full max-md:aspect-[15/17]">
                   <CardFrame />
                   <div className="relative h-full w-full overflow-hidden">

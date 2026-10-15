@@ -367,7 +367,6 @@ const SITE_LINKS = [
   "/expertise#systems",
   "/expertise#process",
   "/partners",
-  "/partners#international-systems",
   "/partners#practices",
   "/insights",
   "/careers",

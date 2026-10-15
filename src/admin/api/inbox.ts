@@ -1,8 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { can } from "@/admin/permissions";
-import { fail, logActivity, requireMember } from "@/server/auth";
-import { isSupabaseConfigured } from "@/server/supabase";
+import { fail, logActivity, requireMember, requireOwner } from "@/server/auth";
+import { purgeContentCache } from "@/server/cache";
+import { isSupabaseConfigured, serviceClient } from "@/server/supabase";
+import { CannotUndo, undo, undoStates, type UndoState } from "@/server/undo";
 import { idSchema, input } from "@/server/validate";
 
 /** Enquiries from the site's two forms, and the activity log. */
@@ -106,6 +108,12 @@ export type ActivityEntry = {
   entity: string;
   entityId: string;
   summary: string;
+  /**
+   * For the owner, on a change to the site's content made in the last
+   * fifteen days: whether it can be undone ("later": a newer change to the
+   * same content has to be undone first), and until when.
+   */
+  undo?: { state: UndoState; until: string };
 };
 
 export const listActivity = createServerFn({ method: "GET" })
@@ -119,17 +127,59 @@ export const listActivity = createServerFn({ method: "GET" })
     if (member.role === "editor") query = query.eq("user_id", member.id);
     const { data: rows, error } = await query.order("at", { ascending: false }).limit(data.limit);
     if (error) fail(error.message, 500);
-    return {
-      entries: (rows ?? []).map((row: Record<string, unknown>): ActivityEntry => ({
-        id: Number(row["id"]),
-        at: String(row["at"]),
-        userEmail: String(row["user_email"] ?? ""),
-        action: String(row["action"]),
-        entity: String(row["entity"]),
-        entityId: String(row["entity_id"] ?? ""),
-        summary: String(row["summary"] ?? ""),
-      })),
-    };
+    const entries = (rows ?? []).map((row: Record<string, unknown>): ActivityEntry => ({
+      id: Number(row["id"]),
+      at: String(row["at"]),
+      userEmail: String(row["user_email"] ?? ""),
+      action: String(row["action"]),
+      entity: String(row["entity"]),
+      entityId: String(row["entity_id"] ?? ""),
+      summary: String(row["summary"] ?? ""),
+    }));
+    // Undo is the owner's alone; nobody else is told a change can be undone.
+    // `undoReady` is false until the database has been given the table the
+    // copies are kept in (migration 0004).
+    if (member.role !== "owner") return { entries };
+    let states: Awaited<ReturnType<typeof undoStates>> = null;
+    try {
+      states = await undoStates(
+        serviceClient(),
+        entries.map((entry) => entry.id),
+      );
+    } catch {
+      // No service key on this server: no undo.
+    }
+    for (const entry of entries) {
+      const state = states?.get(entry.id);
+      if (state) entry.undo = state;
+    }
+    return { entries, undoReady: states !== null };
+  });
+
+/**
+ * Undoes one change to the site's content: the rows it touched go back to
+ * how they were before it. The owner only, and only for fifteen days.
+ */
+export const undoChange = createServerFn({ method: "POST" })
+  .inputValidator(input(z.object({ id: z.number().int().positive() })))
+  .handler(async ({ data }) => {
+    const session = await requireOwner();
+    const { data: line } = await session.db
+      .from("activity")
+      .select("entity, entity_id, summary")
+      .eq("id", data.id)
+      .maybeSingle();
+    if (!line) fail("That change is no longer in the log.", 404);
+    try {
+      await undo(serviceClient(), session.db, data.id);
+    } catch (error) {
+      if (error instanceof CannotUndo) fail(error.message, 409);
+      throw error;
+    }
+    const was = line as { entity: string; entity_id: string; summary: string };
+    await logActivity(session, "undo", was.entity, was.entity_id, `Undid: ${was.summary}`);
+    await purgeContentCache();
+    return { ok: true };
   });
 
 /** Unread enquiries, for the badge in the sidebar. */

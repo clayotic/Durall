@@ -25,8 +25,9 @@ all editable there, and enquiries from the site's forms arrive there.
 1. Create a free project at [supabase.com](https://supabase.com).
 2. In its **SQL Editor**, run each file in `supabase/migrations/` in order
    (`0001_cms.sql`, then `0002_enquiry_phone_location.sql`, then
-   `0003_section_access.sql`). Each is safe to run more than once, so a
-   project set up earlier only needs the files it has not run yet.
+   `0003_section_access.sql`, then `0004_undo.sql`). Each is safe to run more
+   than once, so a project set up earlier only needs the files it has not
+   run yet.
 3. **Authentication → Sign In / Providers:** switch off _Allow new users to sign up_.
 4. **Authentication → URL Configuration:** set the Site URL to the live
    domain, and add `https://<your-domain>/admin/set-password` (plus
@@ -57,6 +58,34 @@ Until step 7 the site shows the content bundled in `src/content/seed/`, and
   entries in the activity log.
 
 There is no sign-up. People join by invitation email only.
+
+## Undo (owner only)
+
+On the **Activity** screen the owner has an **Undo** beside each change to
+the site's content made in the last 15 days, whoever made it. Undoing puts
+the content that change touched back exactly as it was just before: an edit
+is reversed, something deleted comes back, something added is removed.
+Nobody else sees the button or is told a change can be undone.
+
+- **What it covers:** pages, the shared sections, navigation, company
+  details and site settings, projects (including deleting, featuring and
+  reordering), insights, careers and partners.
+- **What it does not:** uploaded image files, enquiries, accounts, and
+  _Store the Current Site_. An undone change can point at a photograph again,
+  so do not delete a photograph from the Media library while a change that
+  replaced it can still be undone.
+- **Order:** where two changes touched the same content, the later one has
+  to be undone first.
+- **Fifteen days:** before each change the rows it is about to touch are
+  copied into `undo_copies` (migration 0004). Copies older than 15 days are
+  deleted as new changes are saved, and from then the change is permanent.
+  The copies are small (a page or a project is a few kilobytes of text), and
+  only the site's server can read them.
+- An undo is itself listed in the log ("Undid: …") and cannot be undone;
+  make the change again by hand if it was a mistake.
+
+Until `0004_undo.sql` has been run, everything else works as before and the
+owner sees a note on the Activity screen saying undo is not switched on.
 
 ## How it fits together
 

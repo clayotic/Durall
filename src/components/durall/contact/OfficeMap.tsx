@@ -15,13 +15,15 @@ const CLOSE = { zoom: 16.3, pitch: 54, bearing: -20 };
 /** Slow out of the wide view, slow into the close-up. */
 const cinematic = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
 
+/* The pin's chip carries the Durall "DS" mark, the same two shapes as the
+ * favicon (public/favicon.svg), cropped to the mark itself. */
 const PIN = `
   <span class="office-pin__inner">
     <span class="office-pin__chip">
       <span class="office-pin__mark">
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M4 4h7a8 8 0 0 1 0 16H4V4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-          <path d="M14 12h7" stroke="currentColor" stroke-width="1.8"/>
+        <svg viewBox="4.5 10.79 23 10.42" fill="currentColor" aria-hidden="true">
+          <polygon points="4.5,10.79 16.39,10.79 16.39,17.73 12.91,21.21 4.5,21.21"/>
+          <polygon points="19.87,10.79 27.5,10.79 27.5,14.27 24.02,17.75 24.02,21.21 16.39,21.21 16.39,17.73 19.87,14.25"/>
         </svg>
       </span>
       Durall Systems

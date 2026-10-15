@@ -1,6 +1,6 @@
 import type { FieldSpec, SectionSpec } from "@/admin/form/spec";
 import { PROJECT_TAGS } from "@/content/categories";
-import { PARTNER_MARKS, PRACTICE_MARKS } from "@/components/durall/partners/marks";
+import { PRACTICE_MARKS } from "@/components/durall/partners/marks";
 import type { ProjectDoc } from "@/content/types";
 import { area, group, list, number, paragraphs, photo, strings, text, toggle } from "./build";
 
@@ -116,7 +116,8 @@ export function projectForm(others: ProjectDoc[]): SectionSpec[] {
     {
       id: "gallery",
       title: "Photography",
-      description: "The gallery. The first eight are laid out by hand in the Detail view.",
+      description:
+        "The gallery: a masonry of three columns, each photograph whole at its own shape.",
       fields: [
         list<{ caption: string; alt: string }>(
           "plates",
@@ -219,23 +220,22 @@ export const ROLE_FIELDS: FieldSpec[] = [
   area("summary", "Summary", { rows: 3 }),
 ];
 
-export function partnerFields(kind: "partner" | "practice"): FieldSpec[] {
-  const marks = kind === "partner" ? PARTNER_MARKS : PRACTICE_MARKS;
-  return [
-    text("name", "Name"),
-    toggle("visible", "Show on the site"),
-    text("country", "Country"),
-    area("description", "What they do", { rows: 2 }),
-    { kind: "logo", path: "logo", label: "Logo" },
-    {
-      kind: "select",
-      path: "mark",
-      label: "Style without a logo",
-      hint: "How the name is drawn when there is no logo file.",
-      options: marks.map((mark) => ({
-        value: mark,
-        label: mark === "plain" ? "Plain name" : mark,
-      })),
-    },
-  ];
-}
+/** An architect or design practice. The country puts its mark on the Partners page's world map. */
+export const PRACTICE_FIELDS: FieldSpec[] = [
+  text("name", "Name"),
+  toggle("visible", "Show on the site"),
+  text("country", "Country", {
+    hint: "Marked on the world map: Singapore, Netherlands, USA, Sri Lanka and most others are known.",
+  }),
+  { kind: "logo", path: "logo", label: "Logo" },
+  {
+    kind: "select",
+    path: "mark",
+    label: "Style without a logo",
+    hint: "How the name is drawn when there is no logo file.",
+    options: PRACTICE_MARKS.map((mark) => ({
+      value: mark,
+      label: mark === "plain" ? "Plain name" : mark,
+    })),
+  },
+];

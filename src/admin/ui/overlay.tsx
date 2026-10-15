@@ -251,6 +251,18 @@ export function OverlayProviders({ children }: { children: ReactNode }) {
 
 /** The message of whatever a server function threw, for a toast. */
 export function errorMessage(error: unknown): string {
+  // The request was cut off before the site answered: the browser's own
+  // words for that are "Load failed" (Safari) or "Failed to fetch" (Chrome).
+  const cutOff =
+    error instanceof TypeError && /load failed|failed to fetch|networkerror/i.test(error.message);
+  // Or the host answered in the site's place, with a time-out or a page of
+  // its own, which would otherwise be shown as it came.
+  const hostSpoke = error instanceof Error && /^\s*(<|TimeoutError)/.test(error.message);
+  // Either way the change may have gone through all the same, which matters
+  // before an invitation is sent a second time.
+  if (cutOff || hostSpoke) {
+    return "The site did not answer. Reload the page to see whether the change went through before trying again.";
+  }
   if (error instanceof Error && error.message) return error.message;
   if (typeof error === "string") return error;
   return "Something went wrong. Try again.";

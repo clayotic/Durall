@@ -4,7 +4,6 @@ import { prefersReducedMotion } from "@/lib/motion-prefs";
 import { clamp01, ramp, smooth, useSceneProgress } from "@/lib/scene";
 import { imageOf, Lines } from "@/content/render";
 import type { ExpertisePage } from "@/content/types";
-import { SillDrawing } from "./SillDrawing";
 import { EYEBROW, HEADING, NUMERAL, PAPER, SHELL } from "./styles";
 
 /* The held scene runs where the steps sit beside the drawing and motion is
@@ -13,24 +12,18 @@ import { EYEBROW, HEADING, NUMERAL, PAPER, SHELL } from "./styles";
 const SCENE_QUERY = "(min-width: 64rem) and (prefers-reduced-motion: no-preference)";
 
 /**
- * "Decided on paper, not on site.": four steps on the left; on the right a
- * section through a sliding door's sill, drawn over a photograph of the
- * door it describes.
- *
- * The design is a 1920 × 1060 canvas. Its right-hand 1060px is a square
- * holding everything drawn: the photograph (684 × 760 in the top right
- * corner, faded into the paper on its left and top) and the drawing. That
- * square is kept whole here and scales with the screen, pinned to the right
- * edge from `lg` up and set under the text below it; the drawing's ground
- * line and hatching run on past its left edge, behind the text, as drawn.
+ * "Decided on paper, not on site.": four steps on the left, and the
+ * photograph filling the right half of the screen from `lg` up (under the
+ * text below that). There used to be a drawing of a sliding door's sill
+ * over a smaller photograph; the client asked for the drawing to go and the
+ * photograph to take half the screen.
  *
  * From `lg` the section holds on screen for a little over a screen of
  * scrolling, and that distance plays it: the four steps appear one after
- * another while the photograph settles out of an
- * overscan under the drawing and registers with it. It is sticky rather
- * than a scripted pin (see lib/scene.ts). Where the section is taller than
- * the window it holds with its foot on the foot of the window, which only
- * ever puts its top padding out of sight.
+ * another while the photograph settles out of an overscan. It is sticky
+ * rather than a scripted pin (see lib/scene.ts). Where the section is taller
+ * than the window it holds with its foot on the foot of the window, which
+ * only ever puts its top padding out of sight.
  */
 export function InTheDetail({ content }: { content: ExpertisePage["detail"] }) {
   const introRef = useSectionIntro<HTMLDivElement>();
@@ -55,55 +48,6 @@ export function InTheDetail({ content }: { content: ExpertisePage["detail"] }) {
     return () => {
       observer.disconnect();
       window.removeEventListener("resize", place);
-    };
-  }, []);
-
-  /* The drawing is put together by the scroll: the door leaf comes down from
-   * above while the sill and the ground it sits in come in from the right,
-   * and the two meet in the drawing's own position. The dimension marks and
-   * the drainage arrow follow. Scrolling back takes it apart again.
-   *
-   * From `lg` this runs through the first part of the section's hold, so it
-   * happens with the whole drawing on screen and nothing else moving; below that it
-   * runs as the drawing crosses the window. The section clips sideways, so
-   * the part arriving from the right never widens the page. */
-  const drawingRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const root = drawingRef.current;
-    const scene = sceneRef.current;
-    if (!root || !scene || prefersReducedMotion()) return;
-    let dispose = () => {};
-    let cancelled = false;
-
-    void loadGsap().then(({ gsap }) => {
-      if (cancelled) return;
-      const part = (name: string) => root.querySelector(`[data-sill="${name}"]`);
-      const build = (trigger: Element, start: string, end: string) => {
-        gsap
-          .timeline({
-            defaults: { ease: "power1.out" },
-            scrollTrigger: { trigger, start, end, scrub: 0.6 },
-          })
-          .fromTo(part("upper"), { yPercent: -30 }, { yPercent: 0, duration: 1 }, 0)
-          .fromTo(part("lower"), { xPercent: 16 }, { xPercent: 0, duration: 1 }, 0)
-          .fromTo(
-            [part("upper"), part("lower")],
-            { opacity: 0 },
-            { opacity: 1, duration: 0.4, ease: "none" },
-            0,
-          )
-          .fromTo(part("notes"), { opacity: 0 }, { opacity: 1, duration: 0.25, ease: "none" }, 1);
-      };
-      // matchMedia reverts whichever timeline is not for the current width.
-      const media = gsap.matchMedia();
-      media.add("(min-width: 64rem)", () => build(scene, "top 8%", "top -62%"));
-      media.add("(max-width: 63.999rem)", () => build(root, "center 78%", "center 36%"));
-      dispose = () => media.revert();
-    });
-
-    return () => {
-      cancelled = true;
-      dispose();
     };
   }, []);
 
@@ -217,41 +161,19 @@ export function InTheDetail({ content }: { content: ExpertisePage["detail"] }) {
             </div>
           </div>
 
-          <div
-            ref={drawingRef}
-            className="relative aspect-square w-full lg:absolute lg:top-0 lg:right-0 lg:w-[min(55.21vw,66.25rem)]"
-          >
-            <div className="absolute top-0 right-0 h-[71.72%] w-[64.53%] overflow-hidden">
-              <div data-detail-photo className="h-full w-full">
-                <img
-                  draggable={false}
-                  {...imageOf(content.photo.image)}
-                  alt={content.photo.alt}
-                  sizes="(min-width: 1024px) 36vw, 65vw"
-                  loading="lazy"
-                  decoding="async"
-                  className="h-full w-full object-cover"
-                />
-              </div>
-              <div
-                aria-hidden="true"
-                className="absolute inset-y-0 left-0 w-[38%] bg-linear-to-r from-[#fdfdfb] to-[#fdfdfb]/0"
-              />
-              <div
-                aria-hidden="true"
-                className="absolute inset-x-0 top-0 h-[21%] bg-linear-to-b from-[#fdfdfb]/85 to-[#fdfdfb]/0"
+          {/* The right half of the screen from `lg`, the block's full height. */}
+          <div className="relative aspect-[4/5] w-full overflow-hidden lg:absolute lg:inset-y-0 lg:right-0 lg:aspect-auto lg:w-1/2">
+            <div data-detail-photo className="h-full w-full">
+              <img
+                draggable={false}
+                {...imageOf(content.photo.image)}
+                alt={content.photo.alt}
+                sizes="(min-width: 120rem) 960px, (min-width: 64rem) 50vw, 100vw"
+                loading="lazy"
+                decoding="async"
+                className="h-full w-full object-cover"
               />
             </div>
-            {/* The whole 1920 × 1060 drawing, its right-hand square over this
-              one: 181.13% wide, hanging off to the left. */}
-            <SillDrawing
-              label="Drawing: section through the sill of a flush sliding door"
-              className="absolute top-0 right-0 h-full w-[181.13%] max-w-none"
-            />
-            <div
-              aria-hidden="true"
-              className="absolute right-0 bottom-0 h-[15.1%] w-[181.13%] bg-linear-to-b from-[#fdfdfb]/0 to-[#fdfdfb] to-70%"
-            />
           </div>
         </div>
         {/* The scene's length: how far the page scrolls while the block holds. */}

@@ -94,7 +94,6 @@ import aboutPlateRight from "./about-plate-right.webp";
 import aboutLineHouse from "./about-line-house.webp";
 import aboutDurallMark from "./about-durall-mark.webp";
 
-import partnersVilla from "./partners-villa.webp";
 // A dotted map drawn from Natural Earth's public-domain land outline: vector,
 // so it stays sharp at any size.
 import partnersWorldMap from "./partners-world-map.svg";
@@ -548,7 +547,6 @@ export const IMAGES = {
   aboutLineHouse: one(aboutLineHouse, 578, 404),
   aboutDurallMark: one(aboutDurallMark, 394, 122),
 
-  partnersVilla: one(partnersVilla, 1365, 648),
   partnersWorldMap: one(partnersWorldMap, 1400, 474),
 
   /* Parikrama — Murud House, the first project detail page. Brought over from

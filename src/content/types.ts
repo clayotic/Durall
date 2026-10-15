@@ -392,20 +392,12 @@ export type AboutPage = {
 export type PartnersPage = {
   seo: Seo;
   opening: PhotoHero;
-  network: {
-    eyebrow: string;
-    heading: string;
-    body: string;
-    /** Drawn faintly behind the partner grid; decorative, so no alt text. */
-    map: ImageRef;
-    quote: string;
-  };
+  /** "Architects & Design Practices": the words around the map and the logos. */
   practices: {
     eyebrow: string;
     heading: string;
     lead: string;
     note: string;
-    photo: Photo;
     tagline: string;
   };
 };

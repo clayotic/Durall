@@ -1,4 +1,4 @@
-import type { ArticleDoc, ProjectDoc } from "./types";
+import type { ArticleDoc, ProjectDoc, ProjectFeature } from "./types";
 
 /* Pure views over the collections, shared by the server functions that feed
  * the site and by the admin panel's previews. Each takes the whole list and
@@ -48,6 +48,25 @@ export function publishedProjects(projects: readonly ProjectDoc[]): ProjectDoc[]
 export function featuredProject(projects: readonly ProjectDoc[]): ProjectDoc | undefined {
   const live = publishedProjects(projects);
   return live.find((p) => p.isFeatured) ?? live[0];
+}
+
+/**
+ * How a project reads as the featured one. Its Featured Presentation starts
+ * empty in the admin, and a project can be featured before anything is put
+ * there, so whatever was left empty is taken from the project itself: its
+ * place, title, architect and summary, and its opening photograph for a
+ * slideshow with nothing in it. The page can then count on a photograph.
+ */
+export function presentationOf(doc: ProjectDoc): ProjectFeature {
+  const own = doc.feature;
+  return {
+    ...own,
+    location: own.location.trim() || doc.location,
+    title: own.title.some((line) => line.trim()) ? own.title : doc.title,
+    architect: own.architect.trim() || doc.architect,
+    description: own.description.trim() || doc.description,
+    gallery: own.gallery.length ? own.gallery : [doc.hero],
+  };
 }
 
 export type PortfolioItem = Pick<

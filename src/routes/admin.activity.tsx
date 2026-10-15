@@ -11,6 +11,6 @@ export const Route = createFileRoute("/admin/activity")({
 });
 
 function Screen() {
-  const { entries } = Route.useLoaderData();
-  return <ActivityScreen entries={entries} />;
+  const { entries, undoReady } = Route.useLoaderData();
+  return <ActivityScreen entries={entries} undoReady={undoReady} />;
 }

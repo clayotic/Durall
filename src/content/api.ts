@@ -6,6 +6,7 @@ import {
   homeCardsOf,
   nextProjectOf,
   portfolioOf,
+  presentationOf,
   projectSlidesOf,
   publishedArticles,
   publishedProjects,
@@ -54,11 +55,9 @@ export const fetchPartners = createServerFn({ method: "GET" }).handler(async () 
   const store = contentStore();
   const [page, all] = await Promise.all([store.page("partners"), store.partners()]);
   const visible = all.filter((p) => p.visible).sort(byOrder);
-  return {
-    page,
-    partners: visible.filter((p) => p.kind === "partner"),
-    practices: visible.filter((p) => p.kind === "practice"),
-  };
+  // The partner brands' grid ("International Systems") was taken off the
+  // page; only the architects and design practices show.
+  return { page, practices: visible.filter((p) => p.kind === "practice") };
 });
 
 export const fetchCareers = createServerFn({ method: "GET" }).handler(async () => {
@@ -141,7 +140,7 @@ export const fetchProjects = createServerFn({ method: "GET" }).handler(async () 
   const featured = featuredProject(projects);
   return {
     page,
-    featured: featured ? { slug: featured.slug, feature: featured.feature } : null,
+    featured: featured ? { slug: featured.slug, feature: presentationOf(featured) } : null,
     portfolio: portfolioOf(projects),
   };
 });

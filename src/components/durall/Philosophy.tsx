@@ -10,8 +10,12 @@ import { UnderlineLink } from "./ui";
  *
  * Measured from the design at 1920 wide, where the section starts under the
  * hero at 1284:
- *   - text from 261, in a 749 column; the photograph from 1063, 871 × 779,
- *     so its last 14 run off the page;
+ *   - text in line with the projects section under it, on the same inset
+ *     (`shell-narrow`: 287 at 1920, the page's edge at 1440 and under); the
+ *     design had it at 261, and the client asked for the two to line up.
+ *     The column takes up the difference, so the photograph stays where the
+ *     design put it:
+ *     from 1063, 871 × 779, its last 14 running off the page;
  *   - the photograph 66 below the section's top, the heading 170 below that;
  *   - the outline 22 left of the photograph and 26 below its top, ending 25
  *     short of its right edge and 25 below its foot;
@@ -46,7 +50,7 @@ export function Philosophy({ content }: { content: HomePage["philosophy"] }) {
       <div className="@container mx-auto max-w-[1920px]">
         <div
           ref={sectionRef}
-          className="grid grid-cols-1 gap-[clamp(2.5rem,5vw,4rem)] px-[clamp(1.25rem,3.75vw,4.5rem)] py-[clamp(4.5rem,9vw,6rem)] max-md:gap-[2.375rem] max-md:pt-14 max-md:pb-0 lg:grid-cols-[39.01cqw_minmax(0,1fr)] lg:items-start lg:gap-x-[2.76cqw] lg:gap-y-0 lg:pt-[3.44cqw] lg:pr-0 lg:pb-[2.6cqw] lg:pl-[13.594cqw]"
+          className="grid grid-cols-1 gap-[clamp(2.5rem,5vw,4rem)] px-[clamp(1.25rem,3.75vw,4.5rem)] py-[clamp(4.5rem,9vw,6rem)] max-md:gap-[2.375rem] max-md:pt-14 max-md:pb-0 lg:grid-cols-[calc(52.604cqw-clamp(1.25rem,max(3.75vw,70.94vw-67.18rem),17.9375rem))_minmax(0,1fr)] lg:items-start lg:gap-x-[2.76cqw] lg:gap-y-0 lg:pt-[3.44cqw] lg:pr-0 lg:pb-[2.6cqw] lg:pl-[clamp(1.25rem,max(3.75vw,70.94vw-67.18rem),17.9375rem)]"
         >
           <div className="min-w-0 lg:pt-[8.83cqw] lg:pb-[clamp(2rem,4cqw,4.5rem)]">
             <h2
