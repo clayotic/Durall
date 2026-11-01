@@ -71,6 +71,14 @@ const holdsBack = () =>
   prefersReducedMotion() ||
   (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData === true;
 
+/* An upright screen shows only the middle of the 16:9 film, so it is sent
+ * that middle alone: a 3:4 cut at full height saved beside the film with
+ * `-phone` in its name (a third of the download). A film without one falls
+ * through to the whole film. The cut is wider than the query, so the
+ * difference between the small and large viewport heights never shows an edge. */
+const UPRIGHT = "(max-aspect-ratio: 2/3)";
+const phoneCut = (film: string) => film.replace(/(\.\w+)$/, "-phone$1");
+
 const FILM_CONTROL =
   "flex h-11 items-center justify-center rounded-full transition-colors hover:bg-white/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white";
 
@@ -149,6 +157,23 @@ export function ProjectHero({
       window.removeEventListener("scroll", check);
     };
   }, [wanted]);
+
+  // A screen turned the other way needs the other cut. The browser picks a
+  // source once, so ask it to pick again, from the same moment.
+  useEffect(() => {
+    const query = window.matchMedia(UPRIGHT);
+    const repick = () => {
+      const el = filmRef.current;
+      if (!el?.currentSrc) return;
+      const at = el.currentTime;
+      const playing = !el.paused;
+      el.load();
+      el.currentTime = at;
+      if (playing) void el.play().catch(() => {});
+    };
+    query.addEventListener("change", repick);
+    return () => query.removeEventListener("change", repick);
+  }, []);
 
   const toggleFilm = () => {
     const el = filmRef.current;
@@ -290,7 +315,6 @@ export function ProjectHero({
               {film ? (
                 <video
                   ref={filmRef}
-                  src={film}
                   muted={muted}
                   loop
                   playsInline
@@ -300,7 +324,10 @@ export function ProjectHero({
                   onPlaying={() => setStarted(true)}
                   aria-label={`${project.name}: the film`}
                   className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-[var(--dur-long)] motion-reduce:transition-none ${started ? "opacity-100" : "opacity-0"}`}
-                />
+                >
+                  <source src={phoneCut(film)} media={UPRIGHT} />
+                  <source src={film} />
+                </video>
               ) : null}
             </div>
           </div>
