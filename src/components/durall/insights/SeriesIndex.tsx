@@ -117,7 +117,7 @@ export function SeriesIndex({
           <img
             draggable={false}
             {...imageOf({ kind: "asset", key: "insightsBanner" })}
-            alt="Durall’s fabrication hall seen from directly above, frames and glass staged along both sides"
+            alt="Assembly tables and stacked aluminium profiles on Durall’s factory floor, a frame standing on one table"
             sizes="100vw"
             fetchPriority="high"
             decoding="async"
@@ -125,7 +125,7 @@ export function SeriesIndex({
           />
         </div>
         <figcaption className="flex flex-wrap justify-between gap-x-6 gap-y-1 text-[0.8125rem] text-slate">
-          <span>Durall’s fabrication hall, from directly above</span>
+          <span>Durall’s fabrication hall</span>
           <span>Where every part of this series takes place</span>
         </figcaption>
       </figure>

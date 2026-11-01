@@ -33,7 +33,10 @@ export const ARTICLES_SEED: ArticleDoc[] = [
     title: "Understanding Premium Glazing: What It Really Means & How Every Project Begins",
     excerpt:
       "Behind the clean architectural expression of glass is a process of design, engineering, manufacturing and installation that begins long before the glass reaches the site.",
-    cover: photo("insightsYard", "Glass and frames staged outside Durall’s fabrication hall"),
+    cover: photo(
+      "insightsYard",
+      "Sentosa House: a double-height living room behind sheer curtains and full-height glazing",
+    ),
     series: {
       part: 1,
       kicker: "Where it begins",
@@ -42,7 +45,7 @@ export const ARTICLES_SEED: ArticleDoc[] = [
       opening: "photo",
       openingLabel: "",
       openingNote: "",
-      caption: "Glass and frames staged outside Durall’s fabrication hall",
+      caption: "Sentosa House · Studio MK27",
       focus: "50% 40%",
       pull: "The result may look minimal. Achieving it is anything but.",
     },
@@ -62,13 +65,16 @@ export const ARTICLES_SEED: ArticleDoc[] = [
             label: "What you see",
             photo: photo(
               "insightsParikramaWide",
-              "Parikrama, Murud House · SPASM Design Architects",
+              "Sentosa House: a library wall rising behind a living room walled in glass",
             ),
-            caption: "Parikrama, Murud House · SPASM Design Architects",
+            caption: "Sentosa House · Studio MK27",
           },
           {
             label: "What you don’t",
-            photo: photo("insightsHall", "Inside Durall’s fabrication hall"),
+            photo: photo(
+              "insightsHall",
+              "A hand pressing tape along the edge of a glass pane in Durall’s fabrication hall",
+            ),
             caption: "Inside Durall’s fabrication hall",
           },
         ],
@@ -517,12 +523,12 @@ export const ARTICLES_SEED: ArticleDoc[] = [
           {
             label: "Inspection",
             text: "Completed systems are verified against the required specifications.",
-            photo: null,
+            photo: photo("insightsInspection", "Inspection on the factory floor"),
           },
           {
             label: "Packing",
             text: "Inspected systems are packed and prepared for the next stage.",
-            photo: null,
+            photo: photo("insightsPacking", "Packing on the factory floor"),
           },
         ],
       },

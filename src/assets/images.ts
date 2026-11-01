@@ -39,7 +39,8 @@ import heroCareers1440 from "./hero-careers-1440w.webp";
 import heroCareers1920 from "./hero-careers.webp";
 import logoDurallWhite from "./logo-durall-white.webp";
 import philosophyPavilion880 from "./philosophy-pavilion-880w.webp";
-import philosophyPavilion1440 from "./philosophy-pavilion.webp";
+import philosophyPavilion1440 from "./philosophy-pavilion-1440w.webp";
+import philosophyPavilion2048 from "./philosophy-pavilion-2048w.webp";
 
 import projectPatina640 from "./project-patina-640w.webp";
 import projectPatina from "./project-patina.webp";
@@ -78,17 +79,27 @@ import homeChiltern from "./home-chiltern.webp";
 import homeChiltern1040 from "./home-chiltern-1040w.webp";
 import homeJuhu480 from "./home-juhu-480w.webp";
 import homeJuhu from "./home-juhu.webp";
-import homeRitz480 from "./home-ritz-480w.webp";
-import homeRitz from "./home-ritz.webp";
+import homeRitz640 from "./home-ritz-640w.webp";
+import homeRitz from "./home-ritz-1336w.webp";
 
 import stageDiscover from "./stage-discover.webp";
-import stageParikrama from "./stage-parikrama.webp";
-import stageEngineer from "./stage-engineer.webp";
-import stageFabricate from "./stage-fabricate.webp";
-import stageInstall from "./stage-install.webp";
+// The home page's five stages (November 2026): Parikrama House, and SPASM's
+// model and drawings of it for Design and Fabricate.
+import stageParikrama800 from "./stage-parikrama-800w.webp";
+import stageParikrama from "./stage-parikrama-1600w.webp";
+import stageDesign960 from "./stage-design-960w.webp";
+import stageDesign from "./stage-design-1600w.webp";
+import stageEngineer800 from "./stage-engineer-800w.webp";
+import stageEngineer from "./stage-engineer-1600w.webp";
+import stageFabricate960 from "./stage-fabricate-960w.webp";
+import stageFabricate from "./stage-fabricate-1600w.webp";
+import stageInstall800 from "./stage-install-800w.webp";
+import stageInstall from "./stage-install-1600w.webp";
 
-import aboutVilla from "./about-villa.webp";
-import aboutLake from "./about-lake.webp";
+import aboutVilla800 from "./about-villa-800w.webp";
+import aboutVilla from "./about-villa-1600w.webp";
+import aboutLake800 from "./about-lake-800w.webp";
+import aboutLake from "./about-lake-1600w.webp";
 import aboutPlateLeft from "./about-plate-left.webp";
 import aboutPlateRight from "./about-plate-right.webp";
 import aboutLineHouse from "./about-line-house.webp";
@@ -281,42 +292,53 @@ import carmichaelFacade800 from "./projects/carmichael/facade-800w.webp";
 import carmichaelFacade from "./projects/carmichael/facade-1600w.webp";
 // Durall’s factory floor and drawings, for the Premium Glazing Series (Insights).
 import insightsProfileCut640 from "./insights/profile-cut-640w.webp";
-import insightsProfileCut from "./insights/profile-cut-1200w.webp";
+import insightsProfileCut from "./insights/profile-cut-900w.webp";
 import insightsYard640 from "./insights/yard-640w.webp";
-import insightsYard from "./insights/yard-1080w.webp";
+import insightsYard from "./insights/yard-1117w.webp";
 import insightsAssemblyAbove640 from "./insights/assembly-above-640w.webp";
 import insightsAssemblyAbove from "./insights/assembly-above-1080w.webp";
 import insightsFabrication640 from "./insights/fabrication-640w.webp";
-import insightsFabrication from "./insights/fabrication-1080w.webp";
+import insightsFabrication1080 from "./insights/fabrication-1080w.webp";
+import insightsFabrication from "./insights/fabrication-1669w.webp";
 import insightsCutting640 from "./insights/cutting-640w.webp";
-import insightsCutting from "./insights/cutting-1080w.webp";
+import insightsCutting1080 from "./insights/cutting-1080w.webp";
+import insightsCutting from "./insights/cutting-1670w.webp";
 import insightsParikramaWide640 from "./insights/parikrama-wide-640w.webp";
-import insightsParikramaWide from "./insights/parikrama-wide-1280w.webp";
-import insightsProfile640 from "./insights/profile-640w.webp";
-import insightsProfile from "./insights/profile-1200w.webp";
+import insightsParikramaWide from "./insights/parikrama-wide-1289w.webp";
 import insightsGlazing640 from "./insights/glazing-640w.webp";
-import insightsGlazing from "./insights/glazing-1080w.webp";
+import insightsGlazing1080 from "./insights/glazing-1080w.webp";
+import insightsGlazing from "./insights/glazing-1672w.webp";
 import insightsProfilesStaged640 from "./insights/profiles-staged-640w.webp";
-import insightsProfilesStaged from "./insights/profiles-staged-1080w.webp";
+import insightsProfilesStaged from "./insights/profiles-staged-1120w.webp";
 import insightsProfileStock640 from "./insights/profile-stock-640w.webp";
 import insightsProfileStock from "./insights/profile-stock-1080w.webp";
 import insightsParikramaIntent640 from "./insights/parikrama-intent-640w.webp";
 import insightsParikramaIntent from "./insights/parikrama-intent-1280w.webp";
 import insightsBanner640 from "./insights/banner-640w.webp";
-import insightsBanner from "./insights/banner-1920w.webp";
+import insightsBanner1280 from "./insights/banner-1280w.webp";
+import insightsBanner from "./insights/banner-1768w.webp";
 import insightsHall640 from "./insights/hall-640w.webp";
-import insightsHall from "./insights/hall-1080w.webp";
+import insightsHall from "./insights/hall-941w.webp";
 import insightsSection from "./insights/section-1300w.webp";
 import insightsMachiningCentre640 from "./insights/machining-centre-640w.webp";
-import insightsMachiningCentre from "./insights/machining-centre-1080w.webp";
+import insightsMachiningCentre1080 from "./insights/machining-centre-1080w.webp";
+import insightsMachiningCentre from "./insights/machining-centre-1672w.webp";
 import insightsAssembly640 from "./insights/assembly-640w.webp";
-import insightsAssembly from "./insights/assembly-1080w.webp";
+import insightsAssembly1080 from "./insights/assembly-1080w.webp";
+import insightsAssembly from "./insights/assembly-1672w.webp";
 import insightsScreenCarried640 from "./insights/screen-carried-640w.webp";
 import insightsScreenCarried from "./insights/screen-carried-900w.webp";
 import insightsGlassStaged640 from "./insights/glass-staged-640w.webp";
 import insightsGlassStaged from "./insights/glass-staged-1080w.webp";
 import insightsMachining640 from "./insights/machining-640w.webp";
-import insightsMachining from "./insights/machining-1080w.webp";
+import insightsMachining1080 from "./insights/machining-1080w.webp";
+import insightsMachining from "./insights/machining-1672w.webp";
+import insightsInspection640 from "./insights/inspection-640w.webp";
+import insightsInspection1080 from "./insights/inspection-1080w.webp";
+import insightsInspection from "./insights/inspection-1672w.webp";
+import insightsPacking640 from "./insights/packing-640w.webp";
+import insightsPacking1080 from "./insights/packing-1080w.webp";
+import insightsPacking from "./insights/packing-1671w.webp";
 
 export type ImageAsset = {
   src: string;
@@ -400,8 +422,9 @@ export const IMAGES = {
     [
       [philosophyPavilion880, 880],
       [philosophyPavilion1440, 1440],
+      [philosophyPavilion2048, 2048],
     ],
-    1309,
+    1301,
   ),
 
   projectPatina: set(
@@ -528,20 +551,63 @@ export const IMAGES = {
   ),
   homeRitz: set(
     [
-      [homeRitz480, 480],
-      [homeRitz, 780],
+      [homeRitz640, 640],
+      [homeRitz, 1336],
     ],
-    780,
+    891,
   ),
 
   stageDiscover: one(stageDiscover, 760, 967),
-  stageParikrama: one(stageParikrama, 1100, 882),
-  stageEngineer: one(stageEngineer, 1382, 996),
-  stageFabricate: one(stageFabricate, 782, 782),
-  stageInstall: one(stageInstall, 1382, 736),
+  stageParikrama: set(
+    [
+      [stageParikrama800, 800],
+      [stageParikrama, 1600],
+    ],
+    965,
+  ),
+  stageDesign: set(
+    [
+      [stageDesign960, 960],
+      [stageDesign, 1600],
+    ],
+    892,
+  ),
+  stageEngineer: set(
+    [
+      [stageEngineer800, 800],
+      [stageEngineer, 1600],
+    ],
+    1073,
+  ),
+  stageFabricate: set(
+    [
+      [stageFabricate960, 960],
+      [stageFabricate, 1600],
+    ],
+    1132,
+  ),
+  stageInstall: set(
+    [
+      [stageInstall800, 800],
+      [stageInstall, 1600],
+    ],
+    1005,
+  ),
 
-  aboutVilla: one(aboutVilla, 1023, 840),
-  aboutLake: one(aboutLake, 1400, 820),
+  aboutVilla: set(
+    [
+      [aboutVilla800, 800],
+      [aboutVilla, 1600],
+    ],
+    1066,
+  ),
+  aboutLake: set(
+    [
+      [aboutLake800, 800],
+      [aboutLake, 1600],
+    ],
+    1067,
+  ),
   aboutPlateLeft: one(aboutPlateLeft, 462, 523),
   aboutPlateRight: one(aboutPlateRight, 438, 523),
   aboutLineHouse: one(aboutLineHouse, 578, 404),
@@ -1112,16 +1178,16 @@ export const IMAGES = {
   insightsProfileCut: set(
     [
       [insightsProfileCut640, 640],
-      [insightsProfileCut, 1200],
+      [insightsProfileCut, 900],
     ],
-    1636,
+    1600,
   ),
   insightsYard: set(
     [
       [insightsYard640, 640],
-      [insightsYard, 1080],
+      [insightsYard, 1117],
     ],
-    1440,
+    1500,
   ),
   insightsAssemblyAbove: set(
     [
@@ -1133,44 +1199,47 @@ export const IMAGES = {
   insightsFabrication: set(
     [
       [insightsFabrication640, 640],
-      [insightsFabrication, 1080],
+      [insightsFabrication1080, 1080],
+      [insightsFabrication, 1669],
     ],
-    1040,
+    942,
   ),
   insightsCutting: set(
     [
       [insightsCutting640, 640],
-      [insightsCutting, 1080],
+      [insightsCutting1080, 1080],
+      [insightsCutting, 1670],
     ],
-    740,
+    941,
   ),
   insightsParikramaWide: set(
     [
       [insightsParikramaWide640, 640],
-      [insightsParikramaWide, 1280],
+      [insightsParikramaWide, 1289],
     ],
-    640,
+    860,
   ),
   insightsProfile: set(
     [
-      [insightsProfile640, 640],
-      [insightsProfile, 1200],
+      [insightsProfileCut640, 640],
+      [insightsProfileCut, 900],
     ],
-    1650,
+    1600,
   ),
   insightsGlazing: set(
     [
       [insightsGlazing640, 640],
-      [insightsGlazing, 1080],
+      [insightsGlazing1080, 1080],
+      [insightsGlazing, 1672],
     ],
-    820,
+    941,
   ),
   insightsProfilesStaged: set(
     [
       [insightsProfilesStaged640, 640],
-      [insightsProfilesStaged, 1080],
+      [insightsProfilesStaged, 1120],
     ],
-    1640,
+    1404,
   ),
   insightsProfileStock: set(
     [
@@ -1184,36 +1253,39 @@ export const IMAGES = {
       [insightsParikramaIntent640, 640],
       [insightsParikramaIntent, 1280],
     ],
-    814,
+    1165,
   ),
   insightsBanner: set(
     [
       [insightsBanner640, 640],
-      [insightsBanner, 1920],
+      [insightsBanner1280, 1280],
+      [insightsBanner, 1768],
     ],
-    800,
+    890,
   ),
   insightsHall: set(
     [
       [insightsHall640, 640],
-      [insightsHall, 1080],
+      [insightsHall, 941],
     ],
-    1180,
+    1351,
   ),
   insightsSection: one(insightsSection, 1300, 235),
   insightsMachiningCentre: set(
     [
       [insightsMachiningCentre640, 640],
-      [insightsMachiningCentre, 1080],
+      [insightsMachiningCentre1080, 1080],
+      [insightsMachiningCentre, 1672],
     ],
-    1180,
+    941,
   ),
   insightsAssembly: set(
     [
       [insightsAssembly640, 640],
-      [insightsAssembly, 1080],
+      [insightsAssembly1080, 1080],
+      [insightsAssembly, 1672],
     ],
-    820,
+    941,
   ),
   insightsScreenCarried: set(
     [
@@ -1232,8 +1304,25 @@ export const IMAGES = {
   insightsMachining: set(
     [
       [insightsMachining640, 640],
-      [insightsMachining, 1080],
+      [insightsMachining1080, 1080],
+      [insightsMachining, 1672],
     ],
-    840,
+    941,
+  ),
+  insightsInspection: set(
+    [
+      [insightsInspection640, 640],
+      [insightsInspection1080, 1080],
+      [insightsInspection, 1672],
+    ],
+    941,
+  ),
+  insightsPacking: set(
+    [
+      [insightsPacking640, 640],
+      [insightsPacking1080, 1080],
+      [insightsPacking, 1671],
+    ],
+    941,
   ),
 } as const satisfies Record<string, ImageAsset>;

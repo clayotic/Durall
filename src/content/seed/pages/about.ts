@@ -35,7 +35,10 @@ export const ABOUT_SEED: AboutPage = {
         body: "Every connection is designed to last in real conditions.",
       },
     ],
-    photo: photo("aboutVilla", "A contemporary villa wrapped in full-height Durall glazing"),
+    photo: photo(
+      "aboutVilla",
+      "A high-rise living room opening through full-height sliding glass to the city beyond",
+    ),
   },
   meets: {
     heading: "Where architecture meets engineering.",
@@ -45,7 +48,7 @@ export const ABOUT_SEED: AboutPage = {
     ],
     photo: photo(
       "aboutLake",
-      "An infinity terrace framed by Durall sliding systems above the water",
+      "A curved glass corridor under a timber ceiling, planted along one side",
     ),
   },
   approach: {

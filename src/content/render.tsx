@@ -31,6 +31,12 @@ export function imageOf(ref: ImageRef | null | undefined): ImageAsset {
   };
 }
 
+/** Drawings, which a frame shows whole on white rather than cropped to fill it like a photograph. */
+const DRAWINGS: ReadonlySet<string> = new Set<ImageKey>(["stageDesign", "stageFabricate"]);
+
+export const isDrawing = (ref: ImageRef | null | undefined): boolean =>
+  ref?.kind === "asset" && DRAWINGS.has(ref.key);
+
 /** Whether a reference points at a real image, so a card can show its own placeholder instead. */
 export function hasImage(ref: ImageRef | null | undefined): boolean {
   const image = imageOf(ref);

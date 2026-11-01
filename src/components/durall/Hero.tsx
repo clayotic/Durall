@@ -174,7 +174,13 @@ function useHeroFilm(sectionRef: React.RefObject<HTMLElement | null>) {
       const small = window.matchMedia("(max-width: 47.999rem)").matches;
       for (const step of small ? [8, 4, 2] : [8, 4, 2, 1])
         for (let n = step; n <= count; n += step) if (!order.includes(n)) order.push(n);
-      for (const n of order) {
+      // A few at a time. Asked for all at once, the 72 frames held the
+      // connection for seconds and the photographs further down the page,
+      // on screen by then, waited behind them.
+      let next = 0;
+      const pull = () => {
+        const n = order[next++];
+        if (n === undefined || disposed) return;
         const image = new Image();
         image.fetchPriority = "low";
         image.onload = () => {
@@ -182,9 +188,12 @@ function useHeroFilm(sectionRef: React.RefObject<HTMLElement | null>) {
           frames[n] = image;
           drawn = -1;
           wake();
+          pull();
         };
+        image.onerror = pull;
         image.src = FRAMES[n - 1] ?? "";
-      }
+      };
+      for (let i = 0; i < 3; i++) pull();
     };
 
     let loaded = document.readyState === "complete";

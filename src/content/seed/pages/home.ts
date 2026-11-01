@@ -28,7 +28,7 @@ export const HOME_SEED: HomePage = {
     link: { label: "How we work", href: "/expertise" },
     photo: photo(
       "philosophyPavilion",
-      "Dining pavilion framed by full-height Durall sliding systems",
+      "A reading room opening through full-height glazing onto a stone veranda and lawn",
     ),
   },
   projects: {

@@ -136,9 +136,18 @@ export function ProjectHero({
       if (on) void el.play().catch(() => {});
       else el.pause();
     };
-    check();
-    window.addEventListener("scroll", check, { passive: true });
-    return () => window.removeEventListener("scroll", check);
+    // Not before the page has loaded: the film streams megabytes, and the
+    // photograph and the rest of the first screen should not wait behind it.
+    const start = () => {
+      check();
+      window.addEventListener("scroll", check, { passive: true });
+    };
+    if (document.readyState === "complete") start();
+    else window.addEventListener("load", start, { once: true });
+    return () => {
+      window.removeEventListener("load", start);
+      window.removeEventListener("scroll", check);
+    };
   }, [wanted]);
 
   const toggleFilm = () => {

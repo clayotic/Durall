@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useSectionIntro } from "@/lib/anim";
-import { destination, imageOf, TwoToneText } from "@/content/render";
+import { destination, imageOf, isDrawing, TwoToneText } from "@/content/render";
 import { useSite } from "@/content/site";
 import { useReducedMotion } from "@/lib/motion-prefs";
 import { ramp, sceneScrollY, smooth, useSceneProgress } from "@/lib/scene";
@@ -93,6 +93,7 @@ export function Process() {
     body: stage.body,
     caption: stage.caption,
     image: imageOf(stage.photo.image),
+    whole: isDrawing(stage.photo.image),
     alt: stage.photo.alt,
   }));
   const LAST = STAGES.length - 1;
@@ -518,11 +519,20 @@ export function Process() {
                   {...s.image}
                   alt={i === active ? s.alt : ""}
                   aria-hidden={i === active ? undefined : true}
-                  sizes="(min-width: 64rem) 50vw, 100vw"
+                  // From `lg` the frame is half the width but the full
+                  // height, so a landscape photograph is cropped to it and
+                  // drawn at the screen's height times its own shape (and
+                  // the 1.06 overscan), wider than 50vw.
+                  // A drawing is shown whole, so it is never wider than the frame.
+                  sizes={
+                    s.whole
+                      ? "(min-width: 64rem) 50vw, 100vw"
+                      : `(min-width: 64rem) max(50vw, ${Math.ceil((106 * s.image.width) / s.image.height)}vh), 100vw`
+                  }
                   loading={near ? "eager" : "lazy"}
                   decoding="async"
                   // A little overscan from `lg`, which the drift moves within.
-                  className={`h-full w-full origin-center object-cover lg:scale-[1.06] ${near ? "lg:will-change-transform" : ""}`}
+                  className={`h-full w-full origin-center lg:scale-[1.06] ${s.whole ? "bg-white object-contain" : "object-cover"} ${near ? "lg:will-change-transform" : ""}`}
                 />
                 <div
                   data-stage-shade

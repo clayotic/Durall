@@ -12,6 +12,8 @@ export type ProcessStageView = {
   body: string;
   caption: string | undefined;
   image: ReturnType<typeof imageOf>;
+  /** A drawing, shown whole rather than cropped. */
+  whole: boolean;
   alt: string;
 };
 
@@ -285,7 +287,7 @@ export function ProcessMobile({
                   sizes="100vw"
                   loading="lazy"
                   decoding="async"
-                  className="h-full w-full object-cover will-change-transform"
+                  className={`h-full w-full will-change-transform ${item.whole ? "bg-white object-contain" : "object-cover"}`}
                 />
               </div>
             ))}
