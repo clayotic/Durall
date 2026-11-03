@@ -185,6 +185,10 @@ const MOVED: Record<string, string> = {
  * Where a page request should go instead, if anywhere.
  *
  * - An address of the old site: its replacement.
+ * - A page of the admin panel on the domain: the same page at the site's own
+ *   netlify.app address, which Netlify serves directly. The domain reaches
+ *   Netlify through the old host's server (November 2026), and sign-ins
+ *   should not pass through it.
  * - The site's own netlify.app address, once the site has a domain of its
  *   own (Netlify's URL then names that domain): the same page there, so the
  *   site is not in search results under two names. Deploy previews, whose
@@ -195,14 +199,20 @@ function movedTo(request: Request): string | null {
   const url = new URL(request.url);
   const moved = MOVED[url.pathname];
   if (moved) return new URL(moved + url.search, url).toString();
+  // Pages only: the panel's own requests must not be bounced across sites.
+  const page = (request.headers.get("accept") ?? "").includes("text/html");
+  if (url.pathname === "/admin" || url.pathname.startsWith("/admin/")) {
+    const site = process.env["SITE_NAME"];
+    return page && site && !url.hostname.endsWith(".netlify.app")
+      ? `https://${site}.netlify.app${url.pathname}${url.search}`
+      : null;
+  }
   const primary = process.env["URL"];
   if (!primary || !/^[^.]+\.netlify\.app$/.test(url.hostname) || url.hostname.includes("--")) {
     return null;
   }
   try {
     const home = new URL(primary);
-    // Pages only: the panel's own requests must not be bounced across sites.
-    const page = (request.headers.get("accept") ?? "").includes("text/html");
     return page && !home.hostname.endsWith(".netlify.app")
       ? home.origin + url.pathname + url.search
       : null;

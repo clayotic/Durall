@@ -47,6 +47,21 @@ for (const path of ["/", "/contact", "/projects", "/admin/login", "/no-such-page
   console.log(`ok  ${path}  (${response.status}, ${count} scripts named)`);
 }
 
+// On the domain, a page of the admin panel moves to the site's netlify.app
+// address, so sign-ins do not pass through the server in front of the domain.
+if (!local && !new URL(base).hostname.endsWith(".netlify.app")) {
+  const panel = await fetch(`${base}/admin/login`, {
+    redirect: "manual",
+    headers: { accept: "text/html" },
+  });
+  assert.match(
+    panel.headers.get("location") ?? "",
+    /^https:\/\/[a-z0-9-]+\.netlify\.app\/admin\/login$/,
+    "the admin panel is served on the domain",
+  );
+  console.log("ok  the admin panel moves to the netlify.app address");
+}
+
 // A request from another site to one of the server's functions is refused
 // before the function is looked up, so any id will do.
 const crossSite = await fetch(`${base}/_serverFn/${"0".repeat(64)}`, {

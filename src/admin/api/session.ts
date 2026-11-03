@@ -83,9 +83,13 @@ export const signOut = createServerFn({ method: "POST" }).handler(async () => {
   return { ok: true };
 });
 
-/** Where invite and reset emails send people: the site's own address, never
- * one read from the request that asked for the email. */
-export const setPasswordUrl = () => `${siteOrigin()}/admin/set-password`;
+/** Where invite and reset emails send people: the panel's own address (the
+ * site's netlify.app one, see `movedTo` in src/server.ts), never one read from
+ * the request that asked for the email. */
+export const setPasswordUrl = () => {
+  const site = process.env["SITE_NAME"];
+  return `${site ? `https://${site}.netlify.app` : siteOrigin()}/admin/set-password`;
+};
 
 export const requestPasswordReset = createServerFn({ method: "POST" })
   .inputValidator(input(z.object({ email: z.string().trim().toLowerCase().email() })))
