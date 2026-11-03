@@ -2,9 +2,6 @@ import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { isIntroPending, releaseIntro } from "@/lib/intro";
 import { lockScroll, unlockScroll } from "@/lib/scroll-lock";
 
-const WORDMARK = "DURALL SYSTEMS";
-const MIDDLE = (WORDMARK.length - 1) / 2;
-
 /* The mark at the head of the Durall Systems logo, 234 by 106: the D, and
  * the S that leans on it. Traced from the logo itself, so it is the same
  * mark, only in two pieces that can move. Each leaf is drawn in its own
@@ -16,6 +13,107 @@ const LEAVES = [
   { id: "d", shape: D, viewBox: "0 0 121 106", side: "left-0" },
   { id: "s", shape: S, viewBox: "121 0 113 106", side: "right-0" },
 ] as const;
+/* The name as the logo sets it: DURALL, with SYSTEMS under its last three
+ * letters, each letter traced from the logo in the logo's own units (the
+ * mark above is its first 234 of them). The name starts at 286 and runs to
+ * the logo's edge at 1200; DURALL is the first six letters. */
+const NAME: readonly (readonly [x: number, y: number, w: number, h: number, d: string])[] = [
+  [
+    286,
+    0,
+    146,
+    106,
+    "M286 0.5L286 106L411.5 106L432 90.5L432 16.5L412.5 0.5ZM312 21.5L401.5 21.5L405.5 25.5L405.5 81.5L400.5 85L312.5 85L312 84.5Z",
+  ],
+  [
+    450,
+    0,
+    134,
+    106,
+    "M450.5 0.5L450.5 89.5L451 90.5L469.5 105.5L471.5 106L563 106L583.5 90L583.5 0L558.5 0L557 0.5L557 81L552 85L482 85L479 83L477 80.5L477 0.5L475.5 0L451.5 0Z",
+  ],
+  [
+    602,
+    0,
+    155,
+    106,
+    "M602 0.5L602 106L627.5 106L628 105.5L628 76.5L630 75.5L685.5 75.5L719.5 106L755.5 106L723 76.5L723.5 75.5L735.5 75.5L737 75L753 62.5L757 58.5L757 16.5L737 0.5L735.5 0L602.5 0ZM628.5 22.5L629.5 21.5L725 21.5L729 24L730 25.5L730 50L726.5 54L724 54L629.5 54L628.5 53.5Z",
+  ],
+  [
+    775,
+    0,
+    155,
+    106,
+    "M775 0.5L775 105.5L775 106L801 106L801 76.5L802 75.5L803 75.5L902.5 75.5L903 76.5L903 106L929.5 106L929.5 16.5L910 0.5L908.5 0L775.5 0ZM801 22.5L802 21.5L898 21.5L902 24L903 25.5L903 53L902.5 54L901.5 54L802 54L801 53Z",
+  ],
+  [
+    948,
+    0,
+    120,
+    106,
+    "M948 0L948 89.5L948.5 91L968.5 106L1068 106L1068 86L1067.5 85L979.5 85L975 82L974.5 81L974.5 0.5L973.5 0Z",
+  ],
+  [
+    1086,
+    0,
+    114,
+    106,
+    "M1086 0.5L1086 89.5L1087 91L1107 106L1199.5 106L1199.5 85L1118 85L1113 81L1113 0.5L1111.5 0L1087.5 0Z",
+  ],
+  [
+    775,
+    142,
+    52,
+    38,
+    "M775 142.5L775 158.5L781.5 165L816.5 165L818 166.5L818 170.5L815.5 172.5L786 172.5L783.5 169L775.5 169L775 170.5L775 174.5L781.5 180L819.5 180L827 174.5L827 163L820 157L786.5 157L785 156.5L784 155.5L784 150.5L784.5 149.5L815.5 149.5L818.5 152.5L826.5 152.5L827 151.5L827 148L821 142.5L819.5 142L775.5 142Z",
+  ],
+  [
+    834,
+    142,
+    47,
+    38,
+    "M881 142.5L880.5 142L872 142L872 159.5L870.5 161.5L845.5 161.5L843.5 159.5L843.5 142L835 142L834 143.5L834 163L841.5 169L853 169L853.5 170.5L853.5 180L863 180L863 169L874 169L881 163.5Z",
+  ],
+  [
+    888,
+    142,
+    53,
+    38,
+    "M888 142.5L888 158.5L895 164.5L928.5 164.5L930 165L931 166.5L931 170.5L930 172L928.5 172.5L900.5 172L898.5 172L896.5 169L888.5 169L888 170.5L888 174L894.5 180L933 180L940.5 174.5L940.5 163.5L933.5 157L900 157L897.5 155L897.5 150.5L898.5 149.5L929 149.5L931 150.5L932 152.5L940.5 152.5L940.5 147.5L933.5 142L889 142Z",
+  ],
+  [
+    947,
+    142,
+    57,
+    38,
+    "M947.5 143L947.5 148.5L948.5 149.5L969 149.5L970 150L970 179.5L971 180L979.5 180L980 179.5L980 150.5L980.5 149.5L1002.5 149.5L1003.5 148L1003.5 143L1002.5 142L948.5 142Z",
+  ],
+  [
+    1010,
+    142,
+    48,
+    38,
+    "M1010 142.5L1010 176.5L1015 180L1053.5 180L1058 176.5L1058 173.5L1057.5 172.5L1020.5 172.5L1019.5 171.5L1019.5 165.5L1020.5 164.5L1058 164.5L1058 158.5L1057.5 157L1020.5 157L1019.5 156.5L1019.5 150.5L1020.5 149.5L1057.5 149.5L1058 148L1058 143L1057.5 142L1011 142Z",
+  ],
+  [
+    1064,
+    142,
+    83,
+    38,
+    "M1064.5 142.5L1064.5 179.5L1065 180L1073.5 180L1074 179.5L1074 150.5L1075 149.5L1099 149.5L1101 151L1101 179.5L1102 179.5L1110.5 179.5L1110.5 151.5L1112 149.5L1136.5 149.5L1138 152L1138 179.5L1138.5 180L1146.5 180L1147 179.5L1147 148L1146.5 147L1140 142L1109 142L1106.5 143.5L1103 142L1065.5 142Z",
+  ],
+  [
+    1154,
+    142,
+    46,
+    38,
+    "M1154 142.5L1154 158.5L1160.5 164.5L1162 165L1194.5 165L1196 165L1197 166.5L1197 170.5L1196 172L1194.5 172.5L1166.5 172L1164.5 172L1162.5 169L1154.5 169L1154 170.5L1154 175L1161.5 180L1199 180L1200 179.5L1200 158.5L1199.5 157L1165.5 157L1163.5 155.5L1163.5 150.5L1164.5 149.5L1195 149.5L1197 150.5L1197.5 152.5L1199.5 152.5L1199.5 151.5L1199.5 142L1154.5 142Z",
+  ],
+];
+const NAME_X = 286;
+const NAME_W = 914;
+const NAME_H = 180;
+
 /* The setting-out lines: the mark's two sides and the line its halves
  * share, as shares of its width. */
 const UPRIGHTS = [0, 121 / 234, 1] as const;
@@ -264,15 +362,31 @@ export function SiteIntro() {
           ))}
         </div>
 
-        {/* The left padding answers the tracking after the last letter, so
-            the word sits on the mark's centre. */}
-        <p className="intro-name mt-[clamp(1.5rem,2.6vw,2.25rem)] flex pl-[0.3125rem] font-display text-[clamp(1rem,1.7vw,1.375rem)] font-bold tracking-[0.3125rem] uppercase">
-          {Array.from(WORDMARK).map((char, i) => (
-            <span key={i} className="intro-char" style={{ "--n": i - MIDDLE } as CSSProperties}>
-              {char === " " ? " " : char}
-            </span>
-          ))}
-        </p>
+        {/* The font size sets how far apart the letters start (`intro-char`). */}
+        <div className="intro-name relative mt-[clamp(1.5rem,2.6vw,2.25rem)] aspect-[914/180] h-[clamp(2.35rem,4.15vw,3.85rem)] text-[clamp(1rem,1.7vw,1.375rem)]">
+          {NAME.map(([x, y, w, h, d], i) => {
+            // Each word gathers on its own middle; SYSTEMS a beat after DURALL.
+            const word = i < 6 ? { n: i - 2.5, lag: 0 } : { n: i - 9, lag: 140 };
+            const style = {
+              left: `${((x - NAME_X) / NAME_W) * 100}%`,
+              top: `${(y / NAME_H) * 100}%`,
+              width: `${(w / NAME_W) * 100}%`,
+              height: `${(h / NAME_H) * 100}%`,
+              "--n": word.n,
+              "--lag": `${word.lag}ms`,
+            } as CSSProperties;
+            return (
+              <svg
+                key={i}
+                viewBox={`${x} ${y} ${w} ${h}`}
+                className="intro-char absolute"
+                style={style}
+              >
+                <path d={d} fill="currentColor" fillRule="evenodd" />
+              </svg>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

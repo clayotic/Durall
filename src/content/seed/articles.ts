@@ -158,14 +158,6 @@ export const ARTICLES_SEED: ArticleDoc[] = [
         ],
       },
       {
-        type: "image",
-        photo: photo(
-          "insightsScreenCarried",
-          "A finished screen moved across the hall by the factory team",
-        ),
-        caption: "A finished screen moved across the hall by the factory team",
-      },
-      {
         type: "paragraph",
         text: "No single department creates the final result. It is the coordination between people, processes and precision that turns an architectural requirement into a working glazing system.",
       },
@@ -428,11 +420,6 @@ export const ARTICLES_SEED: ArticleDoc[] = [
         text: "And the factory can begin its work with a clear understanding of what needs to be made.",
       },
       {
-        type: "image",
-        photo: photo("insightsProfileStock", "Profile stock beside the assembly tables"),
-        caption: "Profile stock beside the assembly tables",
-      },
-      {
         type: "closing",
         text: "In premium glazing, production doesn’t really begin when the machines start running. It begins with knowing exactly what needs to go into the system.",
       },
@@ -558,14 +545,6 @@ export const ARTICLES_SEED: ArticleDoc[] = [
       {
         type: "paragraph",
         text: "Inspection is an important part of the process, helping verify that the completed systems meet the required specifications before they leave the factory. Once the systems have been inspected, they are packed and prepared for the next stage of the project.",
-      },
-      {
-        type: "image",
-        photo: photo(
-          "insightsGlassStaged",
-          "Inspected glass units staged outside the hall, ready for the next stage",
-        ),
-        caption: "Inspected glass units staged outside the hall, ready for the next stage",
       },
       { type: "heading", text: "From drawing to reality" },
       {

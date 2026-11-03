@@ -49,7 +49,6 @@ export const SETTINGS_SEED: SiteSettings = {
       { label: "Home", fullLabel: "", href: "/", visible: true },
       { label: "About Us", fullLabel: "", href: "/about", visible: true },
       { label: "Projects", fullLabel: "", href: "/projects", visible: true },
-      { label: "Expertise", fullLabel: "", href: "/expertise", visible: true },
       {
         label: "Partners",
         fullLabel: "Partners / International Systems",
@@ -69,7 +68,6 @@ export const SETTINGS_SEED: SiteSettings = {
         title: "Explore",
         links: [
           { label: "Projects", href: "/projects" },
-          { label: "Expertise", href: "/expertise" },
           { label: "Partners", href: "/partners" },
           { label: "About", href: "/about" },
           { label: "Insights", href: "/insights" },

@@ -57,7 +57,12 @@ function Cover({
         sizes={sizes}
         loading="lazy"
         decoding="async"
-        style={drawing ? undefined : { objectPosition: part.series.focus }}
+        // A drawing sits on the blueprint, so it takes no colour behind it.
+        style={
+          drawing
+            ? undefined
+            : { ...imageOf(part.cover.image).style, objectPosition: part.series.focus }
+        }
         className={`${drawing ? "h-auto w-[92%]" : "h-full w-full object-cover"} ${className}`}
       />
     </span>

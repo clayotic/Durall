@@ -3,8 +3,8 @@ import { imageOf, Lines } from "@/content/render";
 import type { PhotoHero as Content } from "@/content/types";
 
 /**
- * The full-width photographic opening of About, Partners, Projects,
- * Expertise and Careers: the photograph, the heading and a short
+ * The full-width photographic opening of About, Partners, Projects
+ * and Careers: the photograph, the heading and a short
  * introduction set low on the left, under the clear header.
  *
  * Measured from the designs at 1920 × 964, where the heading is Space
@@ -14,7 +14,7 @@ import type { PhotoHero as Content } from "@/content/types";
  * shade from the left or into the lower corners.
  */
 export type Wash = {
-  /** The two soft darkenings into the lower corners (Partners, Projects, Expertise). */
+  /** The two soft darkenings into the lower corners (Partners, Projects, Careers). */
   corners?: boolean;
   /** Strength of the navy shade from the left edge, 0–1. */
   left?: number;
@@ -61,7 +61,7 @@ export function PhotoHero({
           fetchPriority="high"
           decoding="async"
           className="h-full w-full object-cover"
-          style={focus ? { objectPosition: focus } : undefined}
+          style={{ ...imageOf(content.photo.image).style, objectPosition: focus }}
         />
       </div>
       <div aria-hidden="true" className="absolute inset-0">

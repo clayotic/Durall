@@ -1,6 +1,6 @@
-/* Shared measures for the Expertise page's sections, from its design at
- * 1920px wide: content from 258px to 1663px, section labels in Space
- * Grotesk Medium at 13px, headings in Space Grotesk at 72px. */
+/* Measures for the Careers page's sections, first drawn for the old
+ * Expertise page at 1920px wide: content from 258px to 1663px, section
+ * labels in Space Grotesk Medium at 13px, headings in Space Grotesk at 72px. */
 
 /** 258px either side at 1920, the standard gutter on small screens. */
 export const SHELL =

@@ -8,7 +8,6 @@ import { SETTINGS_SEED } from "./site";
 import { ABOUT_SEED } from "./pages/about";
 import { CAREERS_SEED } from "./pages/careers";
 import { CONTACT_SEED } from "./pages/contact";
-import { EXPERTISE_SEED } from "./pages/expertise";
 import { HOME_SEED } from "./pages/home";
 import { INSIGHTS_SEED } from "./pages/insights";
 import { PARTNERS_PAGE_SEED } from "./pages/partners";
@@ -26,7 +25,6 @@ export const SEED = {
     home: HOME_SEED,
     about: ABOUT_SEED,
     partners: PARTNERS_PAGE_SEED,
-    expertise: EXPERTISE_SEED,
     careers: CAREERS_SEED,
     insights: INSIGHTS_SEED,
     contact: CONTACT_SEED,

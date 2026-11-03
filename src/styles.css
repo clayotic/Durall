@@ -794,13 +794,14 @@ html.intro-bailout .site-intro {
 }
 
 /* The name gathers in from wide spacing, the middle letters first. `--n` is
- * each letter's place counted from the middle of the word. */
+ * each letter's place counted from the middle of its word, `--lag` holds
+ * back the second word. */
 .intro-char {
   display: inline-block;
   opacity: 0;
   translate: calc(var(--n) * 0.5em) 0;
   animation: intro-gather 640ms var(--ease-entrance) forwards;
-  animation-delay: calc(780ms + max(var(--n), -1 * var(--n)) * 24ms);
+  animation-delay: calc(780ms + var(--lag, 0ms) + max(var(--n), -1 * var(--n)) * 24ms);
 }
 
 /* Leaving. The solid wall is swapped for the same wall with the mark cut

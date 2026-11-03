@@ -1,6 +1,7 @@
 import { Fragment, type ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import { IMAGES, type ImageAsset } from "@/assets/images";
+import { TONES } from "@/assets/tones";
 import type { ImageRef, Photo, TwoTone } from "./types";
 
 /* Renderers for the text conventions in ./types.ts. Each one produces the
@@ -19,10 +20,25 @@ function isImageKey(key: string): key is ImageKey {
   return Object.prototype.hasOwnProperty.call(IMAGES, key);
 }
 
-/** The `<img>` attributes for an image reference: spread it and add alt/sizes. */
-export function imageOf(ref: ImageRef | null | undefined): ImageAsset {
+/**
+ * The `<img>` attributes for an image reference: spread it and add alt/sizes.
+ * A photograph also brings its own colours as a background, so its frame is
+ * never an empty box while the picture is still on its way; a component that
+ * sets a style of its own merges this one in.
+ */
+export function imageOf(
+  ref: ImageRef | null | undefined,
+): ImageAsset & { style?: { backgroundImage: string } } {
   if (!ref) return MISSING;
-  if (ref.kind === "asset") return isImageKey(ref.key) ? IMAGES[ref.key] : MISSING;
+  if (ref.kind === "asset") {
+    if (!isImageKey(ref.key)) return MISSING;
+    const tone = DRAWINGS.has(ref.key) ? undefined : TONES[ref.key];
+    if (!tone) return IMAGES[ref.key];
+    return {
+      ...IMAGES[ref.key],
+      style: { backgroundImage: `linear-gradient(#${tone.replaceAll(" ", ",#")})` },
+    };
+  }
   return {
     src: ref.src,
     width: ref.width,
@@ -32,7 +48,11 @@ export function imageOf(ref: ImageRef | null | undefined): ImageAsset {
 }
 
 /** Drawings, which a frame shows whole on white rather than cropped to fill it like a photograph. */
-const DRAWINGS: ReadonlySet<string> = new Set<ImageKey>(["stageDesign", "stageFabricate"]);
+const DRAWINGS: ReadonlySet<string> = new Set<ImageKey>([
+  "stageDesign",
+  "stageFabricate",
+  "aboutLineHouse",
+]);
 
 export const isDrawing = (ref: ImageRef | null | undefined): boolean =>
   ref?.kind === "asset" && DRAWINGS.has(ref.key);

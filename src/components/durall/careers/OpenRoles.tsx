@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { useReveal, useSectionIntro } from "@/lib/anim";
 import { topicKey } from "@/content/select";
 import type { CareersPage, RoleDoc } from "@/content/types";
-import { EYEBROW, HEADING, PAPER, SHELL } from "../expertise/styles";
+import { EYEBROW, HEADING, PAPER, SHELL } from "./styles";
 import { ArrowRight, BUTTON } from "../ui";
 
 const FOCUS =

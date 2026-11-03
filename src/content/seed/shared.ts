@@ -3,7 +3,7 @@ import type { SharedContent } from "../types";
 
 /** Sections that appear on more than one page: edited once, shown everywhere. */
 export const SHARED_SEED: SharedContent = {
-  // Home and Expertise.
+  // Home.
   process: {
     heading: { text: "Concept to commissioning,", muted: "under one roof." },
     lede: "One team carries every opening from the first site visit to handover — so nothing is lost between drawing and building.",
@@ -56,7 +56,7 @@ export const SHARED_SEED: SharedContent = {
     ],
     link: { label: "Explore our approach", href: "/about#approach" },
   },
-  // Home, About, Partners and Expertise: "Let's frame the view."
+  // Home, About and Partners: "Let's frame the view."
   enquiryBand: {
     heading: "Let’s frame the view.",
     lede: "Tell us about the project — we’ll take it from there.",

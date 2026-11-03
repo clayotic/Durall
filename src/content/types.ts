@@ -138,7 +138,7 @@ export type SharedContent = {
     link: Cta;
   };
   /** "Let's frame the view.": the navy enquiry band with the project
-   * slideshow, at the foot of Home, About, Partners and Expertise. */
+   * slideshow, at the foot of Home, About and Partners. */
   enquiryBand: {
     heading: string;
     lede: string;
@@ -358,7 +358,7 @@ export type HomePage = {
 };
 
 /** The full-width photographic opening (About, Partners, Projects,
- * Expertise). Newlines in the heading are forced line breaks. */
+ * Careers). Newlines in the heading are forced line breaks. */
 export type PhotoHero = {
   photo: Photo;
   heading: string;
@@ -404,56 +404,6 @@ export type PartnersPage = {
 
 /** The plain white opening band (PageIntro). */
 export type Intro = { title: string; lede: string };
-
-/** A project named under one kind of work on the Expertise page. */
-export type TrustedProject = {
-  name: string;
-  /** Under the name in the list: "Ahmedabad". */
-  place: string;
-  /** Over the photograph: "SPASM Design Architects · Ahmedabad". */
-  credit: string;
-  /** The large photograph; an empty frame is drawn until there is one. */
-  photo: Photo | null;
-  /** A different picture for the small one in the list; the large one when null. */
-  thumb: Photo | null;
-  /** The project's own page; "View project" is hidden while this is empty. */
-  href: string;
-};
-
-export type ExpertisePage = {
-  seo: Seo;
-  opening: PhotoHero;
-  /** "The world's finest systems…": the statement under the hero. */
-  intro: { eyebrow: string; heading: string; body: string; link: Cta };
-  /** "Concept to commissioning": the stages side by side, each with a picture. */
-  process: {
-    heading: string;
-    lede: string;
-    stages: { title: string; summary: string; body: string; photo: Photo }[];
-    footLeft: string;
-    footRight: string;
-  };
-  /** The navy section: kinds of work, and the projects each was delivered on. */
-  trusted: {
-    eyebrow: string;
-    heading: string;
-    body: string;
-    /** Before the number of projects: "Seen at". */
-    seenAt: string;
-    viewProject: string;
-    kinds: { title: string; body: string; projects: TrustedProject[] }[];
-  };
-  /** "Decided on paper": the steps beside the sill drawing. */
-  detail: {
-    eyebrow: string;
-    heading: string;
-    body: string;
-    steps: { title: string; body: string }[];
-    /** The photograph the drawing is laid over. */
-    photo: Photo;
-  };
-  cta: CtaBand;
-};
 
 export type CareersPage = {
   seo: Seo;
@@ -551,7 +501,6 @@ export type PageMap = {
   home: HomePage;
   about: AboutPage;
   partners: PartnersPage;
-  expertise: ExpertisePage;
   careers: CareersPage;
   insights: InsightsPage;
   contact: ContactPage;

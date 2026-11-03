@@ -6,8 +6,8 @@ import type { CtaBand } from "@/content/types";
 import { ArrowRight, BUTTON } from "./ui";
 
 /**
- * The navy closing plate. Extracted from ProjectsCta so /expertise,
- * /insights and /careers close the same way the rest of the site does.
+ * The navy closing plate. Extracted from ProjectsCta so /insights
+ * and /careers close the same way the rest of the site does.
  *
  * The action used to be a `motion.a href="/contact"` on a spring: a plain
  * anchor across routes forces a full document reload, and the spring was one

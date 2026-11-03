@@ -363,9 +363,6 @@ const SITE_LINKS = [
   "/about#philosophy",
   "/about#approach",
   "/projects",
-  "/expertise",
-  "/expertise#systems",
-  "/expertise#process",
   "/partners",
   "/partners#practices",
   "/insights",
@@ -373,6 +370,7 @@ const SITE_LINKS = [
   "/careers#openings",
   "/contact",
   "#philosophy",
+  "#process",
   "#contact",
 ];
 

@@ -5,7 +5,6 @@ export const PAGES = [
   { key: "home", label: "Home", path: "/" },
   { key: "about", label: "About", path: "/about" },
   { key: "projects", label: "Projects", path: "/projects" },
-  { key: "expertise", label: "Expertise", path: "/expertise" },
   { key: "partners", label: "Partners", path: "/partners" },
   { key: "insights", label: "Insights", path: "/insights" },
   { key: "careers", label: "Careers", path: "/careers" },

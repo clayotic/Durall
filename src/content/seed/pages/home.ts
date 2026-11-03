@@ -25,7 +25,7 @@ export const HOME_SEED: HomePage = {
       "Durall works alongside architects and developers long before a building becomes visible — coordinating design intent, engineering tolerance, and material performance into a single, precise envelope.",
       "Every threshold a building presents to the world — its windows, its skylights, its screens — is a system we design, engineer, fabricate and install as one continuous discipline.",
     ],
-    link: { label: "How we work", href: "/expertise" },
+    link: { label: "How we work", href: "#process" },
     photo: photo(
       "philosophyPavilion",
       "A reading room opening through full-height glazing onto a stone veranda and lawn",

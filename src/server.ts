@@ -177,6 +177,8 @@ const MOVED: Record<string, string> = {
   "/index.html": "/",
   "/index-2.html": "/",
   "/contact_full.html": "/contact",
+  // The Expertise page was removed in November 2026; its five stages are on the home page.
+  "/expertise": "/#process",
 };
 
 /**

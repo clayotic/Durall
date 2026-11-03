@@ -21,7 +21,7 @@ import { ArrowRight, BUTTON, SocialMark } from "./ui";
 /* Pages that open on a dark full-width photograph. The server cannot see
  * what is under the bar, so this is its first guess at the ink; once the
  * page is running the bar reads it from the page itself (see `onDark`). */
-const PHOTO_TOP = /^\/(about|partners|projects|expertise|careers)?$|^\/projects\/[^/]+$/;
+const PHOTO_TOP = /^\/(about|partners|projects|careers)?$|^\/projects\/[^/]+$/;
 
 /** Whether the nearest painted background behind `el` is a dark one. */
 function onDark(el: Element | null | undefined): boolean {

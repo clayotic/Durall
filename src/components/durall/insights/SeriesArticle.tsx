@@ -166,6 +166,8 @@ function PartTile({ part, next }: { part: SeriesPart; next: boolean }) {
           sizes="(min-width: 64rem) 45vw, 100vw"
           loading="lazy"
           decoding="async"
+          // A drawing sits on the blueprint, so it takes no colour behind it.
+          style={part.opening === "drawing" ? undefined : image.style}
           className={`transition-transform duration-[1200ms] ease-out group-hover:scale-105 motion-reduce:transition-none ${
             part.opening === "drawing" ? "h-auto w-[88%]" : "h-full w-full object-cover"
           }`}
@@ -290,7 +292,7 @@ export function SeriesArticle({
       sizes={drawing ? "90vw" : "(min-width: 64rem) 45vw, 100vw"}
       fetchPriority="high"
       decoding="async"
-      style={drawing ? undefined : { objectPosition: series.focus }}
+      style={drawing ? undefined : { ...cover.style, objectPosition: series.focus }}
       className={drawing ? "h-auto w-[92%] max-w-[71.25rem]" : "h-full w-full object-cover"}
     />
   );

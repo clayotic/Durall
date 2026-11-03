@@ -32,7 +32,7 @@ const SEO: SectionSpec = {
   fields: [seo()],
 };
 
-/** The full-width photographic opening (About, Partners, Projects, Expertise). */
+/** The full-width photographic opening (About, Partners, Projects). */
 const photoHero = (description: string): SectionSpec => ({
   id: "opening",
   title: "Opening (Hero)",
@@ -164,142 +164,6 @@ export const PAGE_FORMS: Record<PageKey, SectionSpec[]> = {
         group("", "Closing band", ctaBand("detail.cta")),
       ],
     },
-    SEO,
-  ],
-
-  expertise: [
-    photoHero("The full-width photograph and heading at the top of the Expertise page."),
-    {
-      id: "intro",
-      title: "Our Expertise",
-      description: "The statement under the opening photograph, with its text and link.",
-      fields: [
-        text("intro.eyebrow", "Small heading"),
-        area("intro.heading", "Statement", { rows: 2 }),
-        area("intro.body", "Text", { rows: 4 }),
-        cta("intro.link", "Link", { optional: true }),
-      ],
-    },
-    {
-      id: "process",
-      title: "How We Work",
-      description: "The stages side by side, each with a tall picture.",
-      fields: [
-        lines("process.heading", "Heading"),
-        area("process.lede", "Text", { rows: 3 }),
-        list<{ title: string }>(
-          "process.stages",
-          "Stages",
-          [
-            text("title", "Name"),
-            text("summary", "Line under the name"),
-            area("body", "Text", { rows: 3 }),
-            photo("photo", "Picture", {
-              hint: "Shown tall and narrow (about 2 wide to 3 high), so choose or crop one that suits.",
-            }),
-          ],
-          (item, index) => `${String(index + 1).padStart(2, "0")} ${item.title}`,
-          {
-            create: () => ({
-              title: "",
-              summary: "",
-              body: "",
-              photo: { image: { kind: "asset", key: "expStageDiscover" }, alt: "" },
-            }),
-            max: 6,
-          },
-        ),
-        text("process.footLeft", "Under the stages, left"),
-        text("process.footRight", "Under the stages, right"),
-      ],
-    },
-    {
-      id: "trusted",
-      title: "What We’re Trusted With",
-      description:
-        "The navy section: kinds of work that open one at a time, each with the projects it was delivered on.",
-      fields: [
-        text("trusted.eyebrow", "Small heading"),
-        lines("trusted.heading", "Heading"),
-        area("trusted.body", "Text", { rows: 3 }),
-        text("trusted.seenAt", "Before the number of projects"),
-        text("trusted.viewProject", "Link on the photograph"),
-        list<{ title: string }>(
-          "trusted.kinds",
-          "Kinds of work",
-          [
-            text("title", "Name"),
-            area("body", "Text", { rows: 3 }),
-            list<{ name: string }>(
-              "projects",
-              "Projects",
-              [
-                text("name", "Project"),
-                text("place", "Place", { hint: "Under the name in the list." }),
-                text("credit", "Caption on the photograph", {
-                  hint: "Usually the architect and the place.",
-                }),
-                {
-                  kind: "optional",
-                  path: "photo",
-                  label: "Photograph",
-                  toggleLabel: "Has a photograph",
-                  hint: "Off: an empty frame holds the project’s place.",
-                  create: () => ({ image: { kind: "asset", key: "secretGardens" }, alt: "" }),
-                  fields: [photo("", "Photograph")],
-                },
-                {
-                  kind: "optional",
-                  path: "thumb",
-                  label: "Small picture",
-                  toggleLabel: "Own picture in the list",
-                  hint: "Off: the photograph is used.",
-                  create: () => ({ image: { kind: "asset", key: "secretGardens" }, alt: "" }),
-                  fields: [photo("", "Small picture")],
-                },
-                link("href", "Project page", {
-                  hint: "Leave empty to hide “View project”.",
-                }),
-              ],
-              (item) => item.name,
-              {
-                create: () => ({
-                  name: "",
-                  place: "",
-                  credit: "",
-                  photo: null,
-                  thumb: null,
-                  href: "",
-                }),
-                addLabel: "Add Project",
-                max: 8,
-              },
-            ),
-          ],
-          (item, index) => `${String(index + 1).padStart(2, "0")} ${item.title}`,
-          { create: () => ({ title: "", body: "", projects: [] }), max: 6 },
-        ),
-      ],
-    },
-    {
-      id: "detail",
-      title: "In the Detail",
-      description: "The steps beside the sill drawing. The drawing itself is part of the design.",
-      fields: [
-        text("detail.eyebrow", "Small heading"),
-        lines("detail.heading", "Heading"),
-        area("detail.body", "Text", { rows: 3 }),
-        list<{ title: string }>(
-          "detail.steps",
-          "Steps",
-          [text("title", "Title"), area("body", "Text", { rows: 2 })],
-          (item, index) => `${String(index + 1).padStart(2, "0")} ${item.title}`,
-          { create: () => ({ title: "", body: "" }), max: 5 },
-        ),
-        photo("detail.photo", "Photograph behind the drawing"),
-      ],
-    },
-    { id: "cta", title: "Closing Band", fields: ctaBand("cta") },
     SEO,
   ],
 
@@ -525,8 +389,7 @@ export const SHARED_FORM: SectionSpec[] = [
   {
     id: "process",
     title: "Process",
-    description:
-      "“Concept to commissioning” — the five stages, on the home page and the Expertise page.",
+    description: "“Concept to commissioning” — the five stages on the home page.",
     fields: [
       twoTone("process.heading"),
       area("process.lede", "Text", { rows: 2 }),
