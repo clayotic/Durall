@@ -189,10 +189,11 @@ const MOVED: Record<string, string> = {
  *   netlify.app address, which Netlify serves directly. The domain reaches
  *   Netlify through the old host's server (November 2026), and sign-ins
  *   should not pass through it.
- * - The site's own netlify.app address, once the site has a domain of its
- *   own (Netlify's URL then names that domain): the same page there, so the
- *   site is not in search results under two names. Deploy previews, whose
- *   names carry "--", are left alone.
+ *
+ * The netlify.app address itself serves the site as it is, not sent on to
+ * the domain (the owner asked for that in November 2026): every page's
+ * canonical link names the domain (siteOrigin in content/head.ts), so search
+ * engines still list it once.
  */
 function movedTo(request: Request): string | null {
   if (request.method !== "GET" && request.method !== "HEAD") return null;
@@ -207,18 +208,7 @@ function movedTo(request: Request): string | null {
       ? `https://${site}.netlify.app${url.pathname}${url.search}`
       : null;
   }
-  const primary = process.env["URL"];
-  if (!primary || !/^[^.]+\.netlify\.app$/.test(url.hostname) || url.hostname.includes("--")) {
-    return null;
-  }
-  try {
-    const home = new URL(primary);
-    return page && !home.hostname.endsWith(".netlify.app")
-      ? home.origin + url.pathname + url.search
-      : null;
-  } catch {
-    return null;
-  }
+  return null;
 }
 
 const errorPage = () =>

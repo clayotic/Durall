@@ -6,10 +6,11 @@ import { destination, imageOf } from "@/content/render";
 import type { HomePage } from "@/content/types";
 import { CtaButton } from "./ui";
 
-/* The opening film, as its frames: the doors of the room sliding open, 72
+/* The opening film, as its frames: the open room's glass sliding shut, 72
  * pictures after the still (which is the film's first frame). They are
  * taken from the original at equal steps of change in the picture, not of
- * time, so that equal steps of scroll move the doors equally. */
+ * time, so that equal steps of scroll move the glass equally
+ * (scripts/hero-frames.py makes them and the still). */
 const FRAMES = Object.entries(
   import.meta.glob<string>("@/assets/hero-doors/*.webp", {
     eager: true,
@@ -29,8 +30,8 @@ const FOLLOW = 9;
 /** The stretch of the film's scroll over which the heading and buttons lift
  *  away, so the open room is seen clear before the page comes over it. */
 const LIFT = { from: 0.5, to: 0.95 };
-/** Left alone at the top, the doors open a crack and close again: how long
- *  they wait (ms), how long it takes (ms) and how far they go (of the film). */
+/** Left alone at the top, the glass slides in a little and back again: how
+ *  long it waits (ms), how long it takes (ms) and how far it goes (of the film). */
 const HINT = { every: 6000, length: 2800, reach: 0.14 };
 
 /**
@@ -38,18 +39,18 @@ const HINT = { every: 6000, length: 2800, reach: 0.14 };
  *
  * The opening keeps a stretch of scroll to itself (its bottom margin, set in
  * styles.css) and the film runs across it: scrolling down slides the doors
- * open, scrolling back closes them, and where the scroll stops they stop.
+ * shut, scrolling back opens them, and where the scroll stops they stop.
  * After that stretch the page comes up over the room as it always has.
  *
  * It is drawn frame by frame on a canvas over the still rather than played
  * as a video: a video cannot be run backwards, is slow to be sent to an
  * exact frame, and may be refused altogether (a phone saving power, a tab in
  * the background). A picture drawn on a canvas has none of that. Between
- * two frames it shows a mix of both, so a slow scroll moves the doors
+ * two frames it shows a mix of both, so a slow scroll moves the glass
  * smoothly rather than in steps; at rest it is always one whole frame.
  *
  * The frames are asked for once the page has loaded, at low priority, and
- * coarsely first: every eighth, then the ones between. The doors can
+ * coarsely first: every eighth, then the ones between. The glass can
  * travel their whole way on the first few to arrive and get finer as the
  * rest do. Until any has, and where there is no such stretch (a short
  * window, reduced motion, a data saver), there is only the still and the
@@ -57,7 +58,7 @@ const HINT = { every: 6000, length: 2800, reach: 0.14 };
  *
  * A phone held upright sees only a narrow cut of the room, so still and
  * film are both set to the right of the picture there (`PORTRAIT`), where
- * the door is. It also takes every other frame, half the download; the mix
+ * a door is. It also takes every other frame, half the download; the mix
  * between frames covers the difference at that size.
  */
 function useHeroFilm(sectionRef: React.RefObject<HTMLElement | null>) {
@@ -140,8 +141,8 @@ function useHeroFilm(sectionRef: React.RefObject<HTMLElement | null>) {
           hint = HINT.reach * Math.sin(Math.PI * u) ** 2;
         } else idleSince = now;
       }
-      // Eased as well, so a scroll in the middle of it takes the doors over
-      // from where they are instead of dropping them shut first.
+      // Eased as well, so a scroll in the middle of it takes the glass over
+      // from where it is instead of dropping it back open first.
       nudge += (hint - nudge) * (1 - Math.exp(-dt * 12));
       if (!hinting && nudge < 0.0004) nudge = 0;
 
@@ -265,7 +266,7 @@ export function Hero({ content }: { content: HomePage["hero"] }) {
           <canvas
             data-hero-film
             width={1600}
-            height={900}
+            height={1062}
             aria-hidden="true"
             className={`pointer-events-none absolute inset-0 h-full w-full object-cover ${PORTRAIT}`}
           />
@@ -283,7 +284,7 @@ export function Hero({ content }: { content: HomePage["hero"] }) {
         className="pointer-events-none absolute inset-0 bg-navy opacity-0"
       />
 
-      {/* Lifts away as the doors come open, so the room is seen clear
+      {/* Lifts away as the glass comes shut, so the room is seen clear
           (useHeroFilm). A layer of its own: the entrance and the scroll own
           the ones inside it. */}
       <div data-hero-copy className="relative">

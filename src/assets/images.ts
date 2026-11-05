@@ -371,7 +371,7 @@ export const IMAGES = {
       [heroFilm1440, 1440],
       [heroFilm1920, 1920],
     ],
-    1080,
+    1274,
   ),
   heroParikrama: set(
     [

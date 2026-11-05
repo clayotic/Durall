@@ -1,7 +1,7 @@
 // Written by scripts/image-tones.mjs; rerun it after changing an image.
 /** Each photograph's colours at its top, middle and bottom. */
 export const TONES: Partial<Record<string, string>> = {
-  heroFilm: "371c0d 4f3721 65452f",
+  heroFilm: "411e07 5a3a1e 774d30",
   heroAbout: "7a7c77 bca790 9d948a",
   heroPartners: "92917c 999681 615c50",
   heroProjects: "718589 74756f 695f52",
