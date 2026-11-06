@@ -97,6 +97,8 @@ export function ownFilm(address: string | null | undefined): string | null {
  * "card") is "/films/a-card.mp4". A project's film comes with
  *
  *   -phone.mp4         the middle of the film, for an upright screen
+ *   -loop.mp4          a short silent loop for the project page's opening
+ *   -loop-phone.mp4    the same, for an upright screen
  *   -card.mp4          a short clip for its card on the home page
  *   -poster.webp       the still shown before the full film is played
  *

@@ -85,7 +85,7 @@ export function projectForm(others: ProjectDoc[]): SectionSpec[] {
       fields: [
         photo("hero", "Photograph", { hint: "Also the photograph in the Projects grid." }),
         text("film", "Film", {
-          hint: "A film kept on the site, such as /films/parikrama-house.mp4. It plays with sound in The Experience, when pressed. A short clip saved beside it as -card.mp4 plays without sound on the home page card. Leave empty for none.",
+          hint: "A film kept on the site, such as /films/parikrama-house.mp4. It plays with sound in The Experience, when pressed. Short silent clips saved beside it play over the photographs: -loop.mp4 (and -loop-phone.mp4) in this opening, -card.mp4 on the home page card. Leave empty for none.",
         }),
         {
           kind: "optional",
@@ -218,6 +218,10 @@ export const ROLE_FIELDS: FieldSpec[] = [
   text("location", "Location"),
   text("type", "Type", { placeholder: "Full time" }),
   area("summary", "Summary", { rows: 3 }),
+  area("details", "Details", {
+    rows: 12,
+    hint: "Shown when the role is opened. A line ending in “:” is a heading; a line starting with “- ” is a list item.",
+  }),
 ];
 
 /** An architect or design practice. The country puts its mark on the Partners page's world map. */

@@ -12,10 +12,10 @@ import { OfficeMap } from "./OfficeMap";
  *
  * The map column stretches to the height of the form column beside it, so
  * the two read as one band rather than a short map next to a long form. The
- * office's address and directions, then email and phone, sit under the form,
- * where someone who would rather visit, write or call will look; nothing
- * covers the map. On phones the map comes first and the form follows, in
- * reading order.
+ * office's address and directions, then email and phone, sit above the form,
+ * so someone who would rather visit, write or call finds them first; nothing
+ * covers the map. On phones the map comes first, then the direct lines and
+ * the form, in reading order.
  */
 export function ContactBody({ content }: { content: ContactPage }) {
   const { contact, office } = useSite().settings;
@@ -33,16 +33,7 @@ export function ContactBody({ content }: { content: ContactPage }) {
         </div>
 
         <div className="min-w-0">
-          <div ref={formRef}>
-            <h2 className="font-display text-xs font-bold tracking-eyebrow text-navy uppercase">
-              {content.formHeading}
-            </h2>
-            <div className="mt-[clamp(1.5rem,2.4vw,2rem)]">
-              <EnquiryForm copy={content.form} />
-            </div>
-          </div>
-
-          <div className="mt-[clamp(2.5rem,4vw,3.5rem)] border-t border-navy-14 pt-[clamp(1.5rem,2.4vw,2rem)]">
+          <div>
             <h2 className="font-display text-xs font-bold tracking-eyebrow text-navy uppercase">
               {content.detailsHeading}
             </h2>
@@ -135,6 +126,17 @@ export function ContactBody({ content }: { content: ContactPage }) {
                   </div>
                 );
               })}
+            </div>
+          </div>
+          <div
+            ref={formRef}
+            className="mt-[clamp(2.5rem,4vw,3.5rem)] border-t border-navy-14 pt-[clamp(1.5rem,2.4vw,2rem)]"
+          >
+            <h2 className="font-display text-xs font-bold tracking-eyebrow text-navy uppercase">
+              {content.formHeading}
+            </h2>
+            <div className="mt-[clamp(1.5rem,2.4vw,2rem)]">
+              <EnquiryForm copy={content.form} />
             </div>
           </div>
         </div>

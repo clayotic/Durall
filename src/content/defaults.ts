@@ -86,6 +86,7 @@ export function blankRole(id = "", order = 0): RoleDoc {
     location: "",
     type: "Full time",
     summary: "",
+    details: "",
   };
 }
 

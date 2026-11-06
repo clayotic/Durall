@@ -1,5 +1,7 @@
 import { Link } from "@tanstack/react-router";
+import { ChevronDown } from "lucide-react";
 import { useReveal, useSectionIntro } from "@/lib/anim";
+import { roleDetails } from "@/content/role-details";
 import { topicKey } from "@/content/select";
 import type { CareersPage, RoleDoc } from "@/content/types";
 import { EYEBROW, HEADING, PAPER, SHELL } from "./styles";
@@ -12,6 +14,32 @@ const CHIP = `inline-flex min-h-11 items-center border px-[1.125rem] font-displa
 /* Role, team, location, type and the button: 760, 200, 200, 113 and 132px
  * of the design's 1405. */
 const COLUMNS = "lg:grid lg:grid-cols-[minmax(0,760fr)_200fr_200fr_113fr_8.25rem] lg:gap-0";
+
+/** A role's details: headings, paragraphs and lists, as elements. */
+function RoleDetails({ text }: { text: string }) {
+  return (
+    <div className="mt-1 max-w-[46rem] space-y-3 pb-1 text-[0.9375rem] leading-[1.6] text-pretty text-slate">
+      {roleDetails(text).map((block, index) =>
+        block.kind === "list" ? (
+          <ul key={index} className="list-disc space-y-1 pl-5 marker:text-navy/40">
+            {block.items.map((item, at) => (
+              <li key={at}>{item}</li>
+            ))}
+          </ul>
+        ) : block.kind === "heading" ? (
+          <h4
+            key={index}
+            className="pt-2 text-xs font-semibold tracking-[0.12em] text-navy uppercase"
+          >
+            {block.text}
+          </h4>
+        ) : (
+          <p key={index}>{block.text}</p>
+        ),
+      )}
+    </div>
+  );
+}
 
 function TeamChip({
   team,
@@ -63,7 +91,7 @@ export function OpenRoles({
   email: string;
 }) {
   const headRef = useSectionIntro<HTMLDivElement>();
-  const listRef = useReveal<HTMLUListElement>({ selector: "li", y: 20, stagger: 0.07 });
+  const listRef = useReveal<HTMLUListElement>({ selector: ":scope > li", y: 20, stagger: 0.07 });
   const boxRef = useReveal<HTMLDivElement>({ y: 24 });
 
   const teams = [...new Set(roles.map((role) => role.team).filter(Boolean))];
@@ -146,6 +174,20 @@ export function OpenRoles({
                     <p className="mt-2.5 text-[0.9375rem] leading-[1.47] text-pretty text-slate">
                       {role.summary}
                     </p>
+                    {role.details ? (
+                      <details className="group mt-2">
+                        <summary
+                          className={`inline-flex min-h-11 cursor-pointer list-none items-center gap-2 text-[0.8125rem] font-medium tracking-[0.09em] text-navy uppercase transition-colors duration-[var(--dur-short)] hover:text-accent-blue [&::-webkit-details-marker]:hidden ${FOCUS}`}
+                        >
+                          Job details
+                          <ChevronDown
+                            aria-hidden="true"
+                            className="h-4 w-4 transition-transform duration-[var(--dur-short)] group-open:rotate-180 motion-reduce:transition-none"
+                          />
+                        </summary>
+                        <RoleDetails text={role.details} />
+                      </details>
+                    ) : null}
                   </div>
                   <dl className="mt-4 flex flex-wrap gap-x-6 gap-y-1 text-[0.9375rem] text-slate lg:contents">
                     {(

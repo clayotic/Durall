@@ -6,7 +6,7 @@ import type { SiteSettings } from "../types";
 export const SETTINGS_SEED: SiteSettings = {
   company: {
     name: "Durall Systems",
-    legalName: "Durall Systems Pvt. Ltd.",
+    legalName: "Durall Systems India Pvt. Ltd.",
     tagline: "Enveloping Luxury",
   },
   contact: {
@@ -37,7 +37,7 @@ export const SETTINGS_SEED: SiteSettings = {
     careersEmail: "info@durallsystems.com",
   },
   office: {
-    name: "Durall Systems India Pvt Ltd",
+    name: "Durall Systems India Pvt. Ltd.",
     lines: [
       "Kolivery Village, P and T Colony",
       "Vakola, Santacruz East",

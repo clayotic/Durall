@@ -176,17 +176,24 @@ export function ProjectExperience({ project, labels }: Props) {
         </p>
       </div>
       {film ? (
-        <video
-          controls
-          playsInline
-          preload="none"
-          poster={cutOf(film, "poster", ".webp")}
-          aria-label={`${project.name}: the film`}
-          className="aspect-video w-full min-w-0 bg-navy object-cover lg:col-span-2 [@media(max-aspect-ratio:2/3)]:aspect-[3/4]"
-        >
-          <source src={cutOf(film, "phone")} media={UPRIGHT} />
-          <source src={film} />
-        </video>
+        <figure className="min-w-0 lg:col-span-2">
+          <video
+            controls
+            playsInline
+            preload="none"
+            poster={cutOf(film, "poster", ".webp")}
+            aria-label={`${project.name}: the film`}
+            className="aspect-video w-full bg-navy object-cover [@media(max-aspect-ratio:2/3)]:aspect-[3/4]"
+          >
+            <source src={cutOf(film, "phone")} media={UPRIGHT} />
+            <source src={film} />
+          </video>
+          {/* ponytail: the credit names the architects, who made the only
+              film so far; add a filmCredit field when one is by someone else. */}
+          <figcaption className="mt-3 font-body text-[0.8125rem] text-slate">
+            Film: {project.architect}
+          </figcaption>
+        </figure>
       ) : null}
     </section>
   );

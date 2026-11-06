@@ -16,10 +16,7 @@ export const ABOUT_SEED: AboutPage = {
   story: {
     eyebrow: "About Durall",
     heading: "Since 1992.",
-    facts: [
-      { value: "30+", label: "Years of practice" },
-      { value: "10", label: "Architectural systems" },
-    ],
+    facts: [{ value: "10", label: "Architectural systems" }],
     lead: "Founded in 1992 by Mr. Manoj Sakharkar, Durall Systems has spent more than three decades working on one question:",
     emphasis:
       "how aluminium and glass can serve a building’s architecture rather than sit on top of it.",

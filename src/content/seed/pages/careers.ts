@@ -24,7 +24,7 @@ export const CAREERS_SEED: CareersPage = {
     applyLabel: "Apply",
     // The roles the site ships with are the design's samples (seed/careers.ts);
     // clear this once they are replaced with real postings.
-    note: "Sample roles for layout — replace with live postings.",
+    note: "",
     empty:
       "Nothing is open right now. We still read everything that comes in, so send your work to {email} and we will come back to you when a seat opens.",
   },

@@ -1,58 +1,30 @@
 import type { RoleDoc } from "../types";
 
-/* The design's sample roles, there to show the layout: replace them in the
- * admin panel (and clear the note under the list, Pages → Careers), or close
+/* The roles open on the site; changed in the admin panel (Careers). Close
  * them all and the page shows its "nothing open right now" state. */
 export const ROLES_SEED: RoleDoc[] = [
   {
     id: "role-1",
     order: 0,
     open: true,
-    title: "Façade Design Engineer",
-    team: "Engineering",
+    title: "Junior Architect – 2 Openings",
+    team: "Architecture",
     location: "Mumbai",
     type: "Full time",
     summary:
-      "Detail sliding, glazing and façade systems with architects, from first sketch to shop drawing.",
-  },
-  {
-    id: "role-2",
-    order: 1,
-    open: true,
-    title: "Shop Drawing Draughtsperson",
-    team: "Engineering",
-    location: "Mumbai",
-    type: "Full time",
-    summary: "Turn approved designs into fabrication drawings the workshop can build from.",
-  },
-  {
-    id: "role-3",
-    order: 2,
-    open: true,
-    title: "Fabrication Supervisor",
-    team: "Workshop",
-    location: "Mahape",
-    type: "Full time",
-    summary: "Run a workshop team and check every frame before it leaves for site.",
-  },
-  {
-    id: "role-4",
-    order: 3,
-    open: true,
-    title: "Site Installation Lead",
-    team: "Site",
-    location: "Mumbai + travel",
-    type: "Full time",
-    summary: "Lead installation crews on residential and hospitality sites across India.",
-  },
-  {
-    id: "role-5",
-    order: 4,
-    open: true,
-    title: "Project Coordinator",
-    team: "Projects",
-    location: "Mumbai",
-    type: "Full time",
-    summary: "Keep architects, site teams and international partners on the same programme.",
+      "We are looking for a motivated and detail-oriented junior architect to join our team. The candidate will assist in architectural design, preparation of drawings, and project documentation while working closely with senior architects.",
+    details: [
+      "Required Qualifications:",
+      "- Bachelor of Architecture (B.Arch.)",
+      "- Minimum 1–3 years of professional experience.",
+      "- Strong design sensibility with a sound understanding of technical drawings and construction details.",
+      "- Good communication and teamwork skills.",
+      "Technical Skills:",
+      "- Proficiency in AutoCAD, SketchUp, SolidWorks, Revit and 3D rendering tools",
+      "- Familiarity with Adobe Creative Suite (Photoshop, InDesign, Illustrator)",
+      "Pay:",
+      "Competitive salary based on experience and portfolio.",
+      "₹35,000 – ₹60,000 per month",
+    ].join("\n"),
   },
 ];

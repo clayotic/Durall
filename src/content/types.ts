@@ -322,6 +322,8 @@ export type RoleDoc = {
   location: string;
   type: string;
   summary: string;
+  /** Shown when the role is opened: see content/role-details.ts. */
+  details: string;
 };
 
 export type PartnerDoc = {

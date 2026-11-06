@@ -436,7 +436,10 @@ export const ARTICLES_SEED: ArticleDoc[] = [
     title: "When Manufacturing Begins: From Material to Finished System",
     excerpt:
       "The drawings are approved. The materials are ready. This is where a glazing system starts to take physical form.",
-    cover: photo("insightsAssemblyAbove", "Glazed units on the assembly tables, seen from above"),
+    cover: photo(
+      "homeInsights",
+      "A shaded stone veranda beside a planted garden, with full-height sliding glass opening into the house",
+    ),
     series: {
       part: 4,
       kicker: "Production",
@@ -445,7 +448,8 @@ export const ARTICLES_SEED: ArticleDoc[] = [
       opening: "photo",
       openingLabel: "",
       openingNote: "",
-      caption: "Glazed units on the assembly tables, seen from above",
+      caption:
+        "A shaded stone veranda beside a planted garden, with full-height sliding glass opening into the house",
       focus: "50% 50%",
       pull: "Precision in the factory is what makes performance possible on site.",
     },

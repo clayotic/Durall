@@ -1,10 +1,12 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState, type RefObject } from "react";
+import { Pause, Play } from "lucide-react";
 import { isIntroPending } from "@/lib/intro";
 import { heroCover, loadGsap, markAnimReady, playAfterIntro, splitToLines } from "@/lib/anim";
 import { Lines } from "@/content/render";
 import { prefersReducedMotion } from "@/lib/motion-prefs";
 import { LANDING } from "./motion";
 import type { ProjectsPage } from "@/content/types";
+import { cutOf, ownFilm, UPRIGHT } from "@/content/video";
 import type { ProjectDetail } from "./data";
 
 /** How many full turns each odometer column makes before it lands. */
@@ -64,6 +66,86 @@ function Odometer({ value, unit }: { value: number; unit?: string | undefined })
   );
 }
 
+/** Less motion or less data asked for: the photograph stays. */
+const holdsBack = () =>
+  prefersReducedMotion() ||
+  (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData === true;
+
+/**
+ * A project's short silent loop over the opening photograph: its `-loop`
+ * cut, and `-loop-phone` on an upright screen. It starts once the page has
+ * loaded, so the first screen does not wait behind it, comes up over the
+ * photograph once it is running, and pauses when the page has covered the
+ * opening. A missing cut never plays; the photograph stays. `held` is the
+ * visitor's pause button (ProjectHero).
+ */
+function HeroLoop({
+  film,
+  held,
+  videoRef: ref,
+  onRunning,
+}: {
+  film: string;
+  held: boolean;
+  videoRef: RefObject<HTMLVideoElement | null>;
+  onRunning: (running: boolean) => void;
+}) {
+  const [shown, setShown] = useState(false);
+
+  useEffect(() => {
+    const video = ref.current;
+    if (!video || holdsBack()) return;
+    if (held) {
+      video.pause();
+      return;
+    }
+    // React leaves `muted` out of the server's markup; a browser only lets a
+    // muted video start by itself.
+    video.muted = true;
+    // The opening stays in the window behind the page that slides over it,
+    // so whether it can be seen is read from the scroll.
+    let on: boolean | null = null;
+    const check = () => {
+      const next = window.scrollY < window.innerHeight * 0.9;
+      if (next === on) return;
+      on = next;
+      if (on) void video.play().catch(() => {});
+      else video.pause();
+    };
+    const start = () => {
+      check();
+      window.addEventListener("scroll", check, { passive: true });
+    };
+    if (document.readyState === "complete") start();
+    else window.addEventListener("load", start, { once: true });
+    return () => {
+      window.removeEventListener("load", start);
+      window.removeEventListener("scroll", check);
+      video.pause();
+    };
+  }, [held, ref]);
+
+  return (
+    <video
+      ref={ref}
+      muted
+      loop
+      playsInline
+      preload="none"
+      aria-hidden="true"
+      onPlaying={() => {
+        setShown(true);
+        onRunning(true);
+      }}
+      onPause={() => onRunning(false)}
+      className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-[var(--dur-long)] motion-reduce:transition-none ${shown ? "opacity-100" : "opacity-0"}`}
+    >
+      <source src={cutOf(film, "loop-phone")} media={UPRIGHT} />
+      <source src={cutOf(film, "loop")} />
+    </video>
+  );
+}
+
 /**
  * The arrival.
  *
@@ -81,7 +163,8 @@ function Odometer({ value, unit }: { value: number; unit?: string | undefined })
  * Scrolling on, the page slides up over the photograph, which pushes in and
  * darkens underneath it (lib/anim heroCover).
  *
- * The opening is the photograph alone; a project's film plays further down,
+ * A project with a film of its own has its short silent loop come up over
+ * the photograph (HeroLoop); the full film, with sound, plays further down
  * in The Experience.
  */
 export function ProjectHero({
@@ -93,6 +176,21 @@ export function ProjectHero({
 }) {
   const sectionRef = useRef<HTMLElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
+  const film = ownFilm(project.film);
+  const loopRef = useRef<HTMLVideoElement>(null);
+  // Null until the loop first runs (never, under reduced motion); then
+  // whether it is running.
+  const [running, setRunning] = useState<boolean | null>(null);
+  const [held, setHeld] = useState(false);
+
+  const toggleLoop = () => {
+    const video = loopRef.current;
+    if (!video) return;
+    setHeld(!video.paused);
+    // Straight from the press, which a browser that refused to start the
+    // loop by itself requires.
+    if (video.paused) void video.play().catch(() => {});
+  };
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -219,6 +317,9 @@ export function ProjectHero({
                 decoding="async"
                 className="h-full w-full object-cover"
               />
+              {film ? (
+                <HeroLoop film={film} held={held} videoRef={loopRef} onRunning={setRunning} />
+              ) : null}
             </div>
           </div>
         </div>
@@ -264,7 +365,29 @@ export function ProjectHero({
           </p>
         </div>
 
-        {figure}
+        {film ? (
+          <div className="flex shrink-0 flex-col gap-[clamp(1rem,3vh,2rem)] md:items-end">
+            {/* Moving for more than five seconds beside the text: it can be
+                stopped. */}
+            {running !== null ? (
+              <button
+                type="button"
+                onClick={toggleLoop}
+                aria-label={running ? "Pause the film" : "Play the film"}
+                className="-ml-3 flex h-11 w-11 items-center justify-center rounded-full transition-colors duration-[var(--dur-short)] hover:bg-white/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white md:-mr-3 md:ml-0"
+              >
+                {running ? (
+                  <Pause aria-hidden="true" className="h-4 w-4" />
+                ) : (
+                  <Play aria-hidden="true" className="h-4 w-4" />
+                )}
+              </button>
+            ) : null}
+            {figure}
+          </div>
+        ) : (
+          figure
+        )}
       </div>
     </section>
   );

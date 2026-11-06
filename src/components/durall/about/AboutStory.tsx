@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { useReveal } from "@/lib/anim";
+import { useSectionIntro } from "@/lib/anim";
 import type { AboutPage } from "@/content/types";
 
 /** The About page's section name: small, blue, with a short rule after it. */
@@ -22,11 +22,11 @@ export function AboutEyebrow({
 
 /**
  * "About Durall", between the opening and Our Approach (Figma 1070:19): the
- * year Durall began with its two figures on the left, the story on the right.
+ * year Durall began with its figures on the left, the story on the right.
  * On a phone the two stack.
  */
 export function AboutStory({ content }: { content: AboutPage["story"] }) {
-  const ref = useReveal<HTMLDivElement>({ selector: "[data-reveal]", y: 16 });
+  const ref = useSectionIntro<HTMLDivElement>({ selector: "[data-reveal]", y: 16 });
 
   return (
     <section
@@ -43,6 +43,7 @@ export function AboutStory({ content }: { content: AboutPage["story"] }) {
             <h2
               id="story-heading"
               data-reveal
+              data-anim="lines"
               className="pt-[1.125rem] font-display text-[clamp(2.375rem,2.8vw,3.36rem)] leading-[1.04] font-light tracking-[-0.015em] text-balance text-navy"
             >
               {content.heading}
@@ -56,7 +57,7 @@ export function AboutStory({ content }: { content: AboutPage["story"] }) {
               <span className="size-[5px] bg-navy" />
             </span>
             {content.facts.length ? (
-              <dl data-reveal className="mt-12 flex flex-wrap gap-x-12 gap-y-6">
+              <dl data-reveal className="mt-9 flex flex-wrap gap-x-12 gap-y-6">
                 {content.facts.map((fact) => (
                   <div key={fact.label + fact.value} className="flex flex-col-reverse gap-1.5">
                     <dt className="font-display text-xs font-semibold tracking-[0.12em] text-slate uppercase">
