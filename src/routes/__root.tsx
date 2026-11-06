@@ -19,6 +19,7 @@ import { absoluteUrl, organizationLd } from "@/content/head";
 import { destination } from "@/content/render";
 import type { SiteSettings } from "@/content/types";
 import { setRevealEnabled } from "@/lib/page-transition";
+import { warmImages } from "@/lib/warm-images";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -285,6 +286,8 @@ function RootComponent() {
   const { behaviour } = Route.useLoaderData().settings;
   useEffect(() => setRevealEnabled(behaviour.pageTransition), [behaviour.pageTransition]);
   useEffect(() => (inAdmin ? undefined : guardImages()), [inAdmin]);
+  const router = useRouter();
+  useEffect(() => (inAdmin ? undefined : warmImages(router)), [inAdmin, router]);
 
   if (inAdmin) return <Outlet />;
 

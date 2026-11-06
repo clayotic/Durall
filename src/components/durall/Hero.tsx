@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useHeroIntro } from "@/lib/anim";
 import { prefersReducedMotion } from "@/lib/motion-prefs";
+import { holdWarming } from "@/lib/warm-images";
 import { clamp01, ramp, smooth } from "@/lib/scene";
 import { destination, imageOf } from "@/content/render";
 import type { HomePage } from "@/content/types";
@@ -30,9 +31,13 @@ const PACKS = Object.entries(
 /** On an upright screen: the part of the picture kept in view, the same for
  *  the still and the film drawn over it. */
 const PORTRAIT = "portrait:object-[88%_50%]";
-/** How closely the film keeps up with the scroll: the share of the distance
- *  left that it covers each second, as an exponent. */
+/** How quickly the glass settles on a whole frame once the scroll rests: the
+ *  share of the distance left that it covers each second, as an exponent. */
 const FOLLOW = 9;
+/** How long the scroll has to rest before the glass settles (ms). */
+const SETTLE_MS = 150;
+/** How many frames are kept decoded, the ones nearest the glass. */
+const WINDOW = 12;
 /** The stretch of the film's scroll over which the heading and buttons lift
  *  away, so the open room is seen clear before the page comes over it. */
 const LIFT = { from: 0.5, to: 0.95 };
@@ -53,16 +58,27 @@ const HINT = { every: 6000, length: 2800, reach: 0.14 };
  * exact frame, and may be refused altogether (a phone saving power, a tab in
  * the background). A picture drawn on a canvas has none of that. Between
  * two frames it shows a mix of both, so a slow scroll moves the glass
- * smoothly rather than in steps; at rest it is always one whole frame.
+ * smoothly rather than in steps.
+ *
+ * The glass moves with the scroll itself, which is smoothed already (by
+ * Lenis, or by the phone): easing it a second time left it trailing behind.
+ * Once the scroll rests it settles on the nearest whole frame, so at rest
+ * it is never a mix of two.
  *
  * The frames are asked for once the page has loaded, at low priority, one
  * file after another: four requests instead of 72, each of which can take
  * a second to start on a slow connection. The first file holds every
  * eighth frame, so the glass can travel its whole way on that alone, and
- * gets finer as the rest arrive. Each frame is decoded before it is drawn,
- * so the scroll never waits on it. Until the first file has come, and where
+ * gets finer as the rest arrive. Until the first file has come, and where
  * there is no such stretch (a short window, reduced motion, a data saver),
  * there is only the still and the page scrolls over it.
+ *
+ * Only the `WINDOW` frames nearest the glass are kept decoded, and they are
+ * decoded off the page's thread (`createImageBitmap`) as the glass nears
+ * them. Left to the canvas, each frame was decoded on the page's thread as
+ * it was drawn, 10 ms or more apiece and again whenever the browser had let
+ * it go, which stalled the scroll; all 72 decoded at once would hold about
+ * 490 MB. Where the one wanted is not ready yet, the nearest that is drawn.
  *
  * A phone held upright sees only a narrow cut of the room, so still and
  * film are both set to the right of the picture there (`PORTRAIT`), where
@@ -76,19 +92,34 @@ function useHeroFilm(sectionRef: React.RefObject<HTMLElement | null>) {
     const context = canvas?.getContext("2d");
     const saving = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection
       ?.saveData;
-    if (!section || !canvas || !context || prefersReducedMotion() || saving) return;
+    if (
+      !section ||
+      !canvas ||
+      !context ||
+      prefersReducedMotion() ||
+      saving ||
+      typeof createImageBitmap !== "function"
+    )
+      return;
     const copy = section.querySelector<HTMLElement>("[data-hero-copy]");
     const tint = section.querySelector<HTMLElement>("[data-hero-tint]");
     const cue = section.querySelector<HTMLElement>("[data-hero-cue]");
 
     const count = COUNT;
-    /** Frame `n` of the film once it has arrived; 0 is the still, under the canvas. */
-    const frames: (HTMLImageElement | undefined)[] = [];
-    const addresses: string[] = [];
+    /** Frame `n` of the film as it arrived, still compressed; 0 is the still,
+     *  under the canvas. */
+    const blobs: (Blob | undefined)[] = [];
+    /** The frames decoded for drawing: those nearest the glass. */
+    const bitmaps = new Map<number, ImageBitmap>();
+    const decoding = new Set<number>();
+    let wanted = new Set<number>();
+    let shown: number[] = []; // the frames on the canvas now
     let runway = 0; // the length of scroll the film is played across, in px
     let asked = false;
     let scrolled = 0; // how far through the film the scroll has it, 0 to 1
     let nudge = 0; // and how far the hint has it
+    let lastY = -1;
+    let movedAt = 0; // when the scroll last moved
     let drawn = -1;
     let frame = 0;
     let last = 0;
@@ -96,11 +127,11 @@ function useHeroFilm(sectionRef: React.RefObject<HTMLElement | null>) {
     let timer = 0;
     let disposed = false;
 
-    /** The frame nearest `n` that there is. */
+    /** The decoded frame nearest `n`. */
     const nearest = (n: number) => {
       for (let d = 0; d <= count; d++) {
-        if (n - d === 0 || frames[n - d]) return n - d;
-        if (frames[n + d]) return n + d;
+        if (n - d === 0 || bitmaps.has(n - d)) return n - d;
+        if (bitmaps.has(n + d)) return n + d;
       }
       return 0;
     };
@@ -112,26 +143,70 @@ function useHeroFilm(sectionRef: React.RefObject<HTMLElement | null>) {
       drawn = key;
       const below = Math.floor(at);
       const base = nearest(below);
-      const next = frames[below + 1];
+      const image = bitmaps.get(base);
+      const next = bitmaps.get(below + 1);
       context.clearRect(0, 0, canvas.width, canvas.height);
       context.globalAlpha = 1;
-      const image = frames[base];
       if (image) context.drawImage(image, 0, 0, canvas.width, canvas.height);
+      shown = [base];
       // Part-way to the next frame: that one over this, as far as it has got.
       if (base === below && next && at > below) {
         context.globalAlpha = at - below;
         context.drawImage(next, 0, 0, canvas.width, canvas.height);
+        shown.push(below + 1);
       }
     };
+
+    /** Decodes, off the page's thread, the frames that have arrived nearest
+     *  frame `center`, and lets go of the others (but not those on screen,
+     *  which stay until something nearer is ready). */
+    const keep = (center: number) => {
+      const near = new Set<number>();
+      for (let d = 0; d <= count && near.size < WINDOW; d++) {
+        if (blobs[center + d]) near.add(center + d);
+        if (d && blobs[center - d] && near.size < WINDOW) near.add(center - d);
+      }
+      wanted = near;
+      for (const [n, bitmap] of bitmaps) {
+        if (near.has(n) || shown.includes(n)) continue;
+        bitmap.close();
+        bitmaps.delete(n);
+      }
+      for (const n of near) {
+        const blob = blobs[n];
+        if (!blob || bitmaps.has(n) || decoding.has(n)) continue;
+        decoding.add(n);
+        createImageBitmap(blob).then(
+          (bitmap) => {
+            decoding.delete(n);
+            if (disposed || !wanted.has(n)) return bitmap.close();
+            bitmaps.set(n, bitmap);
+            drawn = -1;
+            wake();
+          },
+          () => decoding.delete(n),
+        );
+      }
+    };
+    const here = () => Math.round(clamp01(Math.max(scrolled, nudge)) * count);
 
     const tick = (now: number) => {
       frame = 0;
       const dt = Math.min(0.05, Math.max(0, (now - last) / 1000));
       last = now;
 
-      // The scroll, to the nearest whole frame, and the film easing after it.
-      const goal = runway ? Math.round(clamp01(window.scrollY / runway) * count) / count : 0;
-      scrolled += (goal - scrolled) * (1 - Math.exp(-dt * FOLLOW));
+      // While the scroll moves, the glass moves with it; once it has rested,
+      // the glass settles on the nearest whole frame.
+      const y = window.scrollY;
+      if (y !== lastY) {
+        lastY = y;
+        movedAt = now;
+      }
+      const exact = runway ? clamp01(y / runway) : 0;
+      const settling = now - movedAt >= SETTLE_MS;
+      const goal = settling ? Math.round(exact * count) / count : exact;
+      if (settling) scrolled += (goal - scrolled) * (1 - Math.exp(-dt * FOLLOW));
+      else scrolled = goal;
       if (Math.abs(goal - scrolled) < 0.0004) scrolled = goal;
 
       // The hint, while the page rests at the top with nothing over it.
@@ -156,6 +231,7 @@ function useHeroFilm(sectionRef: React.RefObject<HTMLElement | null>) {
       if (!hinting && nudge < 0.0004) nudge = 0;
 
       draw(Math.max(scrolled, nudge));
+      keep(here());
       const lift = smooth(ramp(scrolled, LIFT.from, LIFT.to));
       if (copy) {
         copy.style.opacity = (1 - lift).toFixed(3);
@@ -165,10 +241,12 @@ function useHeroFilm(sectionRef: React.RefObject<HTMLElement | null>) {
       if (tint) tint.style.opacity = (1 - 0.7 * lift).toFixed(3);
       if (cue) cue.style.opacity = runway ? (1 - ramp(scrolled, 0, 0.08)).toFixed(3) : "0";
 
-      // Still moving: go on. Settled at the top: come back when the hint is
-      // due, or shortly, if something (the opening curtain) is in its way.
+      // Still moving: go on. Just stopped: come back to settle. Settled at
+      // the top: come back when the hint is due, or shortly, if something
+      // (the opening curtain) is in its way.
       window.clearTimeout(timer);
       if (scrolled !== goal || hinting || nudge > 0) frame = requestAnimationFrame(tick);
+      else if (!settling) timer = window.setTimeout(wake, SETTLE_MS - (now - movedAt) + 10);
       else if (resting) timer = window.setTimeout(wake, HINT.every - (now - idleSince) + 20);
       else if (runway && window.scrollY <= 2) timer = window.setTimeout(wake, 500);
     };
@@ -200,30 +278,18 @@ function useHeroFilm(sectionRef: React.RefObject<HTMLElement | null>) {
         for (const n of part) {
           if (at + 8 > file.byteLength) break;
           const end = at + 8 + view.getUint32(at + 4, true); // the RIFF header's size
-          const address = URL.createObjectURL(
-            new Blob([file.slice(at, end)], { type: "image/webp" }),
-          );
-          addresses.push(address);
-          const image = new Image();
-          image.src = address;
-          image.decode().then(
-            () => {
-              if (disposed) return;
-              frames[n] = image;
-              drawn = -1;
-              wake();
-            },
-            () => {},
-          );
+          blobs[n] = new Blob([file.slice(at, end)], { type: "image/webp" });
           at = end;
         }
+        keep(here());
       }
     };
 
     let loaded = document.readyState === "complete";
     const measure = () => {
       runway = parseFloat(getComputedStyle(section).marginBottom) || 0;
-      if (runway && loaded && !asked) void ask();
+      // The film is part of this page, so the other pages' photos wait for it.
+      if (runway && loaded && !asked) holdWarming(ask());
       wake();
     };
     const onLoad = () => {
@@ -244,7 +310,7 @@ function useHeroFilm(sectionRef: React.RefObject<HTMLElement | null>) {
       window.removeEventListener("scroll", wake);
       window.removeEventListener("resize", measure);
       document.removeEventListener("visibilitychange", wake);
-      addresses.forEach((address) => URL.revokeObjectURL(address));
+      bitmaps.forEach((bitmap) => bitmap.close());
       context.clearRect(0, 0, canvas.width, canvas.height);
       if (copy) {
         copy.style.opacity = "";
