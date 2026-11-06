@@ -10,9 +10,15 @@ import { CtaButton } from "./ui";
  * pictures after the still (which is the film's first frame). They are
  * taken from the original at equal steps of change in the picture, not of
  * time, so that equal steps of scroll move the glass equally
- * (scripts/hero-frames.py makes them and the still). */
-const FRAMES = Object.entries(
-  import.meta.glob<string>("@/assets/hero-doors/*.webp", {
+ * (scripts/hero-frames.py makes them and the still).
+ *
+ * They come in four files rather than one each, coarse to fine: every
+ * `STEPS[0]`th frame, then the frames between at each finer step. Each file
+ * is those frames' WebP files end to end. */
+const COUNT = 72;
+const STEPS = [8, 4, 2, 1];
+const PACKS = Object.entries(
+  import.meta.glob<string>("@/assets/hero-doors/*.bin", {
     eager: true,
     query: "?url",
     import: "default",
@@ -49,17 +55,19 @@ const HINT = { every: 6000, length: 2800, reach: 0.14 };
  * two frames it shows a mix of both, so a slow scroll moves the glass
  * smoothly rather than in steps; at rest it is always one whole frame.
  *
- * The frames are asked for once the page has loaded, at low priority, and
- * coarsely first: every eighth, then the ones between. The glass can
- * travel their whole way on the first few to arrive and get finer as the
- * rest do. Until any has, and where there is no such stretch (a short
- * window, reduced motion, a data saver), there is only the still and the
- * page scrolls over it.
+ * The frames are asked for once the page has loaded, at low priority, one
+ * file after another: four requests instead of 72, each of which can take
+ * a second to start on a slow connection. The first file holds every
+ * eighth frame, so the glass can travel its whole way on that alone, and
+ * gets finer as the rest arrive. Each frame is decoded before it is drawn,
+ * so the scroll never waits on it. Until the first file has come, and where
+ * there is no such stretch (a short window, reduced motion, a data saver),
+ * there is only the still and the page scrolls over it.
  *
  * A phone held upright sees only a narrow cut of the room, so still and
  * film are both set to the right of the picture there (`PORTRAIT`), where
- * a door is. It also takes every other frame, half the download; the mix
- * between frames covers the difference at that size.
+ * a door is. It also skips the last file (every other frame), half the
+ * download; the mix between frames covers the difference at that size.
  */
 function useHeroFilm(sectionRef: React.RefObject<HTMLElement | null>) {
   useEffect(() => {
@@ -73,9 +81,10 @@ function useHeroFilm(sectionRef: React.RefObject<HTMLElement | null>) {
     const tint = section.querySelector<HTMLElement>("[data-hero-tint]");
     const cue = section.querySelector<HTMLElement>("[data-hero-cue]");
 
-    const count = FRAMES.length;
+    const count = COUNT;
     /** Frame `n` of the film once it has arrived; 0 is the still, under the canvas. */
     const frames: (HTMLImageElement | undefined)[] = [];
+    const addresses: string[] = [];
     let runway = 0; // the length of scroll the film is played across, in px
     let asked = false;
     let scrolled = 0; // how far through the film the scroll has it, 0 to 1
@@ -169,38 +178,52 @@ function useHeroFilm(sectionRef: React.RefObject<HTMLElement | null>) {
       frame = requestAnimationFrame(tick);
     };
 
-    const ask = () => {
+    const ask = async () => {
       asked = true;
-      const order: number[] = [];
       const small = window.matchMedia("(max-width: 47.999rem)").matches;
-      for (const step of small ? [8, 4, 2] : [8, 4, 2, 1])
-        for (let n = step; n <= count; n += step) if (!order.includes(n)) order.push(n);
-      // A few at a time. Asked for all at once, the 72 frames held the
-      // connection for seconds and the photographs further down the page,
-      // on screen by then, waited behind them.
-      let next = 0;
-      const pull = () => {
-        const n = order[next++];
-        if (n === undefined || disposed) return;
-        const image = new Image();
-        image.fetchPriority = "low";
-        image.onload = () => {
-          if (disposed) return;
-          frames[n] = image;
-          drawn = -1;
-          wake();
-          pull();
-        };
-        image.onerror = pull;
-        image.src = FRAMES[n - 1] ?? "";
-      };
-      for (let i = 0; i < 3; i++) pull();
+      const taken = new Set<number>();
+      // One file at a time, so the photographs further down the page, on
+      // screen by then, are never kept waiting behind several at once.
+      for (const [i, step] of (small ? STEPS.slice(0, 3) : STEPS).entries()) {
+        const part: number[] = [];
+        for (let n = step; n <= count; n += step) if (!taken.has(n)) part.push(n);
+        part.forEach((n) => taken.add(n));
+        let file: ArrayBuffer;
+        try {
+          file = await (await fetch(PACKS[i] ?? "", { priority: "low" })).arrayBuffer();
+        } catch {
+          return;
+        }
+        if (disposed) return;
+        const view = new DataView(file);
+        let at = 0;
+        for (const n of part) {
+          if (at + 8 > file.byteLength) break;
+          const end = at + 8 + view.getUint32(at + 4, true); // the RIFF header's size
+          const address = URL.createObjectURL(
+            new Blob([file.slice(at, end)], { type: "image/webp" }),
+          );
+          addresses.push(address);
+          const image = new Image();
+          image.src = address;
+          image.decode().then(
+            () => {
+              if (disposed) return;
+              frames[n] = image;
+              drawn = -1;
+              wake();
+            },
+            () => {},
+          );
+          at = end;
+        }
+      }
     };
 
     let loaded = document.readyState === "complete";
     const measure = () => {
       runway = parseFloat(getComputedStyle(section).marginBottom) || 0;
-      if (runway && loaded && !asked) ask();
+      if (runway && loaded && !asked) void ask();
       wake();
     };
     const onLoad = () => {
@@ -221,6 +244,7 @@ function useHeroFilm(sectionRef: React.RefObject<HTMLElement | null>) {
       window.removeEventListener("scroll", wake);
       window.removeEventListener("resize", measure);
       document.removeEventListener("visibilitychange", wake);
+      addresses.forEach((address) => URL.revokeObjectURL(address));
       context.clearRect(0, 0, canvas.width, canvas.height);
       if (copy) {
         copy.style.opacity = "";

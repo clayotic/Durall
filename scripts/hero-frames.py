@@ -10,6 +10,7 @@
 # settled at the end are left out. Needs ffmpeg, Pillow and numpy. If the
 # video is not 3:2, change the canvas size in Hero.tsx and the height in
 # images.ts to match.
+import io
 import subprocess
 import sys
 import tempfile
@@ -24,6 +25,12 @@ STILL_QUALITY = 75
 STILLS = {1920: "hero-film.webp", 1440: "hero-film-1440w.webp", 960: "hero-film-960w.webp"}
 # Below this share of the largest change, a frame at the end counts as settled.
 SETTLED = 0.15
+# The frames are sent in a few files rather than one each (a request to the
+# host can take a second to start): every 8th frame first, so the whole film
+# can run coarsely on one file, then the 4ths between, the 2nds and the rest.
+# Each file is the frames' WebP files end to end; Hero.tsx splits them apart
+# by the size each one's RIFF header gives. A phone takes the first three.
+STEPS = (8, 4, 2, 1)
 
 ASSETS = Path(__file__).resolve().parent.parent / "src" / "assets"
 
@@ -61,14 +68,29 @@ def main(video):
         for width, name in STILLS.items():
             size = (width, round(width * still.height / still.width))
             still.resize(size, Image.LANCZOS).save(ASSETS / name, quality=STILL_QUALITY, method=6)
-        doors = ASSETS / "hero-doors"
-        for old in doors.glob("*.webp"):
-            old.unlink()
-        for k, file in enumerate(files, 1):
+        encoded = []
+        for file in files:
             image = Image.open(file).convert("RGB")
             size = (FRAME_WIDTH, round(FRAME_WIDTH * image.height / image.width))
-            image.resize(size, Image.LANCZOS).save(doors / f"{k:03}.webp", quality=FRAME_QUALITY, method=6)
+            out = io.BytesIO()
+            image.resize(size, Image.LANCZOS).save(out, "WEBP", quality=FRAME_QUALITY, method=6)
+            encoded.append(out.getvalue())
+    pack(encoded, ASSETS / "hero-doors")
     print(f"still {still.width}x{still.height}; frames {size[0]}x{size[1]}")
+
+
+def pack(frames, doors):
+    """`frames` (WebP files as bytes, the film's first frame first) into one file per step."""
+    for old in doors.iterdir():
+        old.unlink()
+    taken = set()
+    for i, step in enumerate(STEPS, 1):
+        part = [n for n in range(step, len(frames) + 1, step) if n not in taken]
+        taken.update(part)
+        for n in part:  # split by the header's size, so it must be the whole file
+            assert len(frames[n - 1]) == 8 + int.from_bytes(frames[n - 1][4:8], "little")
+        (doors / f"{i}.bin").write_bytes(b"".join(frames[n - 1] for n in part))
+        print(f"hero-doors/{i}.bin: frames {part[0]}, {part[1]} … {part[-1]}")
 
 
 if __name__ == "__main__":

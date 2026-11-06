@@ -43,6 +43,10 @@ function isH3SwallowedErrorBody(body: string): boolean {
   }
 }
 
+/** Whether the site is live on durallsystems.com. Set it to true at launch
+ * (the launch steps in Durall-legal-and-contact-fixes/FIXES.md, D). */
+const LAUNCHED = false;
+
 /* Public pages and content responses mark themselves cacheable at the CDN
  * (server/cache.ts). The admin panel, errors and anything that sets a
  * cookie never may: those are rewritten here, at the one place every
@@ -58,20 +62,21 @@ function isH3SwallowedErrorBody(body: string): boolean {
 function finished(request: Request, response: Response): Response {
   const url = new URL(request.url);
   const path = url.pathname;
-  /* The netlify.app address serves the same site as durallsystems.com (see
-   * movedTo), so search engines are told to leave it out. It is said here
-   * and not in netlify.toml, which would say it on the domain as well, and
-   * those responses are kept out of the CDN, so a copy of one can never be
-   * served on the domain. */
-  const testSite = url.hostname.endsWith(".netlify.app");
+  /* Search engines are told to leave the site out until it is live on
+   * durallsystems.com (LAUNCHED), and the netlify.app address for good.
+   * Before launch every response says so, on whatever address, so a copy
+   * the CDN keeps is right wherever it is served. After it, the netlify.app
+   * address's responses are kept out of the CDN, which does not keep its
+   * copies apart by address and could serve one on the domain. */
+  const netlifyApp = url.hostname.endsWith(".netlify.app");
   const cacheable =
     request.method === "GET" &&
     response.status === 200 &&
-    !testSite &&
+    !(LAUNCHED && netlifyApp) &&
     !path.startsWith("/admin") &&
     !response.headers.has("set-cookie");
   const headers = new Headers(response.headers);
-  if (testSite) headers.set("x-robots-tag", "noindex, nofollow");
+  if (!LAUNCHED || netlifyApp) headers.set("x-robots-tag", "noindex, nofollow");
   if (!cacheable || !headers.has("cache-control")) {
     headers.delete("netlify-cdn-cache-control");
     headers.delete("netlify-cache-tag");
