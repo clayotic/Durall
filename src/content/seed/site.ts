@@ -1,8 +1,8 @@
 import type { SiteSettings } from "../types";
 
-/* TODO — the email and phone are deliberate placeholders, as they were in
- * the code: a real-looking number is the kind of thing that ships. Replace
- * them in the admin panel (Company & contact). The office address is real. */
+/* The email and phones are the client's (November 2026); applications go to
+ * the same address until the client gives a separate one. Change them in the
+ * admin panel (Company & contact). */
 export const SETTINGS_SEED: SiteSettings = {
   company: {
     name: "Durall Systems",
@@ -14,20 +14,27 @@ export const SETTINGS_SEED: SiteSettings = {
       {
         icon: "mail",
         label: "Email",
-        value: "hello@example.com",
-        href: "mailto:hello@example.com",
+        value: "info@durallsystems.com",
+        href: "mailto:info@durallsystems.com",
         note: "For project enquiries and technical drawings.",
       },
       {
         icon: "phone",
         label: "Phone",
-        value: "+00 00000 00000",
-        href: "tel:+000000000000",
+        value: "+91 93222 42166",
+        href: "tel:+919322242166",
         note: "Weekdays, 9:30 to 18:00 IST.",
+      },
+      {
+        icon: "phone",
+        label: "Phone",
+        value: "+91 89767 42427",
+        href: "tel:+918976742427",
+        note: "",
       },
     ],
     responseNote: "A member of the Durall engineering team will respond within two working days.",
-    careersEmail: "careers@example.com",
+    careersEmail: "info@durallsystems.com",
   },
   office: {
     name: "Durall Systems India Pvt Ltd",

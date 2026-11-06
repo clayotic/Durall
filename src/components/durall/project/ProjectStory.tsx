@@ -2,6 +2,7 @@ import { useLineReveal } from "./motion";
 import { CurtainImage, Eyebrow, FactRows } from "./parts";
 import { Lines } from "@/content/render";
 import type { ProjectsPage } from "@/content/types";
+import { cutOf, ownFilm, UPRIGHT } from "@/content/video";
 import type { ProjectDetail } from "./data";
 
 type Props = { project: ProjectDetail; labels: ProjectsPage["detail"] };
@@ -145,9 +146,11 @@ export function ProjectSystem({ project, labels }: Props) {
   );
 }
 
-/** How the house is lived in, once the work is done. */
+/** How the house is lived in, once the work is done; and the project's full
+ * film under it, with sound, played only when asked for. */
 export function ProjectExperience({ project, labels }: Props) {
   const { experience } = project;
+  const film = ownFilm(project.film);
   const copyRef = useLineReveal<HTMLDivElement>();
 
   return (
@@ -172,6 +175,19 @@ export function ProjectExperience({ project, labels }: Props) {
           {experience.body}
         </p>
       </div>
+      {film ? (
+        <video
+          controls
+          playsInline
+          preload="none"
+          poster={cutOf(film, "poster", ".webp")}
+          aria-label={`${project.name}: the film`}
+          className="aspect-video w-full min-w-0 bg-navy object-cover lg:col-span-2 [@media(max-aspect-ratio:2/3)]:aspect-[3/4]"
+        >
+          <source src={cutOf(film, "phone")} media={UPRIGHT} />
+          <source src={film} />
+        </video>
+      ) : null}
     </section>
   );
 }

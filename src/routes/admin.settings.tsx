@@ -3,11 +3,13 @@ import { loadSettings } from "@/admin/api/content";
 import { SettingsEditor } from "@/admin/screens/SettingsEditor";
 import { SITE_SETTINGS_FORM } from "@/admin/specs/settings";
 import { ScreenSkeleton } from "@/admin/ui/controls";
+import { ScreenError } from "@/admin/ui/overlay";
 
 export const Route = createFileRoute("/admin/settings")({
   loader: () => loadSettings(),
   head: () => ({ meta: [{ title: "Site Settings — Durall Admin" }] }),
   pendingComponent: ScreenSkeleton,
+  errorComponent: ScreenError,
   component: Screen,
 });
 

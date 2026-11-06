@@ -3,6 +3,7 @@ import { iconOf } from "@/content/icons";
 import { imageOf } from "@/content/render";
 import type { AboutPage } from "@/content/types";
 import { at, useSeen } from "@/lib/seen";
+import { AboutEyebrow } from "./AboutStory";
 
 /* The pavilion, as the lines it is drawn with (350 × 200). Each is
  * [points or path, opacity of the line, its width, the order it is drawn in];
@@ -27,13 +28,6 @@ const ROOF = [
   ["146.9,6.0 314.3,76.3 202.7,123.2 35.3,52.9", 0.95, 1.3],
   ["314.3,76.3 202.7,123.2 202.7,128.1 314.3,81.3", 0.7, 1],
   ["35.3,52.9 202.7,123.2 202.7,128.1 35.3,57.8", 0.7, 1],
-] as const;
-const TREE = [
-  ["M34 160V90", 0.6],
-  ["M34 138L20 116", 0.45],
-  ["M34 127l12-19", 0.45],
-  ["M34 116L24 94", 0.45],
-  ["M34 105l10-21", 0.45],
 ] as const;
 
 /** Card height and the gap between cards, in px: the rail's ticks are set
@@ -74,9 +68,7 @@ export function OurApproachMobile({ content }: { content: AboutPage["approach"] 
 
   return (
     <div ref={rootRef} className="px-5 py-14 lg:hidden">
-      <p className="font-display text-xs font-semibold tracking-[0.16em] text-navy uppercase">
-        {content.eyebrow}
-      </p>
+      <AboutEyebrow>{content.eyebrow}</AboutEyebrow>
       <h2 className="mt-[1.125rem] font-display text-[2.375rem] leading-[1.08] font-light tracking-[-0.01em] text-navy">
         {content.heading.replace(/\n/g, " ")}
       </h2>
@@ -306,36 +298,6 @@ export function OurApproachMobile({ content }: { content: AboutPage["approach"] 
                 style={at(0.6, 1.1)}
               />
             ))}
-            {TREE.map(([d, opacity]) => (
-              <path
-                key={d}
-                className="seq-draw"
-                pathLength={1}
-                d={d}
-                stroke="#050834"
-                strokeOpacity={opacity}
-                style={at(0.7, 1.1)}
-              />
-            ))}
-            <ellipse
-              className="seq-draw"
-              pathLength={1}
-              cx={34}
-              cy={94}
-              rx={18}
-              ry={30}
-              stroke="#050834"
-              strokeOpacity={0.35}
-              style={at(0.7, 1.1)}
-            />
-            <path
-              className="seq-draw"
-              pathLength={1}
-              d="M0 190L350 176"
-              stroke="#050834"
-              strokeOpacity={0.18}
-              style={at(0, 1.1)}
-            />
           </svg>
           <div
             className="seq-rise mt-3 flex flex-col items-center gap-2 text-center"

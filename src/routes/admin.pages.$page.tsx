@@ -5,6 +5,7 @@ import { pageForm, SHARED_FORM } from "@/admin/specs/pages";
 import { ScreenSkeleton } from "@/admin/ui/controls";
 import { isPageKey, PAGES } from "@/content/pages";
 import type { PageKey, PageMap, SharedContent } from "@/content/types";
+import { ScreenError } from "@/admin/ui/overlay";
 
 /** One page's editor, or the shared sections ("shared"). */
 export const Route = createFileRoute("/admin/pages/$page")({
@@ -39,6 +40,7 @@ export const Route = createFileRoute("/admin/pages/$page")({
     ],
   }),
   pendingComponent: ScreenSkeleton,
+  errorComponent: ScreenError,
   component: PageEditor,
 });
 

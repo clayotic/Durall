@@ -91,7 +91,7 @@ export const startUpload = createServerFn({ method: "POST" })
             }),
           )
           .min(1)
-          .max(4),
+          .max(6),
       }),
     ),
   )

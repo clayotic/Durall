@@ -37,5 +37,9 @@ export const HOME_SEED: HomePage = {
   },
   insights: {
     heading: "Engineering insights that build better facades",
+    photo: photo(
+      "homeInsights",
+      "A shaded stone veranda beside a planted garden, with full-height sliding glass opening into the house",
+    ),
   },
 };

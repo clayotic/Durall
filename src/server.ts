@@ -56,13 +56,22 @@ function isH3SwallowedErrorBody(body: string): boolean {
  * as the type it is sent as, and tell other sites no more than the site's
  * name about where a visitor came from. */
 function finished(request: Request, response: Response): Response {
-  const path = new URL(request.url).pathname;
+  const url = new URL(request.url);
+  const path = url.pathname;
+  /* The netlify.app address serves the same site as durallsystems.com (see
+   * movedTo), so search engines are told to leave it out. It is said here
+   * and not in netlify.toml, which would say it on the domain as well, and
+   * those responses are kept out of the CDN, so a copy of one can never be
+   * served on the domain. */
+  const testSite = url.hostname.endsWith(".netlify.app");
   const cacheable =
     request.method === "GET" &&
     response.status === 200 &&
+    !testSite &&
     !path.startsWith("/admin") &&
     !response.headers.has("set-cookie");
   const headers = new Headers(response.headers);
+  if (testSite) headers.set("x-robots-tag", "noindex, nofollow");
   if (!cacheable || !headers.has("cache-control")) {
     headers.delete("netlify-cdn-cache-control");
     headers.delete("netlify-cache-tag");

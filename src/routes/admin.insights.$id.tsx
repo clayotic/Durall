@@ -2,6 +2,7 @@ import { createFileRoute, notFound } from "@tanstack/react-router";
 import { listArticles } from "@/admin/api/content";
 import { ArticleEditor, newArticle } from "@/admin/screens/Articles";
 import { ScreenSkeleton } from "@/admin/ui/controls";
+import { ScreenError } from "@/admin/ui/overlay";
 
 /** One article's editor; "new" starts a blank one. */
 export const Route = createFileRoute("/admin/insights/$id")({
@@ -17,6 +18,7 @@ export const Route = createFileRoute("/admin/insights/$id")({
     meta: [{ title: `${loaderData?.article.title || "New Article"} — Durall Admin` }],
   }),
   pendingComponent: ScreenSkeleton,
+  errorComponent: ScreenError,
   component: Screen,
 });
 

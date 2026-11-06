@@ -1,7 +1,6 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
-  createRootRouteWithContext,
+  createRootRoute,
   useRouter,
   useRouterState,
   HeadContent,
@@ -167,7 +166,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   );
 }
 
-export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+export const Route = createRootRoute({
   // Settings and shared sections (header, footer, process, enquiry form).
   // They change rarely; a page change does not need to ask for them again.
   loader: () => fetchSite(),
@@ -280,7 +279,6 @@ function RootShell({ children }: { children: ReactNode }) {
 }
 
 function RootComponent() {
-  const { queryClient } = Route.useRouteContext();
   // The admin panel is an application, not a page: none of the site's
   // opening curtain, smooth scrolling or page transitions belong in it.
   const inAdmin = useRouterState({ select: (s) => s.location.pathname.startsWith("/admin") });
@@ -288,16 +286,10 @@ function RootComponent() {
   useEffect(() => setRevealEnabled(behaviour.pageTransition), [behaviour.pageTransition]);
   useEffect(() => (inAdmin ? undefined : guardImages()), [inAdmin]);
 
-  if (inAdmin) {
-    return (
-      <QueryClientProvider client={queryClient}>
-        <Outlet />
-      </QueryClientProvider>
-    );
-  }
+  if (inAdmin) return <Outlet />;
 
   return (
-    <QueryClientProvider client={queryClient}>
+    <>
       <a
         href="#main"
         className="sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:top-4 focus-visible:left-4 focus-visible:z-100 focus-visible:inline-flex focus-visible:items-center focus-visible:rounded-md focus-visible:bg-navy focus-visible:px-4 focus-visible:py-3 focus-visible:font-display focus-visible:text-xs focus-visible:font-bold focus-visible:tracking-eyebrow focus-visible:text-white focus-visible:uppercase"
@@ -309,6 +301,6 @@ function RootComponent() {
       {behaviour.loadingScreen ? <SiteIntro /> : null}
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
-    </QueryClientProvider>
+    </>
   );
 }

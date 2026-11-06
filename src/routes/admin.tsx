@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createFileRoute, notFound, Outlet, redirect } from "@tanstack/react-router";
 import adminCss from "@/admin/admin.css?url";
 import { getContentStatus } from "@/admin/api/content";
@@ -63,22 +65,26 @@ export const Route = createFileRoute("/admin")({
 function AdminLayout() {
   const state = Route.useLoaderData();
   const signedIn = Boolean(state.member);
+  // The panel's own data cache; the public pages have no use for one.
+  const [queryClient] = useState(() => new QueryClient());
   return (
-    <AdminContext.Provider
-      value={{
-        configured: state.configured,
-        serviceKey: state.serviceKey,
-        imported: state.imported,
-        member: state.member,
-        editable: state.configured && state.imported && signedIn,
-        uploads: state.configured && state.serviceKey && signedIn,
-      }}
-    >
-      <OverlayProviders>
-        <AdminShell>
-          <Outlet />
-        </AdminShell>
-      </OverlayProviders>
-    </AdminContext.Provider>
+    <QueryClientProvider client={queryClient}>
+      <AdminContext.Provider
+        value={{
+          configured: state.configured,
+          serviceKey: state.serviceKey,
+          imported: state.imported,
+          member: state.member,
+          editable: state.configured && state.imported && signedIn,
+          uploads: state.configured && state.serviceKey && signedIn,
+        }}
+      >
+        <OverlayProviders>
+          <AdminShell>
+            <Outlet />
+          </AdminShell>
+        </OverlayProviders>
+      </AdminContext.Provider>
+    </QueryClientProvider>
   );
 }

@@ -6,9 +6,9 @@ import { PracticeLogo } from "./marks";
 import { PracticesMap } from "./PracticesMap";
 
 /**
- * "Architects & Design Practices": the heading, the dotted world map with a
- * mark on each country the practices work from, then the practices' logos
- * with their countries, and the closing line.
+ * "Architects & Design Practices": the heading, the practices' logos with
+ * their countries over the dotted world map that marks where they work
+ * from, and the closing line.
  *
  * It took the place of the "International Systems" section, which the
  * client removed with its partner brands; the world map that sat faintly
@@ -74,31 +74,34 @@ export function LeadingPractices({
         </p>
       </div>
 
-      <div ref={mapRef} className="shell-about mt-[clamp(2rem,4vw,3.5rem)] max-md:hidden">
-        <PracticesMap practices={practices} />
+      {/* The logos stand over the map, as the partner logos once did: both
+          share one grid cell, so the map is centred behind them at any width. */}
+      <div className="shell-about mt-[clamp(2rem,4vw,3.5rem)] grid items-center max-md:hidden">
+        <div ref={mapRef} className="[grid-area:1/1]">
+          <PracticesMap practices={practices} />
+        </div>
+        <ul
+          ref={gridRef}
+          className="relative grid grid-cols-1 gap-y-[clamp(2rem,4vw,3rem)] [grid-area:1/1] sm:grid-cols-2 lg:grid-cols-4"
+        >
+          {practices.map((practice) => (
+            <li key={practice.id} data-cell className="min-w-0">
+              <Interactive
+                lift={-4}
+                scale={1.01}
+                className="flex min-w-0 flex-col items-center px-[clamp(0.75rem,1.5vw,2rem)] text-center"
+              >
+                <span className="flex min-h-[clamp(2.5rem,3.5vw,3rem)] items-center justify-center">
+                  <PracticeLogo mark={practice.mark} name={practice.name} logo={practice.logo} />
+                </span>
+                <span className="mt-[clamp(0.875rem,1.8vw,1.5rem)] font-display text-[0.625rem] font-bold tracking-eyebrow text-slate uppercase">
+                  {practice.country}
+                </span>
+              </Interactive>
+            </li>
+          ))}
+        </ul>
       </div>
-
-      <ul
-        ref={gridRef}
-        className="shell-about relative mt-[clamp(2rem,4vw,3.5rem)] grid grid-cols-1 gap-y-[clamp(2rem,4vw,3rem)] max-md:hidden sm:grid-cols-2 lg:grid-cols-4"
-      >
-        {practices.map((practice) => (
-          <li key={practice.id} data-cell className="min-w-0">
-            <Interactive
-              lift={-4}
-              scale={1.01}
-              className="flex min-w-0 flex-col items-center px-[clamp(0.75rem,1.5vw,2rem)] text-center"
-            >
-              <span className="flex min-h-[clamp(2.5rem,3.5vw,3rem)] items-center justify-center">
-                <PracticeLogo mark={practice.mark} name={practice.name} logo={practice.logo} />
-              </span>
-              <span className="mt-[clamp(0.875rem,1.8vw,1.5rem)] font-display text-[0.625rem] font-bold tracking-eyebrow text-slate uppercase">
-                {practice.country}
-              </span>
-            </Interactive>
-          </li>
-        ))}
-      </ul>
 
       <div
         ref={closingRef}

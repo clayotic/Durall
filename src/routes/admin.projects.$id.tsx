@@ -2,6 +2,7 @@ import { createFileRoute, notFound } from "@tanstack/react-router";
 import { listProjects } from "@/admin/api/content";
 import { newProject, ProjectEditor } from "@/admin/screens/Projects";
 import { ScreenSkeleton } from "@/admin/ui/controls";
+import { ScreenError } from "@/admin/ui/overlay";
 
 /** One project's editor; "new" starts a blank one. */
 export const Route = createFileRoute("/admin/projects/$id")({
@@ -16,6 +17,7 @@ export const Route = createFileRoute("/admin/projects/$id")({
     meta: [{ title: `${loaderData?.project.name || "New Project"} — Durall Admin` }],
   }),
   pendingComponent: ScreenSkeleton,
+  errorComponent: ScreenError,
   component: Screen,
 });
 

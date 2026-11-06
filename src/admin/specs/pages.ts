@@ -79,14 +79,38 @@ export const PAGE_FORMS: Record<PageKey, SectionSpec[]> = {
       id: "insights",
       title: "Insights",
       description:
-        "The heading over the latest articles. The four newest published articles appear here (a pinned one first).",
-      fields: [text("insights.heading", "Heading")],
+        "The heading and photograph over the latest articles. The four newest published articles appear here (a pinned one first).",
+      fields: [
+        text("insights.heading", "Heading"),
+        photo("insights.photo", "Photograph", {
+          hint: "The large picture beside the newest article.",
+        }),
+      ],
     },
     SEO,
   ],
 
   about: [
     photoHero("The full-width photograph and heading at the top of the About page."),
+    {
+      id: "story",
+      title: "About Durall",
+      description: "The year Durall began, two figures under it, and the story beside them.",
+      fields: [
+        text("story.eyebrow", "Small heading"),
+        text("story.heading", "Heading"),
+        list<{ label: string; value: string }>(
+          "story.facts",
+          "Figures",
+          [text("value", "Figure"), text("label", "Label")],
+          (item) => (item.label ? `${item.value} ${item.label}` : ""),
+          { create: () => ({ value: "", label: "" }), max: 4 },
+        ),
+        area("story.lead", "Opening", { rows: 2 }),
+        area("story.emphasis", "Line in navy", { rows: 2, hint: "Follows the opening." }),
+        area("story.body", "Rest of the story", { rows: 6 }),
+      ],
+    },
     {
       id: "approach",
       title: "Our Approach",
@@ -312,7 +336,7 @@ export const PAGE_FORMS: Record<PageKey, SectionSpec[]> = {
       id: "map",
       title: "Map Card",
       description:
-        "The labels on the office card over the map. The address itself is under Company & contact.",
+        "The labels on the head office's address under the form. The address itself is under Company & contact.",
       fields: [
         text("map.eyebrow", "Small heading"),
         text("map.directions", "Directions button"),

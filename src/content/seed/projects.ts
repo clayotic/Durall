@@ -43,8 +43,8 @@ const featureOf = (
 });
 
 const PARIKRAMA_HERO = photo(
-  "parikramaPalms",
-  "Parikrama House — the long dark elevation beneath coconut palms",
+  "parikramaDusk",
+  "Parikrama House at dusk, low beneath its coconut palms",
 );
 
 const GARDENS_HERO = photo(

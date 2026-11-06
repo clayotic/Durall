@@ -30,13 +30,13 @@ export function Clause({ title, children }: { title: string; children: ReactNode
 
 /** The clause each page ends on: where to write. The name, address and
  * email come from the site settings, so they are the footer's. */
-export function ContactClause({ about }: { about: string }) {
+export function ContactClause({ about, to = "us" }: { about: string; to?: string }) {
   const { company, office, contact } = useSite().settings;
   const email = contact.details.find((detail) => detail.icon === "mail");
   return (
     <Clause title="Contact">
       <p>
-        For any question {about}, write to us
+        For any question {about}, write to {to}
         {email ? (
           <>
             {" "}

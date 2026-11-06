@@ -48,7 +48,8 @@ export function DurallFooter() {
   const { settings } = useSite();
   const { company, footer, office, contact } = settings;
   const email = contact.details.find((detail) => detail.icon === "mail");
-  const phone = contact.details.find((detail) => detail.icon === "phone");
+  // Every number, each on its own line, so each is its own tap on a phone.
+  const phones = contact.details.filter((detail) => detail.icon === "phone");
 
   return (
     // Clipped: its contents climb out from behind the section above as it
@@ -142,14 +143,15 @@ export function DurallFooter() {
                   {email.value}
                 </a>
               ) : null}
-              {phone ? (
+              {phones.map((phone) => (
                 <a
+                  key={phone.href}
                   href={phone.href}
                   className={`flex min-h-10 items-center whitespace-nowrap hover:text-white/75 ${FOCUS}`}
                 >
                   {phone.value}
                 </a>
-              ) : null}
+              ))}
             </div>
             {footer.hours ? (
               <p className="mt-2 max-w-[21.5rem] font-display text-sm leading-snug text-pretty text-silver">

@@ -1,10 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import type { Map as MapInstance } from "maplibre-gl";
-import { ArrowUpRight, LocateFixed, Minus, Plus } from "lucide-react";
+import { LocateFixed, Minus, Plus } from "lucide-react";
 import { prefersReducedMotion } from "@/lib/motion-prefs";
 import { useSite } from "@/content/site";
-import type { ContactPage } from "@/content/types";
-import { BUTTON } from "../ui";
 import { durallMapStyle, MAP_CREDIT, STYLE_URL } from "./mapTheme";
 
 /** Mumbai at a glance: where the camera starts before it flies in. */
@@ -38,8 +36,8 @@ const PIN = `
  * Nothing loads until the frame is within a screen of view: MapLibre and its
  * stylesheet are fetched then, not with the page. Until the map is ready —
  * and if the tiles can never be fetched — the frame shows a quiet drafting
- * grid with the address card over it, so the address and directions are
- * always there whether or not the map is.
+ * grid. The address and directions are beside it, in Contact Details
+ * (ContactBody), so nothing covers the map.
  *
  * Once loaded and properly in view, the camera flies from a wide view of
  * Mumbai down to a tilted close-up over the office, the buildings rising as
@@ -50,7 +48,7 @@ const PIN = `
  * the map says to hold ⌘/Ctrl to zoom it, and on touch one finger scrolls
  * the page while two move the map.
  */
-export function OfficeMap({ labels }: { labels: ContactPage["map"] }) {
+export function OfficeMap() {
   const { office } = useSite().settings;
   const OFFICE = { ...office, lngLat: [office.lng, office.lat] as [number, number] };
   // The map is built once; later renders read the latest office from here.
@@ -58,7 +56,6 @@ export function OfficeMap({ labels }: { labels: ContactPage["map"] }) {
   officeRef.current = OFFICE;
   const frameRef = useRef<HTMLDivElement>(null);
   const hostRef = useRef<HTMLDivElement>(null);
-  const cardRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapInstance | null>(null);
   const [ready, setReady] = useState(false);
 
@@ -70,19 +67,7 @@ export function OfficeMap({ labels }: { labels: ContactPage["map"] }) {
     const OFFICE = officeRef.current;
     let map: MapInstance | undefined;
     let flyObserver: IntersectionObserver | undefined;
-    let resizeObserver: ResizeObserver | undefined;
     const reduced = prefersReducedMotion();
-
-    /* The address card covers the top of the frame, so the camera is padded
-     * to centre the pin in the part of the map left showing: by the card's
-     * full height where it spans the frame (phones), by about half of it
-     * where it sits in the corner. */
-    const padCamera = () => {
-      const card = cardRef.current;
-      if (!map || !card) return;
-      const spans = card.offsetWidth > frame.clientWidth * 0.6;
-      map.setPadding({ top: card.offsetHeight * (spans ? 1 : 0.5), right: 0, bottom: 0, left: 0 });
-    };
 
     // A zoom gesture over the map belongs to the map. Lenis listens on the
     // window, so stopping the event here keeps ⌘-scroll from also scrolling
@@ -107,7 +92,7 @@ export function OfficeMap({ labels }: { labels: ContactPage["map"] }) {
               .catch(() => null),
             import("maplibre-gl/dist/maplibre-gl.css"),
           ]);
-          // Offline or blocked: the grid and the address card stay.
+          // Offline or blocked: the grid stays.
           if (cancelled || !base) return;
 
           let style;
@@ -134,9 +119,6 @@ export function OfficeMap({ labels }: { labels: ContactPage["map"] }) {
             fadeDuration: reduced ? 0 : 300,
           });
           mapRef.current = map;
-          padCamera();
-          resizeObserver = new ResizeObserver(padCamera);
-          resizeObserver.observe(frame);
           map.touchZoomRotate.disableRotation();
           map.keyboard.disableRotation();
           // The map library writes each tile source's credit into the page
@@ -212,7 +194,6 @@ export function OfficeMap({ labels }: { labels: ContactPage["map"] }) {
       cancelled = true;
       loadObserver.disconnect();
       flyObserver?.disconnect();
-      resizeObserver?.disconnect();
       frame.removeEventListener("wheel", keepZoomOnMap);
       map?.remove();
       mapRef.current = null;
@@ -251,60 +232,6 @@ export function OfficeMap({ labels }: { labels: ContactPage["map"] }) {
         <div ref={hostRef} className="h-full w-full" />
       </div>
 
-      <div
-        ref={cardRef}
-        className="absolute inset-x-3 top-3 z-10 rounded-2xl bg-white/95 p-[clamp(1.1rem,1.6vw,1.5rem)] shadow-[0_12px_36px_rgb(5_8_52/0.14)] backdrop-blur-md sm:inset-x-auto sm:top-5 sm:left-5 sm:max-w-[23rem]"
-      >
-        <p className="font-display text-[0.6875rem] font-bold tracking-[0.16em] text-accent-blue uppercase">
-          {labels.eyebrow}
-        </p>
-        <p className="mt-2 font-display text-[clamp(1.0625rem,1.3vw,1.25rem)] leading-snug font-medium tracking-tight text-navy">
-          {OFFICE.name}
-        </p>
-        <address className="mt-2 font-body text-sm leading-relaxed text-slate not-italic">
-          {OFFICE.lines.map((line) => (
-            <span key={line} className="block">
-              {line}
-            </span>
-          ))}
-        </address>
-        <p className="mt-2 font-body text-xs text-slate">
-          <span className="tabular-nums">{OFFICE.plusCode}</span> · {OFFICE.note}
-        </p>
-        <div className="mt-4 flex flex-wrap gap-2">
-          <a
-            href={OFFICE.directions}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={BUTTON.primary}
-          >
-            {labels.directions}
-            <span className="sr-only"> (opens Google Maps in a new tab)</span>
-            <ArrowUpRight
-              aria-hidden="true"
-              className="hover-arrow h-4 w-4 shrink-0"
-              strokeWidth={1.2}
-            />
-          </a>
-          <a
-            href={OFFICE.googleMaps}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={BUTTON.secondary}
-          >
-            {labels.openInMaps}
-            <span className="sr-only"> (Google Maps, new tab)</span>
-            <ArrowUpRight
-              aria-hidden="true"
-              className="hover-arrow h-4 w-4 shrink-0"
-              strokeWidth={1.2}
-            />
-          </a>
-        </div>
-      </div>
-
-      {/* After the card in the DOM, so keyboard order follows the frame
-       * top to bottom: address and directions first, then the controls. */}
       {ready ? (
         <div className="absolute right-4 bottom-4 z-10 flex flex-col overflow-hidden rounded-xl bg-white shadow-[0_6px_20px_rgb(5_8_52/0.12)]">
           <button type="button" onClick={() => zoomBy(1)} aria-label="Zoom in" className={control}>

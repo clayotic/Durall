@@ -91,3 +91,22 @@ export function ownFilm(address: string | null | undefined): string | null {
   const path = address?.trim() ?? "";
   return /^\/(?!\/)[^?#\s]+\.(?:mp4|webm)$/i.test(path) ? path : null;
 }
+
+/**
+ * A cut of a film kept beside it, named after it: cutOf("/films/a.mp4",
+ * "card") is "/films/a-card.mp4". A project's film comes with
+ *
+ *   -phone.mp4         the middle of the film, for an upright screen
+ *   -card.mp4          a short clip for its card on the home page
+ *   -poster.webp       the still shown before the full film is played
+ *
+ * A cut that is missing simply never plays; the photograph stays.
+ */
+export function cutOf(film: string, cut: string, type?: string): string {
+  return film.replace(/(\.\w+)$/, (ext) => `-${cut}${type ?? ext}`);
+}
+
+/** An upright screen, which is sent a film's `-phone` cut. Wider than
+ * portrait, so the gap between the small and large viewport heights never
+ * shows an edge. */
+export const UPRIGHT = "(max-aspect-ratio: 2/3)";

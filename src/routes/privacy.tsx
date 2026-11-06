@@ -4,7 +4,7 @@ import { seoHead } from "@/content/head";
 import { useSite } from "@/content/site";
 
 /* Change this whenever the policy below changes. */
-const UPDATED = "5 October 2026";
+const UPDATED = "6 November 2026";
 
 export const Route = createFileRoute("/privacy")({
   head: () =>
@@ -27,7 +27,9 @@ export const Route = createFileRoute("/privacy")({
  * the same here as in the footer.
  */
 function PrivacyPage() {
-  const { company, office } = useSite().settings;
+  const { company, office, contact } = useSite().settings;
+  const email = contact.details.find((detail) => detail.icon === "mail");
+  const phone = contact.details.find((detail) => detail.icon === "phone");
 
   return (
     <PolicyPage
@@ -159,16 +161,65 @@ function PrivacyPage() {
           <li className={ITEM}>to look into a concern about how we have handled it.</li>
         </ul>
         <p>
-          Write to us at the address below and we will answer as soon as we reasonably can. These
-          choices are in addition to any rights the law gives you over your personal information.
+          You can also withdraw any consent you have given us, for example to receive updates, at
+          any time. It is as easy to withdraw as it was to give, and withdrawing does not affect
+          what we did before.
         </p>
+        <p>
+          You may nominate another person to exercise these choices on your behalf if you die or
+          become unable to do so yourself.
+        </p>
+        <p>
+          Write to our Grievance Officer (below). We will acknowledge your request and resolve it
+          within one month. If you are not satisfied with our answer, you may complain to the Data
+          Protection Board of India.
+        </p>
+        <p>
+          These choices are in addition to any rights the law gives you over your personal
+          information.
+        </p>
+      </Clause>
+
+      {/* The officer's name and designation go above the company's name
+          once the client has given them. */}
+      <Clause title="Grievance Officer">
+        <p>
+          If you have a question, request or complaint about how we handle your information, contact
+          our Grievance Officer:
+        </p>
+        <address className="text-navy not-italic">
+          {company.legalName}
+          {office.lines.map((line) => (
+            <span key={line} className="block">
+              {line}
+            </span>
+          ))}
+          {email ? (
+            <span className="block">
+              Email:{" "}
+              <a href={email.href} className={LINK}>
+                {email.value}
+              </a>
+            </span>
+          ) : null}
+          {phone ? (
+            <span className="block">
+              Phone:{" "}
+              <a href={phone.href} className={LINK}>
+                {phone.value}
+              </a>
+            </span>
+          ) : null}
+        </address>
+        <p>We respond to every grievance within one month of receiving it.</p>
       </Clause>
 
       <Clause title="Keeping it safe">
         <p>
           The site is served over an encrypted connection, and enquiries are held in a database that
           only signed-in members of the Durall team can open. No website can promise perfect
-          security; if something goes wrong that affects your information, we will tell you.
+          security. If a breach affects your information, we will tell you and the authorities as
+          the law requires.
         </p>
       </Clause>
 
@@ -186,7 +237,7 @@ function PrivacyPage() {
         </p>
       </Clause>
 
-      <ContactClause about="or request about your information" />
+      <ContactClause about="or request about your information" to="our Grievance Officer" />
     </PolicyPage>
   );
 }

@@ -117,23 +117,19 @@ export function SeriesIndex({
         </div>
       </section>
 
-      <figure className="shell mt-10 flex flex-col gap-3 lg:mt-[4.5rem]">
+      <div className="shell mt-10 lg:mt-[4.5rem]">
         <div className="relative h-56 overflow-hidden bg-navy sm:h-80 lg:h-[26.25rem]">
           <img
             draggable={false}
             {...imageOf({ kind: "asset", key: "insightsBanner" })}
-            alt="Assembly tables and stacked aluminium profiles on Durall’s factory floor, a frame standing on one table"
+            alt="A high-rise living room opening through full-height sliding glass and timber screens to the city beyond"
             sizes="100vw"
             fetchPriority="high"
             decoding="async"
             className="absolute inset-0 h-full w-full object-cover"
           />
         </div>
-        <figcaption className="flex flex-wrap justify-between gap-x-6 gap-y-1 text-[0.8125rem] text-slate">
-          <span>Durall’s fabrication hall</span>
-          <span>Where every part of this series takes place</span>
-        </figcaption>
-      </figure>
+      </div>
 
       {/* The parts on the project's line. The line scrolls sideways on a
           phone, where nine stages do not fit across. */}

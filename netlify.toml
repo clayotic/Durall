@@ -7,3 +7,11 @@
 
 [functions]
   directory = ".netlify/functions-internal"
+
+# The films keep their names when replaced, so they are kept for a day rather
+# than the year the hashed files in /assets get. Long enough for Cloudflare,
+# in front of durallsystems.com, to serve them from its servers in India.
+[[headers]]
+  for = "/films/*"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"

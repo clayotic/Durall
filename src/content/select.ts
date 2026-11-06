@@ -102,12 +102,13 @@ export function portfolioOf(projects: readonly ProjectDoc[]): PortfolioItem[] {
     .filter((p) => p.slug !== featured?.slug);
 }
 
-export type HomeCard = { slug: string } & ProjectDoc["home"];
+/** `film` is the project's own; its `-card` cut plays over the card. */
+export type HomeCard = { slug: string; film: string } & ProjectDoc["home"];
 
 export function homeCardsOf(projects: readonly ProjectDoc[]): HomeCard[] {
   return publishedProjects(projects)
     .filter((p) => p.home.show)
-    .map((p) => ({ slug: p.slug, ...p.home }));
+    .map((p) => ({ slug: p.slug, film: p.film, ...p.home }));
 }
 
 /** A slide in the home page's enquiry band: every published project, in order. */

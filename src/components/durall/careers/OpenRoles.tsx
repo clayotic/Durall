@@ -206,6 +206,14 @@ export function OpenRoles({
                 {email}
               </a>
             </p>
+            <p className="max-w-[22rem] font-display text-xs leading-relaxed text-pretty text-slate md:text-center">
+              By sending an application you agree that we may use it to consider you for this and
+              similar roles. See our{" "}
+              <Link to="/privacy" className={EMAIL_LINK}>
+                Privacy Policy
+              </Link>
+              .
+            </p>
           </div>
         </div>
       </div>

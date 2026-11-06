@@ -473,6 +473,18 @@ function EnquiryForm({ copy, source }: { copy: Copy; source: Source }) {
               </p>
             ) : null}
 
+            <p className="max-w-[36rem] font-display text-[clamp(0.8125rem,0.83vw,0.9375rem)] leading-[1.45] text-pretty text-white/75 sm:col-span-2">
+              We use your details only to reply to your enquiry and, if you ticked the box above, to
+              send you updates. Read our{" "}
+              <Link
+                to="/privacy"
+                className={`text-white underline decoration-white/40 underline-offset-2 hover:decoration-white ${FOCUS}`}
+              >
+                Privacy Policy
+              </Link>
+              .
+            </p>
+
             <div className="mt-[clamp(0.5rem,0.3vw,0.75rem)] flex flex-wrap items-center gap-x-[clamp(1.25rem,1.72vw,2.1rem)] gap-y-4 sm:col-span-2">
               <button type="submit" disabled={sending} className={BUTTON.inverted}>
                 {sending ? copy.sending : copy.submit}

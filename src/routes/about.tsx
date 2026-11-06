@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { SiteHeader } from "@/components/durall/SiteHeader";
 import { PhotoHero } from "@/components/durall/PhotoHero";
 import { AboutPhilosophy } from "@/components/durall/about/AboutPhilosophy";
+import { AboutStory } from "@/components/durall/about/AboutStory";
 import { MeetsEngineering } from "@/components/durall/about/MeetsEngineering";
 import { OurApproach } from "@/components/durall/about/OurApproach";
 import { DurallFooter } from "@/components/durall/DurallFooter";
@@ -21,6 +22,7 @@ function About() {
       <SiteHeader />
       <main id="main" tabIndex={-1} className="scroll-mt-24">
         <PhotoHero content={page.opening} wash={{ left: 1 }} />
+        <AboutStory content={page.story} />
         <OurApproach content={page.approach} />
         <AboutPhilosophy content={page.philosophy} />
         <MeetsEngineering content={page.meets} />

@@ -123,7 +123,7 @@ export const COMPANY_FORM: SectionSpec[] = [
   {
     id: "office",
     title: "Head Office",
-    description: "The address card and the pin on the Contact page map.",
+    description: "The head office address on the Contact page, and the pin on its map.",
     fields: [
       text("office.name", "Name"),
       text("office.plusCode", "Plus code"),

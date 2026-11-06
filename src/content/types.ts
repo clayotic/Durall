@@ -202,9 +202,10 @@ export type ProjectDoc = {
   facts: Fact[];
   intro: { heading: string; paragraphs: string[] };
   /**
-   * The project's film, which plays in the opening of its page in place of
-   * the photograph: a file kept on this site ("/films/….mp4", see ownFilm in
-   * content/video.ts). "" for none.
+   * The project's full film, played with sound in The Experience: a file
+   * kept on this site ("/films/….mp4", see ownFilm in content/video.ts).
+   * Its short clip beside it plays on the home page card (cutOf, ibid.).
+   * "" for none.
    */
   film: string;
   plates: Plate[];
@@ -354,7 +355,9 @@ export type HomePage = {
     photo: Photo;
   };
   projects: { heading: string; lede: string };
-  insights: { heading: string };
+  /** The large photograph beside the newest article; that article's own
+   * cover is used where a page has none. */
+  insights: { heading: string; photo: Photo };
 };
 
 /** The full-width photographic opening (About, Partners, Projects,
@@ -368,6 +371,16 @@ export type PhotoHero = {
 export type AboutPage = {
   seo: Seo;
   opening: PhotoHero;
+  /** "About Durall", under the opening: the year it began, two figures, and
+   * the story, its middle sentence (`emphasis`) set in navy. */
+  story: {
+    eyebrow: string;
+    heading: string;
+    facts: Fact[];
+    lead: string;
+    emphasis: string;
+    body: string;
+  };
   philosophy: {
     heading: string;
     body: string;

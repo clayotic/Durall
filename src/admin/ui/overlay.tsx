@@ -9,9 +9,10 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { useRouter, type ErrorComponentProps } from "@tanstack/react-router";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Button, IconButton } from "./controls";
+import { Button, Card, IconButton } from "./controls";
 
 /* ── Dialog ──────────────────────────────────────────────────────────────── */
 
@@ -266,4 +267,29 @@ export function errorMessage(error: unknown): string {
   if (error instanceof Error && error.message) return error.message;
   if (typeof error === "string") return error;
   return "Something went wrong. Try again.";
+}
+
+/**
+ * A screen whose data could not be read (no access to the section, or the
+ * database did not answer), shown in the screen's place so the sidebar stays
+ * and the rest of the panel can still be used.
+ */
+export function ScreenError({ error, reset }: ErrorComponentProps) {
+  const router = useRouter();
+  return (
+    <Card title="This screen could not open" className="max-w-lg">
+      <p className="text-sm leading-relaxed text-slate-deep">{errorMessage(error)}</p>
+      <div className="mt-5">
+        <Button
+          variant="primary"
+          onClick={() => {
+            reset();
+            void router.invalidate();
+          }}
+        >
+          Try Again
+        </Button>
+      </div>
+    </Card>
+  );
 }

@@ -41,65 +41,91 @@ import logoDurallWhite from "./logo-durall-white.webp";
 import philosophyPavilion880 from "./philosophy-pavilion-880w.webp";
 import philosophyPavilion1440 from "./philosophy-pavilion-1440w.webp";
 import philosophyPavilion2048 from "./philosophy-pavilion-2048w.webp";
+import philosophyPavilion1130 from "./philosophy-pavilion-1130w.webp";
 
 import projectPatina640 from "./project-patina-640w.webp";
 import projectPatina from "./project-patina.webp";
+import projectPatina930 from "./project-patina-930w.webp";
 import projectSentosa640 from "./project-sentosa-640w.webp";
 import projectSentosa from "./project-sentosa.webp";
+import projectSentosa930 from "./project-sentosa-930w.webp";
 import projectChiltron640 from "./project-chiltron-640w.webp";
 import projectChiltron from "./project-chiltron.webp";
+import projectChiltron930 from "./project-chiltron-930w.webp";
 import projectJuhu640 from "./project-juhu-640w.webp";
 import projectJuhu from "./project-juhu.webp";
+import projectJuhu930 from "./project-juhu-930w.webp";
 import projectBangalore640 from "./project-bangalore-640w.webp";
 import projectBangalore from "./project-bangalore.webp";
+import projectBangalore930 from "./project-bangalore-930w.webp";
 import projectBanyan640 from "./project-banyan-640w.webp";
 import projectBanyan from "./project-banyan.webp";
+import projectBanyan930 from "./project-banyan-930w.webp";
 import projectFeatured640 from "./project-featured-640w.webp";
 import projectFeatured from "./project-featured.webp";
+import projectFeatured860 from "./project-featured-860w.webp";
 
 import cardParikrama480 from "./card-parikrama-480w.webp";
 import cardParikrama from "./card-parikrama.webp";
+import cardParikrama610 from "./card-parikrama-610w.webp";
 import cardPatina480 from "./card-patina-480w.webp";
 import cardPatina from "./card-patina.webp";
+import cardPatina610 from "./card-patina-610w.webp";
 import cardChiltron480 from "./card-chiltron-480w.webp";
 import cardChiltron from "./card-chiltron.webp";
+import cardChiltron620 from "./card-chiltron-620w.webp";
 import cardJuhu480 from "./card-juhu-480w.webp";
 import cardJuhu from "./card-juhu.webp";
+import cardJuhu610 from "./card-juhu-610w.webp";
 import cardRitz480 from "./card-ritz-480w.webp";
 import cardRitz from "./card-ritz.webp";
+import cardRitz620 from "./card-ritz-620w.webp";
 
-import homeParikrama480 from "./home-parikrama-480w.webp";
-import homeParikrama from "./home-parikrama.webp";
-import homeParikrama1040 from "./home-parikrama-1040w.webp";
 import homePatina480 from "./home-patina-480w.webp";
 import homePatina from "./home-patina.webp";
 import homePatina1040 from "./home-patina-1040w.webp";
+import homePatina610 from "./home-patina-610w.webp";
 import homeChiltern480 from "./home-chiltern-480w.webp";
 import homeChiltern from "./home-chiltern.webp";
 import homeChiltern1040 from "./home-chiltern-1040w.webp";
+import homeChiltern610 from "./home-chiltern-610w.webp";
 import homeJuhu480 from "./home-juhu-480w.webp";
 import homeJuhu from "./home-juhu.webp";
+import homeJuhu610 from "./home-juhu-610w.webp";
 import homeRitz640 from "./home-ritz-640w.webp";
 import homeRitz from "./home-ritz-1336w.webp";
+import homeRitz920 from "./home-ritz-920w.webp";
+/* The home page's Insights section, beside the newest article (November 2026). */
+import homeInsights640 from "./insights/home-blogs-640w.webp";
+import homeInsights1080 from "./insights/home-blogs-1080w.webp";
+import homeInsights from "./insights/home-blogs-1600w.webp";
+import homeInsights830 from "./insights/home-blogs-830w.webp";
 
 import stageDiscover from "./stage-discover.webp";
 // The home page's five stages (November 2026): Parikrama House, and SPASM's
 // model and drawings of it for Design and Fabricate.
 import stageParikrama800 from "./stage-parikrama-800w.webp";
 import stageParikrama from "./stage-parikrama-1600w.webp";
+import stageParikrama1130 from "./stage-parikrama-1130w.webp";
 import stageDesign960 from "./stage-design-960w.webp";
 import stageDesign from "./stage-design-1600w.webp";
+import stageDesign1240 from "./stage-design-1240w.webp";
 import stageEngineer800 from "./stage-engineer-800w.webp";
 import stageEngineer from "./stage-engineer-1600w.webp";
+import stageEngineer1130 from "./stage-engineer-1130w.webp";
 import stageFabricate960 from "./stage-fabricate-960w.webp";
 import stageFabricate from "./stage-fabricate-1600w.webp";
+import stageFabricate1240 from "./stage-fabricate-1240w.webp";
 import stageInstall800 from "./stage-install-800w.webp";
 import stageInstall from "./stage-install-1600w.webp";
+import stageInstall1130 from "./stage-install-1130w.webp";
 
 import aboutVilla800 from "./about-villa-800w.webp";
 import aboutVilla from "./about-villa-1600w.webp";
+import aboutVilla1130 from "./about-villa-1130w.webp";
 import aboutLake800 from "./about-lake-800w.webp";
 import aboutLake from "./about-lake-1600w.webp";
+import aboutLake1130 from "./about-lake-1130w.webp";
 import aboutPlateLeft from "./about-plate-left.webp";
 import aboutPlateRight from "./about-plate-right.webp";
 import aboutLineHouse from "./about-line-house.webp";
@@ -112,26 +138,41 @@ import partnersWorldMap from "./partners-world-map.svg";
 import parikramaPalms960 from "./parikrama/palms-960w.webp";
 import parikramaPalms1440 from "./parikrama/palms-1440w.webp";
 import parikramaPalms from "./parikrama/palms-1674w.webp";
-import parikramaPavilion800 from "./parikrama/pavilion-800w.webp";
-import parikramaPavilion from "./parikrama/pavilion-1674w.webp";
-import parikramaLiving800 from "./parikrama/living-800w.webp";
-import parikramaLiving from "./parikrama/living-1500w.webp";
+/* Parikrama's photographs are the architects' own (SPASM Design; photographs by
+ * Umang Shah), kept whole at their full size. The opening's dusk view was
+ * enlarged from 1500px with an upscaler, so it is sharp across a large screen. */
+import parikramaDusk640 from "./parikrama/dusk-640w.webp";
+import parikramaDusk960 from "./parikrama/dusk-960w.webp";
+import parikramaDusk1280 from "./parikrama/dusk-1280w.webp";
+import parikramaDusk1600 from "./parikrama/dusk-1600w.webp";
+import parikramaDusk1920 from "./parikrama/dusk-1920w.webp";
+import parikramaDusk2560 from "./parikrama/dusk-2560w.webp";
+import parikramaPavilion640 from "./parikrama/pavilion-640w.webp";
+import parikramaPavilion960 from "./parikrama/pavilion-960w.webp";
+import parikramaPavilion1280 from "./parikrama/pavilion-1280w.webp";
+import parikramaPavilion1500 from "./parikrama/pavilion-1500w.webp";
+import parikramaLiving640 from "./parikrama/living-640w.webp";
+import parikramaLiving960 from "./parikrama/living-960w.webp";
+import parikramaLiving1280 from "./parikrama/living-1280w.webp";
+import parikramaLiving1500 from "./parikrama/living-1500w.webp";
 import parikramaGarden640 from "./parikrama/garden-640w.webp";
 import parikramaGarden from "./parikrama/garden-1010w.webp";
+import parikramaGarden800 from "./parikrama/garden-800w.webp";
 import parikramaGrove800 from "./parikrama/grove-800w.webp";
 import parikramaGrove from "./parikrama/grove-1232w.webp";
-import parikramaBedroom800 from "./parikrama/bedroom-800w.webp";
-import parikramaBedroom from "./parikrama/bedroom-1336w.webp";
+import parikramaGrove990 from "./parikrama/grove-990w.webp";
 import parikramaSteps560 from "./parikrama/steps-560w.webp";
 import parikramaSteps from "./parikrama/steps-886w.webp";
+import parikramaSteps700 from "./parikrama/steps-700w.webp";
+import parikramaBedroom640 from "./parikrama/bedroom-640w.webp";
+import parikramaBedroom960 from "./parikrama/bedroom-960w.webp";
+import parikramaBedroom1280 from "./parikrama/bedroom-1280w.webp";
 import parikramaDining640 from "./parikrama/dining-640w.webp";
-import parikramaDining from "./parikrama/dining-1010w.webp";
-import parikramaPavilionOpen640 from "./parikrama/pavilion-open-640w.webp";
-import parikramaPavilionOpen from "./parikrama/pavilion-open-1136w.webp";
-import parikramaBedroomEvening640 from "./parikrama/bedroom-evening-640w.webp";
-import parikramaBedroomEvening from "./parikrama/bedroom-evening-1208w.webp";
+import parikramaDining960 from "./parikrama/dining-960w.webp";
+import parikramaDining1280 from "./parikrama/dining-1280w.webp";
 import sentosaLibrary480 from "./parikrama/sentosa-library-480w.webp";
 import sentosaLibrary from "./parikrama/sentosa-library-768w.webp";
+import sentosaLibrary610 from "./parikrama/sentosa-library-610w.webp";
 import projectRitz from "./project-ritz.webp";
 
 import expStageDiscover from "./expertise/stage-discover.webp";
@@ -142,12 +183,21 @@ import expStageInstall from "./expertise/stage-install.webp";
 import expDetailDoor from "./expertise/detail-door.webp";
 import secretGardens240 from "./expertise/secret-gardens-240w.webp";
 import secretGardens from "./expertise/secret-gardens.webp";
+import secretGardens330 from "./expertise/secret-gardens-330w.webp";
+import secretGardens460 from "./expertise/secret-gardens-460w.webp";
+import secretGardens650 from "./expertise/secret-gardens-650w.webp";
 import patinaPool240 from "./expertise/patina-pool-240w.webp";
 import patinaPool from "./expertise/patina-pool.webp";
+import patinaPool330 from "./expertise/patina-pool-330w.webp";
+import patinaPool460 from "./expertise/patina-pool-460w.webp";
+import patinaPool650 from "./expertise/patina-pool-650w.webp";
 import patinaAerial from "./expertise/patina-aerial.webp";
 import ritzVillas from "./expertise/ritz-villas.webp";
 import juhuFacade240 from "./expertise/juhu-facade-240w.webp";
 import juhuFacade from "./expertise/juhu-facade.webp";
+import juhuFacade330 from "./expertise/juhu-facade-330w.webp";
+import juhuFacade460 from "./expertise/juhu-facade-460w.webp";
+import juhuFacade650 from "./expertise/juhu-facade-650w.webp";
 import mandalaHouse from "./expertise/mandala-house.webp";
 import mandalaCourt from "./expertise/mandala-court.webp";
 
@@ -174,25 +224,34 @@ import gardensDusk1440 from "./projects/secret-gardens/dusk-1440w.webp";
 import gardensDusk from "./projects/secret-gardens/dusk-1920w.webp";
 import gardensStair800 from "./projects/secret-gardens/stair-800w.webp";
 import gardensStair from "./projects/secret-gardens/stair-1600w.webp";
+import gardensStair1130 from "./projects/secret-gardens/stair-1130w.webp";
 import gardensSwing800 from "./projects/secret-gardens/swing-800w.webp";
 import gardensSwing from "./projects/secret-gardens/swing-1600w.webp";
+import gardensSwing1130 from "./projects/secret-gardens/swing-1130w.webp";
 import gardensPavilion800 from "./projects/secret-gardens/pavilion-800w.webp";
 import gardensPavilion from "./projects/secret-gardens/pavilion-1600w.webp";
+import gardensPavilion1130 from "./projects/secret-gardens/pavilion-1130w.webp";
 import gardensBedroom800 from "./projects/secret-gardens/bedroom-800w.webp";
 import gardensBedroom from "./projects/secret-gardens/bedroom-1600w.webp";
+import gardensBedroom1130 from "./projects/secret-gardens/bedroom-1130w.webp";
 import gardensGlass640 from "./projects/secret-gardens/glass-640w.webp";
 import gardensGlass from "./projects/secret-gardens/glass-1125w.webp";
+import gardensGlass850 from "./projects/secret-gardens/glass-850w.webp";
 import gardensGlassClose640 from "./projects/secret-gardens/glass-close-640w.webp";
 import gardensGlassClose from "./projects/secret-gardens/glass-close-1125w.webp";
+import gardensGlassClose850 from "./projects/secret-gardens/glass-close-850w.webp";
 import gardensWindow640 from "./projects/secret-gardens/window-640w.webp";
 import gardensWindow from "./projects/secret-gardens/window-1200w.webp";
+import gardensWindow880 from "./projects/secret-gardens/window-880w.webp";
 import mandalaDusk960 from "./projects/mandala/dusk-960w.webp";
 import mandalaDusk1440 from "./projects/mandala/dusk-1440w.webp";
 import mandalaDusk from "./projects/mandala/dusk-1500w.webp";
 import mandalaDining800 from "./projects/mandala/dining-800w.webp";
 import mandalaDining from "./projects/mandala/dining-1500w.webp";
+import mandalaDining1100 from "./projects/mandala/dining-1100w.webp";
 import mandalaLiving800 from "./projects/mandala/living-800w.webp";
 import mandalaLiving from "./projects/mandala/living-1500w.webp";
+import mandalaLiving1100 from "./projects/mandala/living-1100w.webp";
 import mandalaPool800 from "./projects/mandala/pool-800w.webp";
 import mandalaPool from "./projects/mandala/pool-1032w.webp";
 import mandalaNight800 from "./projects/mandala/night-800w.webp";
@@ -202,143 +261,203 @@ import sentosaShelves1440 from "./projects/sentosa/shelves-1440w.webp";
 import sentosaShelves from "./projects/sentosa/shelves-1500w.webp";
 import sentosaBedroom800 from "./projects/sentosa/bedroom-800w.webp";
 import sentosaBedroom from "./projects/sentosa/bedroom-1500w.webp";
+import sentosaBedroom1100 from "./projects/sentosa/bedroom-1100w.webp";
 import sentosaLiving640 from "./projects/sentosa/living-640w.webp";
 import sentosaLiving from "./projects/sentosa/living-1200w.webp";
+import sentosaLiving880 from "./projects/sentosa/living-880w.webp";
 import sentosaLounge640 from "./projects/sentosa/lounge-640w.webp";
 import sentosaLounge from "./projects/sentosa/lounge-1200w.webp";
+import sentosaLounge880 from "./projects/sentosa/lounge-880w.webp";
 import sentosaShadow640 from "./projects/sentosa/shadow-640w.webp";
 import sentosaShadow from "./projects/sentosa/shadow-1200w.webp";
+import sentosaShadow880 from "./projects/sentosa/shadow-880w.webp";
 import chilternPond960 from "./projects/chiltern/pond-960w.webp";
 import chilternPond1440 from "./projects/chiltern/pond-1440w.webp";
 import chilternPond from "./projects/chiltern/pond-1920w.webp";
 import chilternLiving800 from "./projects/chiltern/living-800w.webp";
 import chilternLiving from "./projects/chiltern/living-1600w.webp";
+import chilternLiving1130 from "./projects/chiltern/living-1130w.webp";
 import chilternPool640 from "./projects/chiltern/pool-640w.webp";
 import chilternPool from "./projects/chiltern/pool-1200w.webp";
+import chilternPool880 from "./projects/chiltern/pool-880w.webp";
 import chilternCorner640 from "./projects/chiltern/corner-640w.webp";
 import chilternCorner from "./projects/chiltern/corner-1200w.webp";
+import chilternCorner880 from "./projects/chiltern/corner-880w.webp";
 import chilternBedroom800 from "./projects/chiltern/bedroom-800w.webp";
 import chilternBedroom from "./projects/chiltern/bedroom-1600w.webp";
+import chilternBedroom1130 from "./projects/chiltern/bedroom-1130w.webp";
 import chilternLounge800 from "./projects/chiltern/lounge-800w.webp";
 import chilternLounge from "./projects/chiltern/lounge-1600w.webp";
+import chilternLounge1130 from "./projects/chiltern/lounge-1130w.webp";
 import chilternStudy800 from "./projects/chiltern/study-800w.webp";
 import chilternStudy from "./projects/chiltern/study-1600w.webp";
+import chilternStudy1130 from "./projects/chiltern/study-1130w.webp";
 import juhuAerial960 from "./projects/juhu/aerial-960w.webp";
 import juhuAerial from "./projects/juhu/aerial-1330w.webp";
 import juhuCourt640 from "./projects/juhu/court-640w.webp";
 import juhuCourt from "./projects/juhu/court-1104w.webp";
+import juhuCourt840 from "./projects/juhu/court-840w.webp";
 import juhuShutters640 from "./projects/juhu/shutters-640w.webp";
 import juhuShutters from "./projects/juhu/shutters-904w.webp";
 import juhuGlazing640 from "./projects/juhu/glazing-640w.webp";
 import juhuGlazing from "./projects/juhu/glazing-904w.webp";
 import juhuTerrace640 from "./projects/juhu/terrace-640w.webp";
 import juhuTerrace from "./projects/juhu/terrace-1200w.webp";
+import juhuTerrace880 from "./projects/juhu/terrace-880w.webp";
 import juhuLiving640 from "./projects/juhu/living-640w.webp";
 import juhuLiving from "./projects/juhu/living-1200w.webp";
+import juhuLiving880 from "./projects/juhu/living-880w.webp";
 import juhuDusk640 from "./projects/juhu/dusk-640w.webp";
 import juhuDusk from "./projects/juhu/dusk-1168w.webp";
+import juhuDusk860 from "./projects/juhu/dusk-860w.webp";
 import ritzAerial960 from "./projects/ritz/aerial-960w.webp";
 import ritzAerial1440 from "./projects/ritz/aerial-1440w.webp";
 import ritzAerial from "./projects/ritz/aerial-1920w.webp";
 import ritzVilla800 from "./projects/ritz/villa-800w.webp";
 import ritzVilla from "./projects/ritz/villa-1600w.webp";
+import ritzVilla1130 from "./projects/ritz/villa-1130w.webp";
 import ritzPool800 from "./projects/ritz/pool-800w.webp";
 import ritzPool from "./projects/ritz/pool-1600w.webp";
+import ritzPool1130 from "./projects/ritz/pool-1130w.webp";
 import ritzBedroom800 from "./projects/ritz/bedroom-800w.webp";
 import ritzBedroom from "./projects/ritz/bedroom-1600w.webp";
+import ritzBedroom1130 from "./projects/ritz/bedroom-1130w.webp";
 import ritzBeach800 from "./projects/ritz/beach-800w.webp";
 import ritzBeach from "./projects/ritz/beach-1600w.webp";
+import ritzBeach1130 from "./projects/ritz/beach-1130w.webp";
 import ritzEvening800 from "./projects/ritz/evening-800w.webp";
 import ritzEvening from "./projects/ritz/evening-1600w.webp";
+import ritzEvening1130 from "./projects/ritz/evening-1130w.webp";
 import ritzGarden800 from "./projects/ritz/garden-800w.webp";
 import ritzGarden from "./projects/ritz/garden-1600w.webp";
+import ritzGarden1130 from "./projects/ritz/garden-1130w.webp";
 import ritzRing640 from "./projects/ritz/ring-640w.webp";
 import ritzRing from "./projects/ritz/ring-1200w.webp";
+import ritzRing880 from "./projects/ritz/ring-880w.webp";
 import ritzShore640 from "./projects/ritz/shore-640w.webp";
 import ritzShore from "./projects/ritz/shore-1200w.webp";
+import ritzShore880 from "./projects/ritz/shore-880w.webp";
 import ritzDeck800 from "./projects/ritz/deck-800w.webp";
 import ritzDeck from "./projects/ritz/deck-1600w.webp";
+import ritzDeck1130 from "./projects/ritz/deck-1130w.webp";
 import ritzSpa800 from "./projects/ritz/spa-800w.webp";
 import ritzSpa from "./projects/ritz/spa-1600w.webp";
+import ritzSpa1130 from "./projects/ritz/spa-1130w.webp";
 import patinaPavilion960 from "./projects/patina/pavilion-960w.webp";
 import patinaPavilion1440 from "./projects/patina/pavilion-1440w.webp";
 import patinaPavilion from "./projects/patina/pavilion-1920w.webp";
 import patinaSuite800 from "./projects/patina/suite-800w.webp";
 import patinaSuite from "./projects/patina/suite-1600w.webp";
+import patinaSuite1130 from "./projects/patina/suite-1130w.webp";
 import patinaTerrace800 from "./projects/patina/terrace-800w.webp";
 import patinaTerrace from "./projects/patina/terrace-1600w.webp";
+import patinaTerrace1130 from "./projects/patina/terrace-1130w.webp";
 import patinaVillaPool800 from "./projects/patina/villa-pool-800w.webp";
 import patinaVillaPool from "./projects/patina/villa-pool-1600w.webp";
+import patinaVillaPool1130 from "./projects/patina/villa-pool-1130w.webp";
 import patinaBeach800 from "./projects/patina/beach-800w.webp";
 import patinaBeach from "./projects/patina/beach-1600w.webp";
+import patinaBeach1130 from "./projects/patina/beach-1130w.webp";
 import patinaBar800 from "./projects/patina/bar-800w.webp";
 import patinaBar from "./projects/patina/bar-1600w.webp";
+import patinaBar1130 from "./projects/patina/bar-1130w.webp";
 import patinaLounge800 from "./projects/patina/lounge-800w.webp";
 import patinaLounge from "./projects/patina/lounge-1600w.webp";
+import patinaLounge1130 from "./projects/patina/lounge-1130w.webp";
 import patinaRestaurant800 from "./projects/patina/restaurant-800w.webp";
 import patinaRestaurant from "./projects/patina/restaurant-1600w.webp";
+import patinaRestaurant1130 from "./projects/patina/restaurant-1130w.webp";
 import patinaIsland640 from "./projects/patina/island-640w.webp";
 import patinaIsland from "./projects/patina/island-1200w.webp";
+import patinaIsland880 from "./projects/patina/island-880w.webp";
 import patinaWaterVillas640 from "./projects/patina/water-villas-640w.webp";
 import patinaWaterVillas from "./projects/patina/water-villas-1200w.webp";
+import patinaWaterVillas880 from "./projects/patina/water-villas-880w.webp";
 import patinaShore800 from "./projects/patina/shore-800w.webp";
 import patinaShore from "./projects/patina/shore-1440w.webp";
+import patinaShore1070 from "./projects/patina/shore-1070w.webp";
 import carmichaelSkyline960 from "./projects/carmichael/skyline-960w.webp";
 import carmichaelSkyline1440 from "./projects/carmichael/skyline-1440w.webp";
 import carmichaelSkyline from "./projects/carmichael/skyline-1920w.webp";
 import carmichaelScreens800 from "./projects/carmichael/screens-800w.webp";
 import carmichaelScreens from "./projects/carmichael/screens-1600w.webp";
+import carmichaelScreens1130 from "./projects/carmichael/screens-1130w.webp";
 import carmichaelFacade800 from "./projects/carmichael/facade-800w.webp";
 import carmichaelFacade from "./projects/carmichael/facade-1600w.webp";
+import carmichaelFacade1130 from "./projects/carmichael/facade-1130w.webp";
 // Durall’s factory floor and drawings, for the Premium Glazing Series (Insights).
 import insightsProfileCut640 from "./insights/profile-cut-640w.webp";
 import insightsProfileCut from "./insights/profile-cut-900w.webp";
 import insightsYard640 from "./insights/yard-640w.webp";
 import insightsYard from "./insights/yard-1117w.webp";
+import insightsYard850 from "./insights/yard-850w.webp";
 import insightsAssemblyAbove640 from "./insights/assembly-above-640w.webp";
 import insightsAssemblyAbove from "./insights/assembly-above-1080w.webp";
+import insightsAssemblyAbove830 from "./insights/assembly-above-830w.webp";
 import insightsFabrication640 from "./insights/fabrication-640w.webp";
 import insightsFabrication1080 from "./insights/fabrication-1080w.webp";
 import insightsFabrication from "./insights/fabrication-1669w.webp";
+import insightsFabrication830 from "./insights/fabrication-830w.webp";
+import insightsFabrication1340 from "./insights/fabrication-1340w.webp";
 import insightsCutting640 from "./insights/cutting-640w.webp";
 import insightsCutting1080 from "./insights/cutting-1080w.webp";
 import insightsCutting from "./insights/cutting-1670w.webp";
+import insightsCutting830 from "./insights/cutting-830w.webp";
+import insightsCutting1340 from "./insights/cutting-1340w.webp";
 import insightsParikramaWide640 from "./insights/parikrama-wide-640w.webp";
 import insightsParikramaWide from "./insights/parikrama-wide-1289w.webp";
+import insightsParikramaWide910 from "./insights/parikrama-wide-910w.webp";
 import insightsGlazing640 from "./insights/glazing-640w.webp";
 import insightsGlazing1080 from "./insights/glazing-1080w.webp";
 import insightsGlazing from "./insights/glazing-1672w.webp";
+import insightsGlazing830 from "./insights/glazing-830w.webp";
+import insightsGlazing1340 from "./insights/glazing-1340w.webp";
 import insightsProfilesStaged640 from "./insights/profiles-staged-640w.webp";
 import insightsProfilesStaged from "./insights/profiles-staged-1120w.webp";
+import insightsProfilesStaged850 from "./insights/profiles-staged-850w.webp";
 import insightsProfileStock640 from "./insights/profile-stock-640w.webp";
 import insightsProfileStock from "./insights/profile-stock-1080w.webp";
+import insightsProfileStock830 from "./insights/profile-stock-830w.webp";
 import insightsParikramaIntent640 from "./insights/parikrama-intent-640w.webp";
-import insightsParikramaIntent from "./insights/parikrama-intent-1280w.webp";
+import insightsParikramaIntent960 from "./insights/parikrama-intent-960w.webp";
+import insightsParikramaIntent1098 from "./insights/parikrama-intent-1098w.webp";
 import insightsBanner640 from "./insights/banner-640w.webp";
 import insightsBanner1280 from "./insights/banner-1280w.webp";
 import insightsBanner from "./insights/banner-1768w.webp";
+import insightsBanner910 from "./insights/banner-910w.webp";
 import insightsHall640 from "./insights/hall-640w.webp";
 import insightsHall from "./insights/hall-941w.webp";
 import insightsSection from "./insights/section-1300w.webp";
 import insightsMachiningCentre640 from "./insights/machining-centre-640w.webp";
 import insightsMachiningCentre1080 from "./insights/machining-centre-1080w.webp";
 import insightsMachiningCentre from "./insights/machining-centre-1672w.webp";
+import insightsMachiningCentre830 from "./insights/machining-centre-830w.webp";
+import insightsMachiningCentre1340 from "./insights/machining-centre-1340w.webp";
 import insightsAssembly640 from "./insights/assembly-640w.webp";
 import insightsAssembly1080 from "./insights/assembly-1080w.webp";
 import insightsAssembly from "./insights/assembly-1672w.webp";
+import insightsAssembly830 from "./insights/assembly-830w.webp";
+import insightsAssembly1340 from "./insights/assembly-1340w.webp";
 import insightsScreenCarried640 from "./insights/screen-carried-640w.webp";
 import insightsScreenCarried from "./insights/screen-carried-900w.webp";
 import insightsGlassStaged640 from "./insights/glass-staged-640w.webp";
 import insightsGlassStaged from "./insights/glass-staged-1080w.webp";
+import insightsGlassStaged830 from "./insights/glass-staged-830w.webp";
 import insightsMachining640 from "./insights/machining-640w.webp";
 import insightsMachining1080 from "./insights/machining-1080w.webp";
 import insightsMachining from "./insights/machining-1672w.webp";
+import insightsMachining830 from "./insights/machining-830w.webp";
+import insightsMachining1340 from "./insights/machining-1340w.webp";
 import insightsInspection640 from "./insights/inspection-640w.webp";
 import insightsInspection1080 from "./insights/inspection-1080w.webp";
 import insightsInspection from "./insights/inspection-1672w.webp";
+import insightsInspection830 from "./insights/inspection-830w.webp";
+import insightsInspection1340 from "./insights/inspection-1340w.webp";
 import insightsPacking640 from "./insights/packing-640w.webp";
 import insightsPacking1080 from "./insights/packing-1080w.webp";
 import insightsPacking from "./insights/packing-1671w.webp";
+import insightsPacking830 from "./insights/packing-830w.webp";
+import insightsPacking1340 from "./insights/packing-1340w.webp";
 
 export type ImageAsset = {
   src: string;
@@ -421,6 +540,7 @@ export const IMAGES = {
   philosophyPavilion: set(
     [
       [philosophyPavilion880, 880],
+      [philosophyPavilion1130, 1130],
       [philosophyPavilion1440, 1440],
       [philosophyPavilion2048, 2048],
     ],
@@ -430,6 +550,7 @@ export const IMAGES = {
   projectPatina: set(
     [
       [projectPatina640, 640],
+      [projectPatina930, 930],
       [projectPatina, 1360],
     ],
     907,
@@ -437,6 +558,7 @@ export const IMAGES = {
   projectSentosa: set(
     [
       [projectSentosa640, 640],
+      [projectSentosa930, 930],
       [projectSentosa, 1360],
     ],
     907,
@@ -444,6 +566,7 @@ export const IMAGES = {
   projectChiltron: set(
     [
       [projectChiltron640, 640],
+      [projectChiltron930, 930],
       [projectChiltron, 1360],
     ],
     907,
@@ -451,6 +574,7 @@ export const IMAGES = {
   projectJuhu: set(
     [
       [projectJuhu640, 640],
+      [projectJuhu930, 930],
       [projectJuhu, 1360],
     ],
     907,
@@ -458,6 +582,7 @@ export const IMAGES = {
   projectBangalore: set(
     [
       [projectBangalore640, 640],
+      [projectBangalore930, 930],
       [projectBangalore, 1360],
     ],
     907,
@@ -465,6 +590,7 @@ export const IMAGES = {
   projectBanyan: set(
     [
       [projectBanyan640, 640],
+      [projectBanyan930, 930],
       [projectBanyan, 1360],
     ],
     907,
@@ -472,6 +598,7 @@ export const IMAGES = {
   projectFeatured: set(
     [
       [projectFeatured640, 640],
+      [projectFeatured860, 860],
       [projectFeatured, 1153],
     ],
     721,
@@ -483,6 +610,7 @@ export const IMAGES = {
   cardParikrama: set(
     [
       [cardParikrama480, 480],
+      [cardParikrama610, 610],
       [cardParikrama, 780],
     ],
     780,
@@ -490,6 +618,7 @@ export const IMAGES = {
   cardPatina: set(
     [
       [cardPatina480, 480],
+      [cardPatina610, 610],
       [cardPatina, 780],
     ],
     780,
@@ -497,6 +626,7 @@ export const IMAGES = {
   cardChiltron: set(
     [
       [cardChiltron480, 480],
+      [cardChiltron620, 620],
       [cardChiltron, 804],
     ],
     780,
@@ -504,6 +634,7 @@ export const IMAGES = {
   cardJuhu: set(
     [
       [cardJuhu480, 480],
+      [cardJuhu610, 610],
       [cardJuhu, 780],
     ],
     780,
@@ -511,6 +642,7 @@ export const IMAGES = {
   cardRitz: set(
     [
       [cardRitz480, 480],
+      [cardRitz620, 620],
       [cardRitz, 792],
     ],
     780,
@@ -518,17 +650,20 @@ export const IMAGES = {
 
   /* The home page's five project cards, from the design's "Selected work"
    * frame, cut square to the framing drawn there. */
+  // The architects' cover photograph, the same files as parikramaPavilion.
   homeParikrama: set(
     [
-      [homeParikrama480, 480],
-      [homeParikrama, 780],
-      [homeParikrama1040, 1040],
+      [parikramaPavilion640, 640],
+      [parikramaPavilion960, 960],
+      [parikramaPavilion1280, 1280],
+      [parikramaPavilion1500, 1500],
     ],
-    1040,
+    1000,
   ),
   homePatina: set(
     [
       [homePatina480, 480],
+      [homePatina610, 610],
       [homePatina, 780],
       [homePatina1040, 1040],
     ],
@@ -537,6 +672,7 @@ export const IMAGES = {
   homeChiltern: set(
     [
       [homeChiltern480, 480],
+      [homeChiltern610, 610],
       [homeChiltern, 780],
       [homeChiltern1040, 1040],
     ],
@@ -545,6 +681,7 @@ export const IMAGES = {
   homeJuhu: set(
     [
       [homeJuhu480, 480],
+      [homeJuhu610, 610],
       [homeJuhu, 780],
     ],
     780,
@@ -552,15 +689,26 @@ export const IMAGES = {
   homeRitz: set(
     [
       [homeRitz640, 640],
+      [homeRitz920, 920],
       [homeRitz, 1336],
     ],
     891,
+  ),
+  homeInsights: set(
+    [
+      [homeInsights640, 640],
+      [homeInsights830, 830],
+      [homeInsights1080, 1080],
+      [homeInsights, 1600],
+    ],
+    1372,
   ),
 
   stageDiscover: one(stageDiscover, 760, 967),
   stageParikrama: set(
     [
       [stageParikrama800, 800],
+      [stageParikrama1130, 1130],
       [stageParikrama, 1600],
     ],
     965,
@@ -568,6 +716,7 @@ export const IMAGES = {
   stageDesign: set(
     [
       [stageDesign960, 960],
+      [stageDesign1240, 1240],
       [stageDesign, 1600],
     ],
     892,
@@ -575,6 +724,7 @@ export const IMAGES = {
   stageEngineer: set(
     [
       [stageEngineer800, 800],
+      [stageEngineer1130, 1130],
       [stageEngineer, 1600],
     ],
     1073,
@@ -582,6 +732,7 @@ export const IMAGES = {
   stageFabricate: set(
     [
       [stageFabricate960, 960],
+      [stageFabricate1240, 1240],
       [stageFabricate, 1600],
     ],
     1132,
@@ -589,6 +740,7 @@ export const IMAGES = {
   stageInstall: set(
     [
       [stageInstall800, 800],
+      [stageInstall1130, 1130],
       [stageInstall, 1600],
     ],
     1005,
@@ -597,6 +749,7 @@ export const IMAGES = {
   aboutVilla: set(
     [
       [aboutVilla800, 800],
+      [aboutVilla1130, 1130],
       [aboutVilla, 1600],
     ],
     1066,
@@ -604,6 +757,7 @@ export const IMAGES = {
   aboutLake: set(
     [
       [aboutLake800, 800],
+      [aboutLake1130, 1130],
       [aboutLake, 1600],
     ],
     1067,
@@ -615,10 +769,10 @@ export const IMAGES = {
 
   partnersWorldMap: one(partnersWorldMap, 1400, 474),
 
-  /* Parikrama — Murud House, the first project detail page. Brought over from
-   * its own Lovable project: the originals were 1px-feathered PNG exports (one
-   * with a 183px transparent band across the top), so each was cropped to its
-   * opaque area before encoding. */
+  /* Parikrama — Murud House, the first project detail page. Palms, garden,
+   * grove and steps were brought over from its own Lovable project (1px-
+   * feathered PNG exports, cropped to their opaque area); the rest are the
+   * architects' originals (see the imports). */
   parikramaPalms: set(
     [
       [parikramaPalms960, 960],
@@ -627,26 +781,41 @@ export const IMAGES = {
     ],
     942,
   ),
+  parikramaDusk: set(
+    [
+      [parikramaDusk640, 640],
+      [parikramaDusk960, 960],
+      [parikramaDusk1280, 1280],
+      [parikramaDusk1600, 1600],
+      [parikramaDusk1920, 1920],
+      [parikramaDusk2560, 2560],
+    ],
+    1711,
+  ),
   parikramaPavilion: set(
     [
-      [parikramaPavilion800, 800],
-      [parikramaPavilion, 1674],
+      [parikramaPavilion640, 640],
+      [parikramaPavilion960, 960],
+      [parikramaPavilion1280, 1280],
+      [parikramaPavilion1500, 1500],
     ],
-    1116,
+    1000,
   ),
-  // The veranda, whole, from the architects' own photographs. It stands
-  // under both of the names the two smaller cuts of this room had, which
-  // stored pages still refer to.
+  // The veranda. It stands under both of the names the two smaller cuts of
+  // this room had, which stored pages still refer to.
   parikramaVeranda: set(
     [
-      [parikramaLiving800, 800],
-      [parikramaLiving, 1500],
+      [parikramaLiving640, 640],
+      [parikramaLiving960, 960],
+      [parikramaLiving1280, 1280],
+      [parikramaLiving1500, 1500],
     ],
     1000,
   ),
   parikramaGarden: set(
     [
       [parikramaGarden640, 640],
+      [parikramaGarden800, 800],
       [parikramaGarden, 1010],
     ],
     1263,
@@ -654,20 +823,23 @@ export const IMAGES = {
   parikramaGrove: set(
     [
       [parikramaGrove800, 800],
+      [parikramaGrove990, 990],
       [parikramaGrove, 1232],
     ],
     821,
   ),
   parikramaBedroom: set(
     [
-      [parikramaBedroom800, 800],
-      [parikramaBedroom, 1336],
+      [parikramaBedroom640, 640],
+      [parikramaBedroom960, 960],
+      [parikramaBedroom1280, 1280],
     ],
-    836,
+    818,
   ),
   parikramaSteps: set(
     [
       [parikramaSteps560, 560],
+      [parikramaSteps700, 700],
       [parikramaSteps, 886],
     ],
     886,
@@ -675,30 +847,36 @@ export const IMAGES = {
   parikramaDining: set(
     [
       [parikramaDining640, 640],
-      [parikramaDining, 1010],
+      [parikramaDining960, 960],
+      [parikramaDining1280, 1280],
     ],
-    1010,
+    898,
   ),
   parikramaVerandaOpen: set(
     [
-      [parikramaLiving800, 800],
-      [parikramaLiving, 1500],
+      [parikramaLiving640, 640],
+      [parikramaLiving960, 960],
+      [parikramaLiving1280, 1280],
+      [parikramaLiving1500, 1500],
     ],
     1000,
   ),
   parikramaPavilionOpen: set(
     [
-      [parikramaPavilionOpen640, 640],
-      [parikramaPavilionOpen, 1136],
+      [parikramaPavilion640, 640],
+      [parikramaPavilion960, 960],
+      [parikramaPavilion1280, 1280],
+      [parikramaPavilion1500, 1500],
     ],
-    852,
+    1000,
   ),
   parikramaBedroomEvening: set(
     [
-      [parikramaBedroomEvening640, 640],
-      [parikramaBedroomEvening, 1208],
+      [parikramaBedroom640, 640],
+      [parikramaBedroom960, 960],
+      [parikramaBedroom1280, 1280],
     ],
-    824,
+    818,
   ),
   /* Cut from inside thumb-ritz's feathered border (the thumbnail is a
    * rounded, faded export); the only photograph of the project on file. */
@@ -706,6 +884,7 @@ export const IMAGES = {
   sentosaLibrary: set(
     [
       [sentosaLibrary480, 480],
+      [sentosaLibrary610, 610],
       [sentosaLibrary, 768],
     ],
     473,
@@ -726,6 +905,9 @@ export const IMAGES = {
   secretGardens: set(
     [
       [secretGardens240, 240],
+      [secretGardens330, 330],
+      [secretGardens460, 460],
+      [secretGardens650, 650],
       [secretGardens, 900],
     ],
     898,
@@ -733,6 +915,9 @@ export const IMAGES = {
   patinaPool: set(
     [
       [patinaPool240, 240],
+      [patinaPool330, 330],
+      [patinaPool460, 460],
+      [patinaPool650, 650],
       [patinaPool, 900],
     ],
     675,
@@ -742,6 +927,9 @@ export const IMAGES = {
   juhuFacade: set(
     [
       [juhuFacade240, 240],
+      [juhuFacade330, 330],
+      [juhuFacade460, 460],
+      [juhuFacade650, 650],
       [juhuFacade, 900],
     ],
     1045,
@@ -779,6 +967,7 @@ export const IMAGES = {
   gardensStair: set(
     [
       [gardensStair800, 800],
+      [gardensStair1130, 1130],
       [gardensStair, 1600],
     ],
     1067,
@@ -786,6 +975,7 @@ export const IMAGES = {
   gardensSwing: set(
     [
       [gardensSwing800, 800],
+      [gardensSwing1130, 1130],
       [gardensSwing, 1600],
     ],
     1019,
@@ -793,6 +983,7 @@ export const IMAGES = {
   gardensPavilion: set(
     [
       [gardensPavilion800, 800],
+      [gardensPavilion1130, 1130],
       [gardensPavilion, 1600],
     ],
     1067,
@@ -800,6 +991,7 @@ export const IMAGES = {
   gardensBedroom: set(
     [
       [gardensBedroom800, 800],
+      [gardensBedroom1130, 1130],
       [gardensBedroom, 1600],
     ],
     1068,
@@ -807,6 +999,7 @@ export const IMAGES = {
   gardensGlass: set(
     [
       [gardensGlass640, 640],
+      [gardensGlass850, 850],
       [gardensGlass, 1125],
     ],
     1116,
@@ -814,6 +1007,7 @@ export const IMAGES = {
   gardensGlassClose: set(
     [
       [gardensGlassClose640, 640],
+      [gardensGlassClose850, 850],
       [gardensGlassClose, 1125],
     ],
     1122,
@@ -821,6 +1015,7 @@ export const IMAGES = {
   gardensWindow: set(
     [
       [gardensWindow640, 640],
+      [gardensWindow880, 880],
       [gardensWindow, 1200],
     ],
     1213,
@@ -836,6 +1031,7 @@ export const IMAGES = {
   mandalaDining: set(
     [
       [mandalaDining800, 800],
+      [mandalaDining1100, 1100],
       [mandalaDining, 1500],
     ],
     751,
@@ -843,6 +1039,7 @@ export const IMAGES = {
   mandalaLiving: set(
     [
       [mandalaLiving800, 800],
+      [mandalaLiving1100, 1100],
       [mandalaLiving, 1500],
     ],
     803,
@@ -872,6 +1069,7 @@ export const IMAGES = {
   sentosaBedroom: set(
     [
       [sentosaBedroom800, 800],
+      [sentosaBedroom1100, 1100],
       [sentosaBedroom, 1500],
     ],
     1001,
@@ -879,6 +1077,7 @@ export const IMAGES = {
   sentosaLiving: set(
     [
       [sentosaLiving640, 640],
+      [sentosaLiving880, 880],
       [sentosaLiving, 1200],
     ],
     1500,
@@ -886,6 +1085,7 @@ export const IMAGES = {
   sentosaLounge: set(
     [
       [sentosaLounge640, 640],
+      [sentosaLounge880, 880],
       [sentosaLounge, 1200],
     ],
     1798,
@@ -893,6 +1093,7 @@ export const IMAGES = {
   sentosaShadow: set(
     [
       [sentosaShadow640, 640],
+      [sentosaShadow880, 880],
       [sentosaShadow, 1200],
     ],
     1798,
@@ -908,6 +1109,7 @@ export const IMAGES = {
   chilternLiving: set(
     [
       [chilternLiving800, 800],
+      [chilternLiving1130, 1130],
       [chilternLiving, 1600],
     ],
     1200,
@@ -915,6 +1117,7 @@ export const IMAGES = {
   chilternPool: set(
     [
       [chilternPool640, 640],
+      [chilternPool880, 880],
       [chilternPool, 1200],
     ],
     1800,
@@ -922,6 +1125,7 @@ export const IMAGES = {
   chilternCorner: set(
     [
       [chilternCorner640, 640],
+      [chilternCorner880, 880],
       [chilternCorner, 1200],
     ],
     1600,
@@ -929,6 +1133,7 @@ export const IMAGES = {
   chilternBedroom: set(
     [
       [chilternBedroom800, 800],
+      [chilternBedroom1130, 1130],
       [chilternBedroom, 1600],
     ],
     798,
@@ -936,6 +1141,7 @@ export const IMAGES = {
   chilternLounge: set(
     [
       [chilternLounge800, 800],
+      [chilternLounge1130, 1130],
       [chilternLounge, 1600],
     ],
     825,
@@ -943,6 +1149,7 @@ export const IMAGES = {
   chilternStudy: set(
     [
       [chilternStudy800, 800],
+      [chilternStudy1130, 1130],
       [chilternStudy, 1600],
     ],
     1078,
@@ -957,6 +1164,7 @@ export const IMAGES = {
   juhuCourt: set(
     [
       [juhuCourt640, 640],
+      [juhuCourt840, 840],
       [juhuCourt, 1104],
     ],
     1356,
@@ -978,6 +1186,7 @@ export const IMAGES = {
   juhuTerrace: set(
     [
       [juhuTerrace640, 640],
+      [juhuTerrace880, 880],
       [juhuTerrace, 1200],
     ],
     1310,
@@ -985,6 +1194,7 @@ export const IMAGES = {
   juhuLiving: set(
     [
       [juhuLiving640, 640],
+      [juhuLiving880, 880],
       [juhuLiving, 1200],
     ],
     1237,
@@ -992,6 +1202,7 @@ export const IMAGES = {
   juhuDusk: set(
     [
       [juhuDusk640, 640],
+      [juhuDusk860, 860],
       [juhuDusk, 1168],
     ],
     1356,
@@ -1007,6 +1218,7 @@ export const IMAGES = {
   ritzVilla: set(
     [
       [ritzVilla800, 800],
+      [ritzVilla1130, 1130],
       [ritzVilla, 1600],
     ],
     1067,
@@ -1014,6 +1226,7 @@ export const IMAGES = {
   ritzPool: set(
     [
       [ritzPool800, 800],
+      [ritzPool1130, 1130],
       [ritzPool, 1600],
     ],
     1045,
@@ -1021,6 +1234,7 @@ export const IMAGES = {
   ritzBedroom: set(
     [
       [ritzBedroom800, 800],
+      [ritzBedroom1130, 1130],
       [ritzBedroom, 1600],
     ],
     899,
@@ -1028,6 +1242,7 @@ export const IMAGES = {
   ritzBeach: set(
     [
       [ritzBeach800, 800],
+      [ritzBeach1130, 1130],
       [ritzBeach, 1600],
     ],
     900,
@@ -1035,6 +1250,7 @@ export const IMAGES = {
   ritzEvening: set(
     [
       [ritzEvening800, 800],
+      [ritzEvening1130, 1130],
       [ritzEvening, 1600],
     ],
     1031,
@@ -1042,6 +1258,7 @@ export const IMAGES = {
   ritzGarden: set(
     [
       [ritzGarden800, 800],
+      [ritzGarden1130, 1130],
       [ritzGarden, 1600],
     ],
     1062,
@@ -1049,6 +1266,7 @@ export const IMAGES = {
   ritzRing: set(
     [
       [ritzRing640, 640],
+      [ritzRing880, 880],
       [ritzRing, 1200],
     ],
     1436,
@@ -1056,6 +1274,7 @@ export const IMAGES = {
   ritzShore: set(
     [
       [ritzShore640, 640],
+      [ritzShore880, 880],
       [ritzShore, 1200],
     ],
     1444,
@@ -1063,6 +1282,7 @@ export const IMAGES = {
   ritzDeck: set(
     [
       [ritzDeck800, 800],
+      [ritzDeck1130, 1130],
       [ritzDeck, 1600],
     ],
     1067,
@@ -1070,6 +1290,7 @@ export const IMAGES = {
   ritzSpa: set(
     [
       [ritzSpa800, 800],
+      [ritzSpa1130, 1130],
       [ritzSpa, 1600],
     ],
     1202,
@@ -1085,6 +1306,7 @@ export const IMAGES = {
   patinaSuite: set(
     [
       [patinaSuite800, 800],
+      [patinaSuite1130, 1130],
       [patinaSuite, 1600],
     ],
     1200,
@@ -1092,6 +1314,7 @@ export const IMAGES = {
   patinaTerrace: set(
     [
       [patinaTerrace800, 800],
+      [patinaTerrace1130, 1130],
       [patinaTerrace, 1600],
     ],
     1181,
@@ -1099,6 +1322,7 @@ export const IMAGES = {
   patinaVillaPool: set(
     [
       [patinaVillaPool800, 800],
+      [patinaVillaPool1130, 1130],
       [patinaVillaPool, 1600],
     ],
     1200,
@@ -1106,6 +1330,7 @@ export const IMAGES = {
   patinaBeach: set(
     [
       [patinaBeach800, 800],
+      [patinaBeach1130, 1130],
       [patinaBeach, 1600],
     ],
     1200,
@@ -1113,6 +1338,7 @@ export const IMAGES = {
   patinaBar: set(
     [
       [patinaBar800, 800],
+      [patinaBar1130, 1130],
       [patinaBar, 1600],
     ],
     1190,
@@ -1120,6 +1346,7 @@ export const IMAGES = {
   patinaLounge: set(
     [
       [patinaLounge800, 800],
+      [patinaLounge1130, 1130],
       [patinaLounge, 1600],
     ],
     1202,
@@ -1127,6 +1354,7 @@ export const IMAGES = {
   patinaRestaurant: set(
     [
       [patinaRestaurant800, 800],
+      [patinaRestaurant1130, 1130],
       [patinaRestaurant, 1600],
     ],
     1196,
@@ -1134,6 +1362,7 @@ export const IMAGES = {
   patinaIsland: set(
     [
       [patinaIsland640, 640],
+      [patinaIsland880, 880],
       [patinaIsland, 1200],
     ],
     1200,
@@ -1141,6 +1370,7 @@ export const IMAGES = {
   patinaWaterVillas: set(
     [
       [patinaWaterVillas640, 640],
+      [patinaWaterVillas880, 880],
       [patinaWaterVillas, 1200],
     ],
     1600,
@@ -1148,6 +1378,7 @@ export const IMAGES = {
   patinaShore: set(
     [
       [patinaShore800, 800],
+      [patinaShore1070, 1070],
       [patinaShore, 1440],
     ],
     1043,
@@ -1163,6 +1394,7 @@ export const IMAGES = {
   carmichaelScreens: set(
     [
       [carmichaelScreens800, 800],
+      [carmichaelScreens1130, 1130],
       [carmichaelScreens, 1600],
     ],
     1067,
@@ -1170,6 +1402,7 @@ export const IMAGES = {
   carmichaelFacade: set(
     [
       [carmichaelFacade800, 800],
+      [carmichaelFacade1130, 1130],
       [carmichaelFacade, 1600],
     ],
     1062,
@@ -1185,6 +1418,7 @@ export const IMAGES = {
   insightsYard: set(
     [
       [insightsYard640, 640],
+      [insightsYard850, 850],
       [insightsYard, 1117],
     ],
     1500,
@@ -1192,6 +1426,7 @@ export const IMAGES = {
   insightsAssemblyAbove: set(
     [
       [insightsAssemblyAbove640, 640],
+      [insightsAssemblyAbove830, 830],
       [insightsAssemblyAbove, 1080],
     ],
     1600,
@@ -1199,7 +1434,9 @@ export const IMAGES = {
   insightsFabrication: set(
     [
       [insightsFabrication640, 640],
+      [insightsFabrication830, 830],
       [insightsFabrication1080, 1080],
+      [insightsFabrication1340, 1340],
       [insightsFabrication, 1669],
     ],
     942,
@@ -1207,7 +1444,9 @@ export const IMAGES = {
   insightsCutting: set(
     [
       [insightsCutting640, 640],
+      [insightsCutting830, 830],
       [insightsCutting1080, 1080],
+      [insightsCutting1340, 1340],
       [insightsCutting, 1670],
     ],
     941,
@@ -1215,6 +1454,7 @@ export const IMAGES = {
   insightsParikramaWide: set(
     [
       [insightsParikramaWide640, 640],
+      [insightsParikramaWide910, 910],
       [insightsParikramaWide, 1289],
     ],
     860,
@@ -1229,7 +1469,9 @@ export const IMAGES = {
   insightsGlazing: set(
     [
       [insightsGlazing640, 640],
+      [insightsGlazing830, 830],
       [insightsGlazing1080, 1080],
+      [insightsGlazing1340, 1340],
       [insightsGlazing, 1672],
     ],
     941,
@@ -1237,6 +1479,7 @@ export const IMAGES = {
   insightsProfilesStaged: set(
     [
       [insightsProfilesStaged640, 640],
+      [insightsProfilesStaged850, 850],
       [insightsProfilesStaged, 1120],
     ],
     1404,
@@ -1244,6 +1487,7 @@ export const IMAGES = {
   insightsProfileStock: set(
     [
       [insightsProfileStock640, 640],
+      [insightsProfileStock830, 830],
       [insightsProfileStock, 1080],
     ],
     950,
@@ -1251,17 +1495,19 @@ export const IMAGES = {
   insightsParikramaIntent: set(
     [
       [insightsParikramaIntent640, 640],
-      [insightsParikramaIntent, 1280],
+      [insightsParikramaIntent960, 960],
+      [insightsParikramaIntent1098, 1098],
     ],
-    1165,
+    1000,
   ),
   insightsBanner: set(
     [
       [insightsBanner640, 640],
+      [insightsBanner910, 910],
       [insightsBanner1280, 1280],
       [insightsBanner, 1768],
     ],
-    890,
+    1175,
   ),
   insightsHall: set(
     [
@@ -1274,7 +1520,9 @@ export const IMAGES = {
   insightsMachiningCentre: set(
     [
       [insightsMachiningCentre640, 640],
+      [insightsMachiningCentre830, 830],
       [insightsMachiningCentre1080, 1080],
+      [insightsMachiningCentre1340, 1340],
       [insightsMachiningCentre, 1672],
     ],
     941,
@@ -1282,7 +1530,9 @@ export const IMAGES = {
   insightsAssembly: set(
     [
       [insightsAssembly640, 640],
+      [insightsAssembly830, 830],
       [insightsAssembly1080, 1080],
+      [insightsAssembly1340, 1340],
       [insightsAssembly, 1672],
     ],
     941,
@@ -1297,6 +1547,7 @@ export const IMAGES = {
   insightsGlassStaged: set(
     [
       [insightsGlassStaged640, 640],
+      [insightsGlassStaged830, 830],
       [insightsGlassStaged, 1080],
     ],
     700,
@@ -1304,7 +1555,9 @@ export const IMAGES = {
   insightsMachining: set(
     [
       [insightsMachining640, 640],
+      [insightsMachining830, 830],
       [insightsMachining1080, 1080],
+      [insightsMachining1340, 1340],
       [insightsMachining, 1672],
     ],
     941,
@@ -1312,7 +1565,9 @@ export const IMAGES = {
   insightsInspection: set(
     [
       [insightsInspection640, 640],
+      [insightsInspection830, 830],
       [insightsInspection1080, 1080],
+      [insightsInspection1340, 1340],
       [insightsInspection, 1672],
     ],
     941,
@@ -1320,7 +1575,9 @@ export const IMAGES = {
   insightsPacking: set(
     [
       [insightsPacking640, 640],
+      [insightsPacking830, 830],
       [insightsPacking1080, 1080],
+      [insightsPacking1340, 1340],
       [insightsPacking, 1671],
     ],
     941,

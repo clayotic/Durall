@@ -1,4 +1,5 @@
 import { useRef, useState, type FormEvent } from "react";
+import { Link } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "motion/react";
 import { useReducedMotion } from "@/lib/motion-prefs";
 import { ArrowRight, BUTTON } from "../ui";
@@ -233,6 +234,17 @@ export function EnquiryForm({ copy }: { copy: ContactPage["form"] }) {
                 {failure}
               </p>
             ) : null}
+
+            <p className="font-body text-xs leading-relaxed text-pretty text-slate">
+              We use your details only to reply to your enquiry. Read our{" "}
+              <Link
+                to="/privacy"
+                className="text-navy underline decoration-navy/30 underline-offset-2 hover:decoration-navy focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-blue"
+              >
+                Privacy Policy
+              </Link>
+              .
+            </p>
 
             <button
               type="submit"

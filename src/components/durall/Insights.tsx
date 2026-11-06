@@ -65,6 +65,7 @@ export function Insights({
   articles: readonly ArticleCard[];
 }) {
   const [featured, ...rest] = articles;
+  const photo = content.photo ?? featured?.cover;
   const headRef = useSectionIntro<HTMLDivElement>();
   const gridRef = useReveal<HTMLDivElement>({
     selector: "[data-card]",
@@ -100,8 +101,8 @@ export function Insights({
                 <div data-fx="parallax" className="h-full w-full">
                   <img
                     draggable={false}
-                    {...imageOf(featured.cover.image)}
-                    alt={featured.cover.alt}
+                    {...imageOf(photo?.image)}
+                    alt={photo?.alt ?? ""}
                     sizes="(min-width: 64rem) 50vw, 100vw"
                     loading="lazy"
                     className="h-full w-full object-cover"

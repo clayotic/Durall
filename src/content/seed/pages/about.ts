@@ -13,6 +13,18 @@ export const ABOUT_SEED: AboutPage = {
     heading: "Engineering what\narchitecture\ndemands.",
     body: "Durall brings architecture, engineering and precision fabrication together to create aluminium systems shaped around the demands of each project.",
   },
+  story: {
+    eyebrow: "About Durall",
+    heading: "Since 1992.",
+    facts: [
+      { value: "30+", label: "Years of practice" },
+      { value: "10", label: "Architectural systems" },
+    ],
+    lead: "Founded in 1992 by Mr. Manoj Sakharkar, Durall Systems has spent more than three decades working on one question:",
+    emphasis:
+      "how aluminium and glass can serve a building’s architecture rather than sit on top of it.",
+    body: "Every system we deliver, from sunshades and decorative fins to curtain walls, skylights, louvers, screens and pergolas, starts with the architect’s intent. It is then resolved through engineering, material selection and careful detailing. That approach has brought us into projects with studios such as Studio MK27, WOW Architects, SPASM Architects and Ernesto Bedmar, on residences across India, Singapore and the Maldives. The aim has not changed since 1992: systems that read as part of the architecture, built to last.",
+  },
   philosophy: {
     heading: "Luxury is never applied. It is engineered.",
     body: "Durall works alongside architects and developers long before a building becomes visible. Design intent, engineering tolerance and material performance are resolved together, before the first extrusion is cut.",

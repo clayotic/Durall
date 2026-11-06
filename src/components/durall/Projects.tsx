@@ -5,8 +5,66 @@ import { TRAVEL, useReveal, useSectionIntro } from "@/lib/anim";
 import { imageOf, Lines } from "@/content/render";
 import type { HomeCard } from "@/content/select";
 import type { HomePage } from "@/content/types";
+import { cutOf, ownFilm } from "@/content/video";
+import { prefersReducedMotion } from "@/lib/motion-prefs";
 import { ConnectorLine } from "./ConnectorLine";
 import { CardFrame, ViewMore } from "./ui";
+
+/**
+ * A project's short silent clip over its card's photograph: looping while
+ * the card is hovered where there is a pointer; on a touch screen, played
+ * once each time the card comes on screen, since nobody there chose to
+ * start it. After a play it rewinds and the photograph shows again. Never
+ * under reduced motion; nothing downloads until the first play.
+ */
+function CardFilm({ src }: { src: string }) {
+  const ref = useRef<HTMLVideoElement>(null);
+  const [shown, setShown] = useState(false);
+
+  const stop = () => {
+    const video = ref.current;
+    if (!video) return;
+    video.pause();
+    video.currentTime = 0;
+    setShown(false);
+  };
+
+  useEffect(() => {
+    const video = ref.current;
+    const card = video?.closest("article");
+    if (!video || !card || prefersReducedMotion()) return;
+    const play = () => void video.play().catch(() => {});
+    if (window.matchMedia("(hover: hover)").matches) {
+      video.loop = true;
+      card.addEventListener("pointerenter", play);
+      card.addEventListener("pointerleave", stop);
+      return () => {
+        card.removeEventListener("pointerenter", play);
+        card.removeEventListener("pointerleave", stop);
+      };
+    }
+    const seen = new IntersectionObserver(([entry]) => (entry?.isIntersecting ? play() : stop()), {
+      threshold: 0.6,
+    });
+    seen.observe(card);
+    return () => seen.disconnect();
+  }, []);
+
+  return (
+    <video
+      ref={ref}
+      muted
+      playsInline
+      preload="none"
+      aria-hidden="true"
+      onPlaying={() => setShown(true)}
+      onEnded={stop}
+      className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-[var(--dur-medium)] motion-reduce:transition-none ${shown ? "opacity-100" : "opacity-0"}`}
+    >
+      <source src={src} />
+    </video>
+  );
+}
 
 /**
  * On a phone the cards are a row to swipe through rather than a column to
@@ -116,66 +174,70 @@ export function Projects({
           // so the next card shows at the right.
           className="mt-[clamp(2.75rem,5.5vw,6.5625rem)] grid grid-cols-1 gap-x-[clamp(1rem,1.4vw,1.625rem)] gap-y-[clamp(1.75rem,2.2vw,2.1875rem)] max-md:-mx-[clamp(1.25rem,3.75vw,4.5rem)] max-md:mt-7 max-md:flex max-md:snap-x max-md:snap-mandatory max-md:scroll-px-[clamp(1.25rem,3.75vw,4.5rem)] max-md:gap-4 max-md:overflow-x-auto max-md:overflow-y-hidden max-md:overscroll-x-contain max-md:px-[clamp(1.25rem,3.75vw,4.5rem)] max-md:[scrollbar-width:none] sm:grid-cols-2 lg:grid-cols-3 max-md:[&::-webkit-scrollbar]:hidden"
         >
-          {cards.map((project, index) => (
-            <li
-              key={project.slug}
-              data-card
-              data-active={index === slides.active}
-              className="group/slide min-w-0 max-md:w-[300px] max-md:shrink-0 max-md:snap-start"
-            >
-              {/* The cards move as one sheet. They used to travel at
+          {cards.map((project, index) => {
+            const film = ownFilm(project.film);
+            return (
+              <li
+                key={project.slug}
+                data-card
+                data-active={index === slides.active}
+                className="group/slide min-w-0 max-md:w-[300px] max-md:shrink-0 max-md:snap-start"
+              >
+                {/* The cards move as one sheet. They used to travel at
                   different rates by column, which left each row out of line
                   wherever the scroll stopped. */}
-              <article className="group relative flex flex-col items-start text-left">
-                <div className="relative aspect-square w-full max-md:aspect-[15/17]">
-                  <CardFrame />
-                  <div className="relative h-full w-full overflow-hidden">
-                    <div data-fx="parallax" className="h-full w-full">
-                      <img
-                        draggable={false}
-                        {...imageOf(project.image)}
-                        alt={`${project.title} — ${project.subtitle}`}
-                        sizes="(min-width: 64rem) 33vw, (min-width: 40rem) 50vw, 100vw"
-                        loading="lazy"
-                        // The same slow zoom as the cards on the Projects page.
-                        // On a phone the card in front settles back from
-                        // a slight enlargement as it arrives.
-                        className="h-full w-full object-cover transition-transform duration-[900ms] ease-out group-hover:scale-[1.04] motion-reduce:transition-none motion-reduce:group-hover:scale-100 max-md:scale-[1.08] max-md:duration-[1200ms] max-md:group-data-[active=true]/slide:scale-100 max-md:motion-reduce:scale-100"
-                      />
-                    </div>
-                    {/* On hover a navy shadow falls across the top-left of
+                <article className="group relative flex flex-col items-start text-left">
+                  <div className="relative aspect-square w-full max-md:aspect-[15/17]">
+                    <CardFrame />
+                    <div className="relative h-full w-full overflow-hidden">
+                      <div data-fx="parallax" className="relative h-full w-full">
+                        <img
+                          draggable={false}
+                          {...imageOf(project.image)}
+                          alt={`${project.title} — ${project.subtitle}`}
+                          sizes="(min-width: 64rem) 33vw, (min-width: 40rem) 50vw, 100vw"
+                          loading="lazy"
+                          // The same slow zoom as the cards on the Projects page.
+                          // On a phone the card in front settles back from
+                          // a slight enlargement as it arrives.
+                          className="h-full w-full object-cover transition-transform duration-[900ms] ease-out group-hover:scale-[1.04] motion-reduce:transition-none motion-reduce:group-hover:scale-100 max-md:scale-[1.08] max-md:duration-[1200ms] max-md:group-data-[active=true]/slide:scale-100 max-md:motion-reduce:scale-100"
+                        />
+                        {film ? <CardFilm src={cutOf(film, "card")} /> : null}
+                      </div>
+                      {/* On hover a navy shadow falls across the top-left of
                         the photograph and the project's name is set in it:
                         the shadow opens out from the corner, the name
                         follows it in. Only that side darkens. The name is
                         already the card's heading below, so this copy is
                         for the eye. */}
-                    <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-                      <div className="absolute inset-0 origin-top-left scale-[0.72] bg-[radial-gradient(110%_85%_at_0%_0%,rgb(5_8_52/0.86)_0%,rgb(5_8_52/0.55)_26%,rgb(5_8_52/0.18)_48%,transparent_66%)] opacity-0 transition-[opacity,scale] duration-[var(--dur-medium)] ease-[var(--ease-entrance)] group-focus-within:scale-100 group-focus-within:opacity-100 group-hover:scale-100 group-hover:opacity-100 motion-reduce:scale-100" />
-                      <span className="absolute top-[7%] left-[7%] max-w-[72%] -translate-x-3 -translate-y-2 font-display text-[clamp(1.25rem,1.67vw,2rem)] leading-[1.15] font-medium tracking-tight text-balance text-white opacity-0 transition-[opacity,translate] duration-[var(--dur-medium)] ease-[var(--ease-entrance)] group-focus-within:translate-x-0 group-focus-within:translate-y-0 group-focus-within:opacity-100 group-focus-within:delay-100 group-hover:translate-x-0 group-hover:translate-y-0 group-hover:opacity-100 group-hover:delay-100 motion-reduce:translate-x-0 motion-reduce:translate-y-0">
-                        {project.title}
-                      </span>
+                      <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+                        <div className="absolute inset-0 origin-top-left scale-[0.72] bg-[radial-gradient(110%_85%_at_0%_0%,rgb(5_8_52/0.86)_0%,rgb(5_8_52/0.55)_26%,rgb(5_8_52/0.18)_48%,transparent_66%)] opacity-0 transition-[opacity,scale] duration-[var(--dur-medium)] ease-[var(--ease-entrance)] group-focus-within:scale-100 group-focus-within:opacity-100 group-hover:scale-100 group-hover:opacity-100 motion-reduce:scale-100" />
+                        <span className="absolute top-[7%] left-[7%] max-w-[72%] -translate-x-3 -translate-y-2 font-display text-[clamp(1.25rem,1.67vw,2rem)] leading-[1.15] font-medium tracking-tight text-balance text-white opacity-0 transition-[opacity,translate] duration-[var(--dur-medium)] ease-[var(--ease-entrance)] group-focus-within:translate-x-0 group-focus-within:translate-y-0 group-focus-within:opacity-100 group-focus-within:delay-100 group-hover:translate-x-0 group-hover:translate-y-0 group-hover:opacity-100 group-hover:delay-100 motion-reduce:translate-x-0 motion-reduce:translate-y-0">
+                          {project.title}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="flex w-full flex-col items-start px-0 text-left">
-                  <h3 className="mt-[clamp(1rem,1.2vw,1.375rem)] font-display text-[clamp(1.125rem,1.4vw,1.5rem)] font-medium tracking-tight text-navy max-md:mt-3.5 max-md:text-xl max-md:tracking-[-0.01em]">
-                    {/* The whole card is the target; the link's box is
-                     * stretched over it rather than wrapping it. */}
-                    <Link
-                      to="/projects/$slug"
-                      params={{ slug: project.slug }}
-                      className="after:absolute after:inset-0 after:content-['']"
-                    >
-                      {project.title}
-                    </Link>
-                  </h3>
-                  <p className="mt-1.5 font-body text-xs tracking-wide text-slate max-md:mt-[5px] max-md:text-[0.8125rem]">
-                    {project.subtitle}
-                  </p>
-                </div>
-              </article>
-            </li>
-          ))}
+                  <div className="flex w-full flex-col items-start px-0 text-left">
+                    <h3 className="mt-[clamp(1rem,1.2vw,1.375rem)] font-display text-[clamp(1.125rem,1.4vw,1.5rem)] font-medium tracking-tight text-navy max-md:mt-3.5 max-md:text-xl max-md:tracking-[-0.01em]">
+                      {/* The whole card is the target; the link's box is
+                       * stretched over it rather than wrapping it. */}
+                      <Link
+                        to="/projects/$slug"
+                        params={{ slug: project.slug }}
+                        className="after:absolute after:inset-0 after:content-['']"
+                      >
+                        {project.title}
+                      </Link>
+                    </h3>
+                    <p className="mt-1.5 font-body text-xs tracking-wide text-slate max-md:mt-[5px] max-md:text-[0.8125rem]">
+                      {project.subtitle}
+                    </p>
+                  </div>
+                </article>
+              </li>
+            );
+          })}
           {/* Desktop: View More takes the grid's empty last cell, standing on
            * the same line as the foot of the photographs beside it. The
            * connector line ends in it. */}

@@ -3,11 +3,13 @@ import { loadSettings } from "@/admin/api/content";
 import { SettingsEditor } from "@/admin/screens/SettingsEditor";
 import { NAVIGATION_FORM } from "@/admin/specs/settings";
 import { ScreenSkeleton } from "@/admin/ui/controls";
+import { ScreenError } from "@/admin/ui/overlay";
 
 export const Route = createFileRoute("/admin/navigation")({
   loader: () => loadSettings(),
   head: () => ({ meta: [{ title: "Navigation & Footer — Durall Admin" }] }),
   pendingComponent: ScreenSkeleton,
+  errorComponent: ScreenError,
   component: Screen,
 });
 

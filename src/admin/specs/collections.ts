@@ -85,7 +85,7 @@ export function projectForm(others: ProjectDoc[]): SectionSpec[] {
       fields: [
         photo("hero", "Photograph", { hint: "Also the photograph in the Projects grid." }),
         text("film", "Film", {
-          hint: "A film kept on the site, such as /films/parikrama-house.mp4. It plays in the opening in place of the photograph, without sound until Unmute is pressed; the photograph shows until it starts. Leave empty for none.",
+          hint: "A film kept on the site, such as /films/parikrama-house.mp4. It plays with sound in The Experience, when pressed. A short clip saved beside it as -card.mp4 plays without sound on the home page card. Leave empty for none.",
         }),
         {
           kind: "optional",

@@ -1,4 +1,5 @@
 import { getRequestHeader, getRequestIP } from "@tanstack/react-start/server";
+import { visitorAddress } from "./cloudflare";
 
 /**
  * A speed bump for the three things a stranger can ask the server to do
@@ -8,14 +9,19 @@ import { getRequestHeader, getRequestIP } from "@tanstack/react-start/server";
 
 /**
  * The address the request came from, as the host recorded it. Netlify sets
- * this header itself on every request. X-Forwarded-For is only the fallback
- * for other hosts and local work: the visitor can send that one too, and
- * give a different address with every request.
+ * this header itself on every request; through Cloudflare it is Cloudflare's,
+ * and the visitor's own comes from Cloudflare (visitorAddress).
+ * X-Forwarded-For is only the fallback for other hosts and local work: the
+ * visitor can send that one too, and give a different address with every
+ * request.
  */
 export function clientAddress(): string {
   try {
     return (
-      getRequestHeader("x-nf-client-connection-ip") ??
+      visitorAddress(
+        getRequestHeader("x-nf-client-connection-ip"),
+        getRequestHeader("cf-connecting-ip"),
+      ) ??
       getRequestIP({ xForwardedFor: true }) ??
       "unknown"
     );

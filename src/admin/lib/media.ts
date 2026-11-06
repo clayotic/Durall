@@ -120,8 +120,10 @@ const ACCEPTED = [
 ];
 export const ACCEPT_ATTR = ACCEPTED.join(",");
 const MAX_BYTES = 30 * 1024 * 1024;
-/** The widths the site's responsive images choose between. */
-const WIDTHS = [640, 1280, 1920];
+/** The widths the site's responsive images choose between: no step over
+ * 1.5x, so a screen never downloads far more than it shows (as in
+ * scripts/image-ladder.py for the bundled photographs). */
+const WIDTHS = [640, 960, 1280, 1920];
 const LARGEST = 2560;
 
 type Output = { name: string; blob: Blob; width: number; height: number };

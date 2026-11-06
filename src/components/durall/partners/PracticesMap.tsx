@@ -60,7 +60,7 @@ const ALSO: Record<string, string> = {
 const left = (longitude: number) => ((3.2332 * longitude + 700.83) / 1400) * 100;
 const top = (latitude: number) => ((264.39 - 3.2706 * latitude) / 474) * 100;
 
-/** One dot per place, however many practices share it, named as the first of them names it. */
+/** One dot per place, however many practices share it. */
 function placesOf(practices: readonly PartnerDoc[]) {
   const places = new Map<string, { name: string; left: number; top: number }>();
   for (const practice of practices) {
@@ -77,7 +77,7 @@ function placesOf(practices: readonly PartnerDoc[]) {
 
 /**
  * The dotted world map with a mark on each country the practices work from.
- * Decorative: the list under it names every practice and its country.
+ * Decorative: the list over it names every practice and its country.
  */
 export function PracticesMap({
   practices,
@@ -99,21 +99,14 @@ export function PracticesMap({
         decoding="async"
         className="absolute inset-0 h-full w-full opacity-35 select-none"
       />
+      {/* Faint, and unnamed: the logos stand over the map, and each names
+          its own country. */}
       {placesOf(practices).map((place) => (
         <span
           key={place.name}
-          className="absolute"
+          className="absolute size-[clamp(0.5rem,0.7vw,0.75rem)] -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent-blue opacity-30 ring-[clamp(3px,0.35vw,5px)] ring-accent-blue/20"
           style={{ left: `${place.left}%`, top: `${place.top}%` }}
-        >
-          <span className="absolute size-[clamp(0.5rem,0.7vw,0.75rem)] -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent-blue ring-[clamp(3px,0.35vw,5px)] ring-accent-blue/20" />
-          <span
-            className={`absolute top-0 -translate-y-1/2 font-display text-[0.625rem] font-bold tracking-eyebrow whitespace-nowrap text-navy uppercase max-md:hidden ${
-              place.left > 80 ? "right-[clamp(0.75rem,1vw,1rem)]" : "left-[clamp(0.75rem,1vw,1rem)]"
-            }`}
-          >
-            {place.name}
-          </span>
-        </span>
+        />
       ))}
     </div>
   );
