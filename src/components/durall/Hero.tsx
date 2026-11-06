@@ -7,7 +7,7 @@ import { destination, imageOf } from "@/content/render";
 import type { HomePage } from "@/content/types";
 import { CtaButton } from "./ui";
 
-/* The opening film, as its frames: the open room's glass sliding shut, 72
+/* The opening film, as its frames: the open room's glass sliding shut, 96
  * pictures after the still (which is the film's first frame). They are
  * taken from the original at equal steps of change in the picture, not of
  * time, so that equal steps of scroll move the glass equally
@@ -16,7 +16,7 @@ import { CtaButton } from "./ui";
  * They come in four files rather than one each, coarse to fine: every
  * `STEPS[0]`th frame, then the frames between at each finer step. Each file
  * is those frames' WebP files end to end. */
-const COUNT = 72;
+const COUNT = 96;
 const STEPS = [8, 4, 2, 1];
 const PACKS = Object.entries(
   import.meta.glob<string>("@/assets/hero-doors/*.bin", {
@@ -66,7 +66,7 @@ const HINT = { every: 6000, length: 2800, reach: 0.14 };
  * it is never a mix of two.
  *
  * The frames are asked for once the page has loaded, at low priority, one
- * file after another: four requests instead of 72, each of which can take
+ * file after another: four requests instead of 96, each of which can take
  * a second to start on a slow connection. The first file holds every
  * eighth frame, so the glass can travel its whole way on that alone, and
  * gets finer as the rest arrive. Until the first file has come, and where
@@ -77,8 +77,8 @@ const HINT = { every: 6000, length: 2800, reach: 0.14 };
  * decoded off the page's thread (`createImageBitmap`) as the glass nears
  * them. Left to the canvas, each frame was decoded on the page's thread as
  * it was drawn, 10 ms or more apiece and again whenever the browser had let
- * it go, which stalled the scroll; all 72 decoded at once would hold about
- * 490 MB. Where the one wanted is not ready yet, the nearest that is drawn.
+ * it go, which stalled the scroll; all 96 decoded at once would hold about
+ * 940 MB. Where the one wanted is not ready yet, the nearest that is drawn.
  *
  * A phone held upright sees only a narrow cut of the room, so still and
  * film are both set to the right of the picture there (`PORTRAIT`), where
@@ -355,8 +355,8 @@ export function Hero({ content }: { content: HomePage["hero"] }) {
           {/* The film, drawn over the still by useHeroFilm. */}
           <canvas
             data-hero-film
-            width={1600}
-            height={1062}
+            width={1920}
+            height={1274}
             aria-hidden="true"
             className={`pointer-events-none absolute inset-0 h-full w-full object-cover ${PORTRAIT}`}
           />

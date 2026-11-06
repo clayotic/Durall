@@ -4,6 +4,7 @@ import { isIntroPending } from "@/lib/intro";
 import { heroCover, loadGsap, markAnimReady, playAfterIntro, splitToLines } from "@/lib/anim";
 import { Lines } from "@/content/render";
 import { prefersReducedMotion } from "@/lib/motion-prefs";
+import { holdWarming } from "@/lib/warm-images";
 import { LANDING } from "./motion";
 import type { ProjectsPage } from "@/content/types";
 import { cutOf, ownFilm, UPRIGHT } from "@/content/video";
@@ -79,7 +80,9 @@ const holdsBack = () =>
  * event alone does not promise on every browser), and comes back while the
  * loop stops to buffer. It pauses when the page has covered the opening. A
  * missing cut never plays; the photograph stays. `held` is the visitor's
- * pause button (ProjectHero).
+ * pause button (ProjectHero). The page's other photographs wait until it can
+ * play through (lib/warm-images): it is what the opening is showing, and on
+ * a slow line they would otherwise share the line with it.
  */
 function HeroLoop({
   film,
@@ -93,6 +96,18 @@ function HeroLoop({
   onRunning: (running: boolean) => void;
 }) {
   const [shown, setShown] = useState(false);
+
+  useEffect(() => {
+    const video = ref.current;
+    if (!video || holdsBack()) return;
+    holdWarming(
+      new Promise((resolve) => {
+        video.addEventListener("canplaythrough", resolve, { once: true });
+        // Every source failed (a film without its loop cut): nothing to wait for.
+        video.lastElementChild?.addEventListener("error", resolve, { once: true });
+      }),
+    );
+  }, [ref]);
 
   useEffect(() => {
     const video = ref.current;
@@ -315,7 +330,11 @@ export function ProjectHero({
                 draggable={false}
                 {...project.hero.image}
                 alt={project.hero.alt}
-                sizes="100vw"
+                // On a screen taller than wide the landscape photograph is
+                // cropped to the full height, so it is drawn about twice the
+                // screen's height wide; asking by width alone fetched a file
+                // a size too small on phones.
+                sizes="(max-aspect-ratio: 1/1) 190vh, 100vw"
                 fetchPriority="high"
                 decoding="async"
                 className="h-full w-full object-cover"

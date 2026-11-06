@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useRouterState } from "@tanstack/react-router";
-import { finePointer, inFirstScreen, loadGsap } from "@/lib/anim";
+import { finePointer, inFirstScreen, loadGsap, playAfterIntro } from "@/lib/anim";
 import { prefersReducedMotion } from "@/lib/motion-prefs";
 
 /**
@@ -16,6 +16,8 @@ import { prefersReducedMotion } from "@/lib/motion-prefs";
  *   drift     a block that travels at its own rate, for the columns of a
  *             grid (`data-fx-by`: pixels either way, default 32)
  *   words     text that appears word by word as it is read down the page
+ *             (`data-fx-load`: if it starts in the first screen, the words
+ *             play in once after the opening instead of being left alone)
  *   rule      a hairline that draws from the left
  *   rise      a block that climbs out from behind the section above it (the
  *             footer); its parent has to clip it
@@ -114,10 +116,26 @@ export function ScrollFx() {
               break;
             }
             case "words": {
-              if (!SplitType || inFirstScreen(el)) break;
+              const onLoad = inFirstScreen(el);
+              if (!SplitType || (onLoad && el.dataset["fxLoad"] === undefined)) break;
               const split = new SplitType(el, { types: "words", tagName: "span" });
               splits.push(split);
               if (!split.words?.length) break;
+              // SplitType sets an element nested in the text (a navy clause,
+              // a link) inline-block, which lifts it out onto lines of its
+              // own; it is part of the sentence, so it stays inline.
+              el.querySelectorAll<HTMLElement>(":not(.word)").forEach((child) => {
+                child.style.display = "inline";
+              });
+              if (onLoad) {
+                const tween = gsap.fromTo(
+                  split.words,
+                  { opacity: 0 },
+                  { opacity: 1, ease: "none", duration: 0.5, stagger: 0.02, paused: true },
+                );
+                playAfterIntro(tween, () => cancelled);
+                break;
+              }
               gsap.fromTo(
                 split.words,
                 { opacity: 0 },

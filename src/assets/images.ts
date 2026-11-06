@@ -25,15 +25,21 @@ import heroFilm1920 from "./hero-film.webp";
 import heroParikrama960 from "./hero-parikrama-960w.webp";
 import heroParikrama1440 from "./hero-parikrama-1440w.webp";
 import heroParikrama1920 from "./hero-parikrama.webp";
+import heroAbout640 from "./hero-about-640w.webp";
 import heroAbout960 from "./hero-about-960w.webp";
-import heroAbout1440 from "./hero-about-1440w.webp";
-import heroAbout1920 from "./hero-about.webp";
+import heroAbout1280 from "./hero-about-1280w.webp";
+import heroAbout1600 from "./hero-about-1600w.webp";
+import heroAbout1920 from "./hero-about-1920w.webp";
+import heroAbout2560 from "./hero-about-2560w.webp";
 import heroPartners960 from "./hero-partners-960w.webp";
 import heroPartners1440 from "./hero-partners-1440w.webp";
 import heroPartners1920 from "./hero-partners.webp";
+import heroProjects640 from "./hero-projects-640w.webp";
 import heroProjects960 from "./hero-projects-960w.webp";
-import heroProjects1440 from "./hero-projects-1440w.webp";
-import heroProjects1920 from "./hero-projects.webp";
+import heroProjects1280 from "./hero-projects-1280w.webp";
+import heroProjects1600 from "./hero-projects-1600w.webp";
+import heroProjects1920 from "./hero-projects-1920w.webp";
+import heroProjects2560 from "./hero-projects-2560w.webp";
 import heroCareers960 from "./hero-careers-960w.webp";
 import heroCareers1440 from "./hero-careers-1440w.webp";
 import heroCareers1920 from "./hero-careers.webp";
@@ -61,9 +67,6 @@ import projectBangalore930 from "./project-bangalore-930w.webp";
 import projectBanyan640 from "./project-banyan-640w.webp";
 import projectBanyan from "./project-banyan.webp";
 import projectBanyan930 from "./project-banyan-930w.webp";
-import projectFeatured640 from "./project-featured-640w.webp";
-import projectFeatured from "./project-featured.webp";
-import projectFeatured860 from "./project-featured-860w.webp";
 
 import cardParikrama480 from "./card-parikrama-480w.webp";
 import cardParikrama from "./card-parikrama.webp";
@@ -138,6 +141,13 @@ import partnersWorldMap from "./partners-world-map.svg";
 import parikramaPalms960 from "./parikrama/palms-960w.webp";
 import parikramaPalms1440 from "./parikrama/palms-1440w.webp";
 import parikramaPalms from "./parikrama/palms-1674w.webp";
+import parikramaPalmGrove640 from "./parikrama/palm-grove-640w.webp";
+import parikramaPalmGrove960 from "./parikrama/palm-grove-960w.webp";
+import parikramaPalmGrove1280 from "./parikrama/palm-grove-1280w.webp";
+import parikramaReflectingPool640 from "./parikrama/reflecting-pool-640w.webp";
+import parikramaReflectingPool960 from "./parikrama/reflecting-pool-960w.webp";
+import parikramaReflectingPool1280 from "./parikrama/reflecting-pool-1280w.webp";
+import parikramaReflectingPool1500 from "./parikrama/reflecting-pool-1500w.webp";
 /* Parikrama's photographs are the architects' own (SPASM Design; photographs by
  * Umang Shah), kept whole at their full size. The opening's dusk view was
  * enlarged from 1500px with an upscaler, so it is sharp across a large screen. */
@@ -259,9 +269,12 @@ import mandalaNight from "./projects/mandala/night-903w.webp";
 import sentosaShelves960 from "./projects/sentosa/shelves-960w.webp";
 import sentosaShelves1440 from "./projects/sentosa/shelves-1440w.webp";
 import sentosaShelves from "./projects/sentosa/shelves-1500w.webp";
-import sentosaBedroom800 from "./projects/sentosa/bedroom-800w.webp";
-import sentosaBedroom from "./projects/sentosa/bedroom-1500w.webp";
-import sentosaBedroom1100 from "./projects/sentosa/bedroom-1100w.webp";
+import sentosaBedroom640 from "./projects/sentosa/bedroom-640w.webp";
+import sentosaBedroom960 from "./projects/sentosa/bedroom-960w.webp";
+import sentosaBedroom1280 from "./projects/sentosa/bedroom-1280w.webp";
+import sentosaBedroom1600 from "./projects/sentosa/bedroom-1600w.webp";
+import sentosaBedroom1920 from "./projects/sentosa/bedroom-1920w.webp";
+import sentosaBedroom2560 from "./projects/sentosa/bedroom-2560w.webp";
 import sentosaLiving640 from "./projects/sentosa/living-640w.webp";
 import sentosaLiving from "./projects/sentosa/living-1200w.webp";
 import sentosaLiving880 from "./projects/sentosa/living-880w.webp";
@@ -292,8 +305,12 @@ import chilternLounge1130 from "./projects/chiltern/lounge-1130w.webp";
 import chilternStudy800 from "./projects/chiltern/study-800w.webp";
 import chilternStudy from "./projects/chiltern/study-1600w.webp";
 import chilternStudy1130 from "./projects/chiltern/study-1130w.webp";
+import juhuAerial640 from "./projects/juhu/aerial-640w.webp";
 import juhuAerial960 from "./projects/juhu/aerial-960w.webp";
-import juhuAerial from "./projects/juhu/aerial-1330w.webp";
+import juhuAerial1280 from "./projects/juhu/aerial-1280w.webp";
+import juhuAerial1600 from "./projects/juhu/aerial-1600w.webp";
+import juhuAerial1920 from "./projects/juhu/aerial-1920w.webp";
+import juhuAerial2560 from "./projects/juhu/aerial-2560w.webp";
 import juhuCourt640 from "./projects/juhu/court-640w.webp";
 import juhuCourt from "./projects/juhu/court-1104w.webp";
 import juhuCourt840 from "./projects/juhu/court-840w.webp";
@@ -305,14 +322,20 @@ import juhuTerrace640 from "./projects/juhu/terrace-640w.webp";
 import juhuTerrace from "./projects/juhu/terrace-1200w.webp";
 import juhuTerrace880 from "./projects/juhu/terrace-880w.webp";
 import juhuLiving640 from "./projects/juhu/living-640w.webp";
-import juhuLiving from "./projects/juhu/living-1200w.webp";
-import juhuLiving880 from "./projects/juhu/living-880w.webp";
+import juhuLiving960 from "./projects/juhu/living-960w.webp";
+import juhuLiving1280 from "./projects/juhu/living-1280w.webp";
+import juhuLiving1600 from "./projects/juhu/living-1600w.webp";
+import juhuLiving1920 from "./projects/juhu/living-1920w.webp";
+import juhuLiving2560 from "./projects/juhu/living-2560w.webp";
 import juhuDusk640 from "./projects/juhu/dusk-640w.webp";
 import juhuDusk from "./projects/juhu/dusk-1168w.webp";
 import juhuDusk860 from "./projects/juhu/dusk-860w.webp";
+import ritzAerial640 from "./projects/ritz/aerial-640w.webp";
 import ritzAerial960 from "./projects/ritz/aerial-960w.webp";
-import ritzAerial1440 from "./projects/ritz/aerial-1440w.webp";
-import ritzAerial from "./projects/ritz/aerial-1920w.webp";
+import ritzAerial1280 from "./projects/ritz/aerial-1280w.webp";
+import ritzAerial1600 from "./projects/ritz/aerial-1600w.webp";
+import ritzAerial1920 from "./projects/ritz/aerial-1920w.webp";
+import ritzAerial2560 from "./projects/ritz/aerial-2560w.webp";
 import ritzVilla800 from "./projects/ritz/villa-800w.webp";
 import ritzVilla from "./projects/ritz/villa-1600w.webp";
 import ritzVilla1130 from "./projects/ritz/villa-1130w.webp";
@@ -387,7 +410,8 @@ import carmichaelFacade from "./projects/carmichael/facade-1600w.webp";
 import carmichaelFacade1130 from "./projects/carmichael/facade-1130w.webp";
 // Durall’s factory floor and drawings, for the Premium Glazing Series (Insights).
 import insightsProfileCut640 from "./insights/profile-cut-640w.webp";
-import insightsProfileCut from "./insights/profile-cut-900w.webp";
+import insightsProfileCut960 from "./insights/profile-cut-960w.webp";
+import insightsProfileCut1280 from "./insights/profile-cut-1280w.webp";
 import insightsYard640 from "./insights/yard-640w.webp";
 import insightsYard from "./insights/yard-1117w.webp";
 import insightsYard850 from "./insights/yard-850w.webp";
@@ -426,7 +450,9 @@ import insightsBanner1280 from "./insights/banner-1280w.webp";
 import insightsBanner from "./insights/banner-1768w.webp";
 import insightsBanner910 from "./insights/banner-910w.webp";
 import insightsHall640 from "./insights/hall-640w.webp";
-import insightsHall from "./insights/hall-941w.webp";
+import insightsHall960 from "./insights/hall-960w.webp";
+import insightsHall1280 from "./insights/hall-1280w.webp";
+import insightsHall1600 from "./insights/hall-1600w.webp";
 import insightsSection from "./insights/section-1300w.webp";
 import insightsMachiningCentre640 from "./insights/machining-centre-640w.webp";
 import insightsMachiningCentre1080 from "./insights/machining-centre-1080w.webp";
@@ -449,10 +475,10 @@ import insightsMachining from "./insights/machining-1672w.webp";
 import insightsMachining830 from "./insights/machining-830w.webp";
 import insightsMachining1340 from "./insights/machining-1340w.webp";
 import insightsInspection640 from "./insights/inspection-640w.webp";
-import insightsInspection1080 from "./insights/inspection-1080w.webp";
-import insightsInspection from "./insights/inspection-1672w.webp";
-import insightsInspection830 from "./insights/inspection-830w.webp";
-import insightsInspection1340 from "./insights/inspection-1340w.webp";
+import insightsInspection960 from "./insights/inspection-960w.webp";
+import insightsInspection1280 from "./insights/inspection-1280w.webp";
+import insightsInspection1600 from "./insights/inspection-1600w.webp";
+import insightsInspection1920 from "./insights/inspection-1920w.webp";
 import insightsPacking640 from "./insights/packing-640w.webp";
 import insightsPacking1080 from "./insights/packing-1080w.webp";
 import insightsPacking from "./insights/packing-1671w.webp";
@@ -502,11 +528,14 @@ export const IMAGES = {
   ),
   heroAbout: set(
     [
+      [heroAbout640, 640],
       [heroAbout960, 960],
-      [heroAbout1440, 1440],
+      [heroAbout1280, 1280],
+      [heroAbout1600, 1600],
       [heroAbout1920, 1920],
+      [heroAbout2560, 2560],
     ],
-    964,
+    1290,
   ),
   heroPartners: set(
     [
@@ -518,11 +547,14 @@ export const IMAGES = {
   ),
   heroProjects: set(
     [
+      [heroProjects640, 640],
       [heroProjects960, 960],
-      [heroProjects1440, 1440],
+      [heroProjects1280, 1280],
+      [heroProjects1600, 1600],
       [heroProjects1920, 1920],
+      [heroProjects2560, 2560],
     ],
-    955,
+    1275,
   ),
   /* House of Secret Gardens at night. Cut taller than the Careers hero
    * shows at desktop (it is focused low, see routes/careers.tsx) so a phone,
@@ -595,13 +627,15 @@ export const IMAGES = {
     ],
     907,
   ),
+  // The architects' cover photograph again: the same files as parikramaPavilion.
   projectFeatured: set(
     [
-      [projectFeatured640, 640],
-      [projectFeatured860, 860],
-      [projectFeatured, 1153],
+      [parikramaPavilion640, 640],
+      [parikramaPavilion960, 960],
+      [parikramaPavilion1280, 1280],
+      [parikramaPavilion1500, 1500],
     ],
-    721,
+    1000,
   ),
 
   /* The project and article photographs, cut from the thumb-*.webp exports
@@ -780,6 +814,25 @@ export const IMAGES = {
       [parikramaPalms, 1674],
     ],
     942,
+  ),
+  /* From the client's Drive (PARIKRAMA folder): the house low among the
+   * palms (IMG_9944), and SPASM's veranda along its reflecting pool (08). */
+  parikramaPalmGrove: set(
+    [
+      [parikramaPalmGrove640, 640],
+      [parikramaPalmGrove960, 960],
+      [parikramaPalmGrove1280, 1280],
+    ],
+    780,
+  ),
+  parikramaReflectingPool: set(
+    [
+      [parikramaReflectingPool640, 640],
+      [parikramaReflectingPool960, 960],
+      [parikramaReflectingPool1280, 1280],
+      [parikramaReflectingPool1500, 1500],
+    ],
+    1000,
   ),
   parikramaDusk: set(
     [
@@ -1068,11 +1121,14 @@ export const IMAGES = {
   ),
   sentosaBedroom: set(
     [
-      [sentosaBedroom800, 800],
-      [sentosaBedroom1100, 1100],
-      [sentosaBedroom, 1500],
+      [sentosaBedroom640, 640],
+      [sentosaBedroom960, 960],
+      [sentosaBedroom1280, 1280],
+      [sentosaBedroom1600, 1600],
+      [sentosaBedroom1920, 1920],
+      [sentosaBedroom2560, 2560],
     ],
-    1001,
+    1711,
   ),
   sentosaLiving: set(
     [
@@ -1156,10 +1212,14 @@ export const IMAGES = {
   ),
   juhuAerial: set(
     [
+      [juhuAerial640, 640],
       [juhuAerial960, 960],
-      [juhuAerial, 1330],
+      [juhuAerial1280, 1280],
+      [juhuAerial1600, 1600],
+      [juhuAerial1920, 1920],
+      [juhuAerial2560, 2560],
     ],
-    1356,
+    2598,
   ),
   juhuCourt: set(
     [
@@ -1194,10 +1254,13 @@ export const IMAGES = {
   juhuLiving: set(
     [
       [juhuLiving640, 640],
-      [juhuLiving880, 880],
-      [juhuLiving, 1200],
+      [juhuLiving960, 960],
+      [juhuLiving1280, 1280],
+      [juhuLiving1600, 1600],
+      [juhuLiving1920, 1920],
+      [juhuLiving2560, 2560],
     ],
-    1237,
+    2636,
   ),
   juhuDusk: set(
     [
@@ -1207,13 +1270,17 @@ export const IMAGES = {
     ],
     1356,
   ),
+  // From the client's 4096px file (Drive, "Ritz carlton maldives").
   ritzAerial: set(
     [
+      [ritzAerial640, 640],
       [ritzAerial960, 960],
-      [ritzAerial1440, 1440],
-      [ritzAerial, 1920],
+      [ritzAerial1280, 1280],
+      [ritzAerial1600, 1600],
+      [ritzAerial1920, 1920],
+      [ritzAerial2560, 2560],
     ],
-    1439,
+    1919,
   ),
   ritzVilla: set(
     [
@@ -1411,9 +1478,10 @@ export const IMAGES = {
   insightsProfileCut: set(
     [
       [insightsProfileCut640, 640],
-      [insightsProfileCut, 900],
+      [insightsProfileCut960, 960],
+      [insightsProfileCut1280, 1280],
     ],
-    1600,
+    2276,
   ),
   insightsYard: set(
     [
@@ -1462,9 +1530,10 @@ export const IMAGES = {
   insightsProfile: set(
     [
       [insightsProfileCut640, 640],
-      [insightsProfileCut, 900],
+      [insightsProfileCut960, 960],
+      [insightsProfileCut1280, 1280],
     ],
-    1600,
+    2276,
   ),
   insightsGlazing: set(
     [
@@ -1512,9 +1581,11 @@ export const IMAGES = {
   insightsHall: set(
     [
       [insightsHall640, 640],
-      [insightsHall, 941],
+      [insightsHall960, 960],
+      [insightsHall1280, 1280],
+      [insightsHall1600, 1600],
     ],
-    1351,
+    2287,
   ),
   insightsSection: one(insightsSection, 1300, 235),
   insightsMachiningCentre: set(
@@ -1565,12 +1636,12 @@ export const IMAGES = {
   insightsInspection: set(
     [
       [insightsInspection640, 640],
-      [insightsInspection830, 830],
-      [insightsInspection1080, 1080],
-      [insightsInspection1340, 1340],
-      [insightsInspection, 1672],
+      [insightsInspection960, 960],
+      [insightsInspection1280, 1280],
+      [insightsInspection1600, 1600],
+      [insightsInspection1920, 1920],
     ],
-    941,
+    1084,
   ),
   insightsPacking: set(
     [

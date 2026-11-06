@@ -139,14 +139,14 @@ export const PROJECTS_SEED: ProjectDoc[] = [
         "The dining pavilion — stone table, timber walls, glass open to the garden",
       ),
       plate(
-        "parikramaGarden",
-        "A view through the house to the garden",
-        "Looking through the house to the garden",
+        "parikramaVeranda",
+        "The veranda with its stone floor and timber soffit",
+        "The veranda — stone floor, timber soffit, sliding glass pockets open",
       ),
       plate(
-        "parikramaGrove",
-        "The long elevation of the house in a coconut grove",
-        "The long elevation set within the coconut grove",
+        "parikramaPalmGrove",
+        "The house low among the coconut palms of its grove",
+        "The house set low within the coconut grove",
       ),
       plate(
         "parikramaBedroom",
@@ -154,9 +154,9 @@ export const PROJECTS_SEED: ProjectDoc[] = [
         "The bedroom held against the garden",
       ),
       plate(
-        "parikramaSteps",
-        "Steps and tropical planting along the veranda",
-        "Steps and planting along the veranda edge",
+        "parikramaReflectingPool",
+        "The veranda along its reflecting pool, a timber bench against the stone wall",
+        "The veranda edge — a reflecting pool along the stone floor",
       ),
       plate(
         "parikramaDining",
@@ -219,7 +219,10 @@ export const PROJECTS_SEED: ProjectDoc[] = [
       gallery: [
         photo("projectFeatured", "Parikrama House — the pavilion under its cantilevered roof"),
         PARIKRAMA_HERO,
-        photo("parikramaGrove", "The long elevation of Parikrama House in a coconut grove"),
+        photo(
+          "stageParikrama",
+          "Parikrama House: a low pavilion under a deep roof, open to a lawn among palms",
+        ),
         photo("parikramaPavilion", "The living pavilion of Parikrama House"),
         photo("parikramaDining", "The dining pavilion of Parikrama House, open to the hills"),
         photo("parikramaBedroom", "A bedroom of Parikrama House opening onto the garden"),
@@ -301,8 +304,8 @@ export const PROJECTS_SEED: ProjectDoc[] = [
     ],
     scope: {
       ...photo(
-        "gardensGlassClose",
-        "Full-height glass wall of the living room under a roof overgrown with bougainvillea",
+        "gardensBedroom",
+        "A bedroom opening through full-height sliding glass onto the garden",
       ),
       heading: "Glazing for a house of stone.",
       paragraphs: [
@@ -839,7 +842,7 @@ export const PROJECTS_SEED: ProjectDoc[] = [
       show: true,
       title: "The Ritz-Carlton",
       subtitle: "Fari Islands — Kerry Hill Architects",
-      image: asset("homeRitz"),
+      image: asset("ritzVilla"),
     },
     isFeatured: false,
     feature: featureOf({

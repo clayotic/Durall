@@ -88,15 +88,18 @@ const arrived = (image: HTMLImageElement) =>
         image.addEventListener("error", () => resolve(), { once: true });
       });
 
-/** Every photograph shown on the open page, now; resolves once they are in. */
+/** Every photograph shown on the open page, once the page's own film work
+ * is done (holdWarming); resolves once they are in. The lazy ones still load
+ * as they near the screen meanwhile. */
 async function openPage() {
+  const work = held;
+  held = [];
+  await within(Promise.all(work));
   const images = [...document.querySelectorAll("img")].filter(
     (image) => image.getClientRects().length > 0,
   );
   for (const image of images) if (image.loading === "lazy") image.loading = "eager";
-  const work = held;
-  held = [];
-  await within(Promise.all([...images.map(arrived), ...work]));
+  await within(Promise.all(images.map(arrived)));
 }
 
 /** One of another page's photographs, as that page would ask for it here. */

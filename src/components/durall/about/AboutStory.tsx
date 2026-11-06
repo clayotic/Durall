@@ -23,7 +23,10 @@ export function AboutEyebrow({
 /**
  * "About Durall", between the opening and Our Approach (Figma 1070:19): the
  * year Durall began with its figures on the left, the story on the right.
- * On a phone the two stack.
+ * On a phone the two stack. The story appears word by word as it is read
+ * down the page (ScrollFx `words`, as on the rest of the page), or plays in
+ * once if the page opens with it on screen; a split into lines would break
+ * the navy clause out onto lines of its own.
  */
 export function AboutStory({ content }: { content: AboutPage["story"] }) {
   const ref = useSectionIntro<HTMLDivElement>({ selector: "[data-reveal]", y: 16 });
@@ -48,11 +51,7 @@ export function AboutStory({ content }: { content: AboutPage["story"] }) {
             >
               {content.heading}
             </h2>
-            <span
-              data-reveal
-              aria-hidden="true"
-              className="mt-[1.375rem] flex w-14 items-center lg:mx-auto"
-            >
+            <span data-reveal aria-hidden="true" className="mt-[1.375rem] flex w-14 items-center">
               <span className="h-px grow bg-navy" />
               <span className="size-[5px] bg-navy" />
             </span>
@@ -73,6 +72,8 @@ export function AboutStory({ content }: { content: AboutPage["story"] }) {
           </div>
           <p
             data-reveal
+            data-fx="words"
+            data-fx-load
             className="min-w-0 font-display text-[clamp(1rem,0.967vw,1.16rem)] leading-[1.62] text-pretty text-slate lg:pt-1.5"
           >
             {content.lead} <span className="text-navy">{content.emphasis}</span> {content.body}

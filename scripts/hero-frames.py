@@ -1,9 +1,18 @@
 # Makes the home opening's film (src/components/durall/Hero.tsx) from a video:
 # the still shown until the film runs (the video's first frame, at the three
-# widths src/assets/images.ts lists as `heroFilm`) and the 72 frames the
+# widths src/assets/images.ts lists as `heroFilm`) and the 96 frames the
 # scroll plays over it. Then rerun `node scripts/image-tones.mjs`.
 #
 #   python3 scripts/hero-frames.py HOMEHERO-1.mp4
+#
+# HOMEHERO-1 at its own 24 fps has too few frames where the glass moves
+# fastest for 96 even steps, so it is first given the frames between by
+# motion interpolation, losslessly, at the width the frames are kept at:
+#
+#   ffmpeg -i HOMEHERO-1.mp4 -vf "scale=1920:-2:flags=lanczos:in_color_matrix=bt709,
+#     format=gbrp,minterpolate=fps=72:mi_mode=mci:mc_mode=aobmc:me_mode=bidir:vsbmc=1"
+#     -c:v ffv1 interp72.mkv
+#   python3 scripts/hero-frames.py interp72.mkv
 #
 # The frames are picked at equal steps of change in the picture, not of time,
 # so equal steps of scroll move the picture equally. Frames where it has
@@ -19,8 +28,8 @@ from pathlib import Path
 import numpy as np
 from PIL import Image
 
-COUNT = 72
-FRAME_WIDTH, FRAME_QUALITY = 1600, 40
+COUNT = 96
+FRAME_WIDTH, FRAME_QUALITY = 1920, 55
 STILL_QUALITY = 75
 STILLS = {1920: "hero-film.webp", 1440: "hero-film-1440w.webp", 960: "hero-film-960w.webp"}
 # Below this share of the largest change, a frame at the end counts as settled.
