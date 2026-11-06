@@ -121,7 +121,9 @@ export const PAGE_FORMS: Record<PageKey, SectionSpec[]> = {
         area("approach.body", "Text", { rows: 3 }),
         iconItems("approach.capabilities", "Capabilities", { fixed: true }),
         photo("approach.mark", "Centre mark"),
-        photo("approach.drawing", "Drawing"),
+        text("approach.drawing.alt", "Drawing description", {
+          hint: "Read aloud to people using a screen reader. The line drawing itself is part of the design.",
+        }),
         text("approach.outcomeTitle", "Outcome heading"),
         area("approach.outcomeBody", "Outcome text", { rows: 2 }),
       ],

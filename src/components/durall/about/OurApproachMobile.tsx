@@ -30,6 +30,97 @@ const ROOF = [
   ["35.3,52.9 202.7,123.2 202.7,128.1 35.3,57.8", 0.7, 1],
 ] as const;
 
+/**
+ * The building that results, as line drawing: on a phone it draws itself
+ * floor first, roof last, inside a `.seq` group (styles.css); on a desktop,
+ * outside one, it is simply there for the diagram's wipe to uncover.
+ */
+export function PavilionDrawing({ label }: { label: string }) {
+  return (
+    <svg
+      role="img"
+      aria-label={label}
+      viewBox="0 0 350 200"
+      fill="none"
+      className="block h-auto w-full"
+    >
+      {SLAB.map(([points, opacity, weight], index) => (
+        <polygon
+          key={points}
+          className="seq-draw"
+          pathLength={1}
+          points={points}
+          fill={index ? "none" : "#050834"}
+          fillOpacity={0.04}
+          stroke="#050834"
+          strokeOpacity={opacity}
+          strokeWidth={weight}
+          style={at(0, 1.1)}
+        />
+      ))}
+      {POSTS.map((d) => (
+        <path
+          key={d}
+          className="seq-draw"
+          pathLength={1}
+          d={d}
+          stroke="#050834"
+          strokeOpacity={0.85}
+          strokeWidth={1.3}
+          style={at(0.2, 1.1)}
+        />
+      ))}
+      {MULLIONS.map((d) => (
+        <path
+          key={d}
+          className="seq-draw"
+          pathLength={1}
+          d={d}
+          stroke="#050834"
+          strokeOpacity={0.45}
+          style={at(0.45, 1.1)}
+        />
+      ))}
+      <polygon
+        className="seq-draw"
+        pathLength={1}
+        points="153.1,36.8 264.7,83.6 196.5,112.3 84.9,65.4"
+        stroke="#050834"
+        strokeOpacity={0.85}
+        strokeWidth={1.2}
+        style={at(0.2, 1.1)}
+      />
+      <polygon
+        className="seq-fade"
+        points="84.9,113.8 196.5,160.6 196.5,112.3 84.9,65.4"
+        fill="#050834"
+        fillOpacity={0.05}
+        style={at(0.9)}
+      />
+      <polygon
+        className="seq-fade"
+        points="264.7,132.0 196.5,160.6 196.5,112.3 264.7,83.6"
+        fill="#050834"
+        fillOpacity={0.08}
+        style={at(0.9)}
+      />
+      {ROOF.map(([points, opacity, weight], index) => (
+        <polygon
+          key={points}
+          className="seq-draw"
+          pathLength={1}
+          points={points}
+          fill={index ? "none" : "#fdfdfb"}
+          stroke="#050834"
+          strokeOpacity={opacity}
+          strokeWidth={weight}
+          style={at(0.6, 1.1)}
+        />
+      ))}
+    </svg>
+  );
+}
+
 /** Card height and the gap between cards, in px: the rail's ticks are set
  *  against them. */
 const CARD = 76;
@@ -218,87 +309,7 @@ export function OurApproachMobile({ content }: { content: AboutPage["approach"] 
 
         {/* What comes out: the building, drawn floor first, roof last. */}
         <div className="seq">
-          <svg
-            role="img"
-            aria-label={content.drawing.alt}
-            viewBox="0 0 350 200"
-            fill="none"
-            className="block h-auto w-full"
-          >
-            {SLAB.map(([points, opacity, weight], index) => (
-              <polygon
-                key={points}
-                className="seq-draw"
-                pathLength={1}
-                points={points}
-                fill={index ? "none" : "#050834"}
-                fillOpacity={0.04}
-                stroke="#050834"
-                strokeOpacity={opacity}
-                strokeWidth={weight}
-                style={at(0, 1.1)}
-              />
-            ))}
-            {POSTS.map((d) => (
-              <path
-                key={d}
-                className="seq-draw"
-                pathLength={1}
-                d={d}
-                stroke="#050834"
-                strokeOpacity={0.85}
-                strokeWidth={1.3}
-                style={at(0.2, 1.1)}
-              />
-            ))}
-            {MULLIONS.map((d) => (
-              <path
-                key={d}
-                className="seq-draw"
-                pathLength={1}
-                d={d}
-                stroke="#050834"
-                strokeOpacity={0.45}
-                style={at(0.45, 1.1)}
-              />
-            ))}
-            <polygon
-              className="seq-draw"
-              pathLength={1}
-              points="153.1,36.8 264.7,83.6 196.5,112.3 84.9,65.4"
-              stroke="#050834"
-              strokeOpacity={0.85}
-              strokeWidth={1.2}
-              style={at(0.2, 1.1)}
-            />
-            <polygon
-              className="seq-fade"
-              points="84.9,113.8 196.5,160.6 196.5,112.3 84.9,65.4"
-              fill="#050834"
-              fillOpacity={0.05}
-              style={at(0.9)}
-            />
-            <polygon
-              className="seq-fade"
-              points="264.7,132.0 196.5,160.6 196.5,112.3 264.7,83.6"
-              fill="#050834"
-              fillOpacity={0.08}
-              style={at(0.9)}
-            />
-            {ROOF.map(([points, opacity, weight], index) => (
-              <polygon
-                key={points}
-                className="seq-draw"
-                pathLength={1}
-                points={points}
-                fill={index ? "none" : "#fdfdfb"}
-                stroke="#050834"
-                strokeOpacity={opacity}
-                strokeWidth={weight}
-                style={at(0.6, 1.1)}
-              />
-            ))}
-          </svg>
+          <PavilionDrawing label={content.drawing.alt} />
           <div
             className="seq-rise mt-3 flex flex-col items-center gap-2 text-center"
             style={at(1.1)}

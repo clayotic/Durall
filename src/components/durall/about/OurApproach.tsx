@@ -4,7 +4,7 @@ import { iconOf } from "@/content/icons";
 import { imageOf, Lines } from "@/content/render";
 import type { AboutPage } from "@/content/types";
 import { AboutEyebrow } from "./AboutStory";
-import { OurApproachMobile } from "./OurApproachMobile";
+import { OurApproachMobile, PavilionDrawing } from "./OurApproachMobile";
 
 const SCENE_QUERY = "(min-width: 64rem) and (prefers-reduced-motion: no-preference)";
 
@@ -441,14 +441,7 @@ export function OurApproach({ content }: { content: AboutPage["approach"] }) {
                   className="absolute inset-y-0 right-0 z-[1] w-px bg-accent-blue opacity-0"
                 />
                 <div data-wipe-inner>
-                  <img
-                    draggable={false}
-                    {...imageOf(content.drawing.image)}
-                    alt={content.drawing.alt}
-                    loading="lazy"
-                    decoding="async"
-                    className="block w-full object-contain"
-                  />
+                  <PavilionDrawing label={content.drawing.alt} />
                 </div>
               </div>
             </div>

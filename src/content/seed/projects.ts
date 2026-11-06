@@ -134,9 +134,9 @@ export const PROJECTS_SEED: ProjectDoc[] = [
         "The living pavilion — roof plane cantilevered over glass and stone",
       ),
       plate(
-        "parikramaVeranda",
-        "The veranda with its stone floor and timber soffit",
-        "The veranda — stone floor, timber soffit, sliding glass pockets open",
+        "insightsParikramaIntent",
+        "The dining pavilion: a long stone table under a brass pendant, timber walls and glass open to the garden",
+        "The dining pavilion — stone table, timber walls, glass open to the garden",
       ),
       plate(
         "parikramaGarden",
@@ -163,7 +163,11 @@ export const PROJECTS_SEED: ProjectDoc[] = [
         "The dining pavilion open to the hills",
         "The dining pavilion open to the hills",
       ),
-      plate("parikramaPalms", "The house beneath the palms", "The house beneath the palms"),
+      plate(
+        "stageParikrama",
+        "A low pavilion under a deep roof, open to a lawn among palms",
+        "The house beneath the palms",
+      ),
     ],
     scope: {
       ...photo("parikramaVerandaOpen", "The veranda with its sliding glass pockets fully open"),

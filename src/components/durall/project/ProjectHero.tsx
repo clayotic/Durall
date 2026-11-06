@@ -74,10 +74,12 @@ const holdsBack = () =>
 /**
  * A project's short silent loop over the opening photograph: its `-loop`
  * cut, and `-loop-phone` on an upright screen. It starts once the page has
- * loaded, so the first screen does not wait behind it, comes up over the
- * photograph once it is running, and pauses when the page has covered the
- * opening. A missing cut never plays; the photograph stays. `held` is the
- * visitor's pause button (ProjectHero).
+ * loaded, so the first screen does not wait behind it. The photograph stays
+ * until the loop is really moving (its time has advanced, which a `playing`
+ * event alone does not promise on every browser), and comes back while the
+ * loop stops to buffer. It pauses when the page has covered the opening. A
+ * missing cut never plays; the photograph stays. `held` is the visitor's
+ * pause button (ProjectHero).
  */
 function HeroLoop({
   film,
@@ -133,10 +135,11 @@ function HeroLoop({
       playsInline
       preload="none"
       aria-hidden="true"
-      onPlaying={() => {
-        setShown(true);
-        onRunning(true);
+      onTimeUpdate={(event) => {
+        if (!shown && event.currentTarget.currentTime > 0.2) setShown(true);
       }}
+      onWaiting={() => setShown(false)}
+      onPlaying={() => onRunning(true)}
       onPause={() => onRunning(false)}
       className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-[var(--dur-long)] motion-reduce:transition-none ${shown ? "opacity-100" : "opacity-0"}`}
     >
