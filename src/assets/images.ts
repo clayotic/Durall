@@ -18,10 +18,11 @@
  * case instead of expecting the two to stay in sync on their own.
  */
 
-// The first frame of the home page's opening film (public/video/hero-*).
+// The first frame of the home page's opening film (scripts/hero-frames.py).
 import heroFilm960 from "./hero-film-960w.webp";
 import heroFilm1440 from "./hero-film-1440w.webp";
 import heroFilm1920 from "./hero-film.webp";
+import heroFilm2560 from "./hero-film-2560w.webp";
 import heroParikrama960 from "./hero-parikrama-960w.webp";
 import heroParikrama1440 from "./hero-parikrama-1440w.webp";
 import heroParikrama1920 from "./hero-parikrama.webp";
@@ -515,8 +516,9 @@ export const IMAGES = {
       [heroFilm960, 960],
       [heroFilm1440, 1440],
       [heroFilm1920, 1920],
+      [heroFilm2560, 2560],
     ],
-    1274,
+    1698,
   ),
   heroParikrama: set(
     [

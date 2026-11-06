@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useHeroIntro } from "@/lib/anim";
 import { prefersReducedMotion } from "@/lib/motion-prefs";
 import { holdWarming } from "@/lib/warm-images";
+import { avifFrames } from "@/lib/frame-pack";
 import { clamp01, ramp, smooth } from "@/lib/scene";
 import { destination, imageOf } from "@/content/render";
 import type { HomePage } from "@/content/types";
@@ -15,7 +16,7 @@ import { CtaButton } from "./ui";
  *
  * They come in four files rather than one each, coarse to fine: every
  * `STEPS[0]`th frame, then the frames between at each finer step. Each file
- * is those frames' WebP files end to end. */
+ * is those frames' AVIF files end to end, 2560 px wide (lib/frame-pack). */
 const COUNT = 96;
 const STEPS = [8, 4, 2, 1];
 const PACKS = Object.entries(
@@ -36,8 +37,8 @@ const PORTRAIT = "portrait:object-[88%_50%]";
 const FOLLOW = 9;
 /** How long the scroll has to rest before the glass settles (ms). */
 const SETTLE_MS = 150;
-/** How many frames are kept decoded, the ones nearest the glass. */
-const WINDOW = 12;
+/** How many frames are kept decoded, the ones nearest the glass (17 MB each). */
+const WINDOW = 10;
 /** The stretch of the film's scroll over which the heading and buttons lift
  *  away, so the open room is seen clear before the page comes over it. */
 const LIFT = { from: 0.5, to: 0.95 };
@@ -78,7 +79,8 @@ const HINT = { every: 6000, length: 2800, reach: 0.14 };
  * them. Left to the canvas, each frame was decoded on the page's thread as
  * it was drawn, 10 ms or more apiece and again whenever the browser had let
  * it go, which stalled the scroll; all 96 decoded at once would hold about
- * 940 MB. Where the one wanted is not ready yet, the nearest that is drawn.
+ * 1.7 GB. Where the one wanted is not ready yet, the nearest that is drawn.
+ * A browser that cannot read AVIF (an older Safari) keeps the still.
  *
  * A phone held upright sees only a narrow cut of the room, so still and
  * film are both set to the right of the picture there (`PORTRAIT`), where
@@ -184,7 +186,11 @@ function useHeroFilm(sectionRef: React.RefObject<HTMLElement | null>) {
             drawn = -1;
             wake();
           },
-          () => decoding.delete(n),
+          () => {
+            // Not a picture this browser can read: not asked again.
+            decoding.delete(n);
+            blobs[n] = undefined;
+          },
         );
       }
     };
@@ -273,14 +279,11 @@ function useHeroFilm(sectionRef: React.RefObject<HTMLElement | null>) {
           return;
         }
         if (disposed) return;
-        const view = new DataView(file);
-        let at = 0;
-        for (const n of part) {
-          if (at + 8 > file.byteLength) break;
-          const end = at + 8 + view.getUint32(at + 4, true); // the RIFF header's size
-          blobs[n] = new Blob([file.slice(at, end)], { type: "image/webp" });
-          at = end;
-        }
+        const frames = avifFrames(file);
+        part.forEach((n, i) => {
+          const frame = frames[i];
+          if (frame) blobs[n] = new Blob([frame], { type: "image/avif" });
+        });
         keep(here());
       }
     };
@@ -347,7 +350,9 @@ export function Hero({ content }: { content: HomePage["hero"] }) {
             draggable={false}
             {...image}
             alt={content.photo.alt}
-            sizes="100vw"
+            // A 3:2 picture covering the screen: on one narrower than 3:2 it
+            // is the screen's height, so 1.5 times that across.
+            sizes="(max-aspect-ratio: 3/2) 151vh, 100vw"
             fetchPriority="high"
             decoding="async"
             className={`h-full w-full object-cover ${PORTRAIT}`}
@@ -355,8 +360,8 @@ export function Hero({ content }: { content: HomePage["hero"] }) {
           {/* The film, drawn over the still by useHeroFilm. */}
           <canvas
             data-hero-film
-            width={1920}
-            height={1274}
+            width={2560}
+            height={1698}
             aria-hidden="true"
             className={`pointer-events-none absolute inset-0 h-full w-full object-cover ${PORTRAIT}`}
           />
