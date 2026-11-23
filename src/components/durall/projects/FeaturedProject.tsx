@@ -7,6 +7,7 @@ import { ArrowRight } from "../ui";
 import { imageOf, Lines } from "@/content/render";
 import type { ProjectFeature } from "@/content/types";
 import { transition } from "@/lib/motion-tokens";
+import { cutOf, ownFilm, UPRIGHT } from "@/content/video";
 
 const INTERVAL = 5000;
 
@@ -20,36 +21,49 @@ function AwardIcon() {
 
 export function FeaturedProject({
   slug,
+  film: projectFilm,
   feature: FEATURED,
   exploreLabel,
 }: {
   slug: string;
+  film: string;
   feature: ProjectFeature;
   exploreLabel: string;
 }) {
-  const FEATURED_GALLERY = FEATURED.gallery.map((photo) => ({
-    image: imageOf(photo.image),
-    alt: photo.alt,
-  }));
+  const film = slug === "parikrama-house" ? ownFilm(projectFilm) : null;
+  const FEATURED_GALLERY = film
+    ? []
+    : FEATURED.gallery.map((photo) => ({
+        image: imageOf(photo.image),
+        alt: photo.alt,
+      }));
   const reduced = useReducedMotion();
   const panelRef = useReveal<HTMLDivElement>({ selector: "[data-reveal]", y: 32, stagger: 0.08 });
   const mediaRef = useClipReveal<HTMLDivElement>();
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
+  const [playing, setPlaying] = useState(false);
   const total = FEATURED_GALLERY.length;
   const advance = useCallback(() => setActive((i) => (i + 1) % total), [total]);
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
-    if (reduced || paused) return;
+    if (film || reduced || paused) return;
     timer.current = setInterval(advance, INTERVAL);
     return () => {
       if (timer.current) clearInterval(timer.current);
     };
-  }, [advance, paused, reduced]);
+  }, [advance, film, paused, reduced]);
 
   const current = FEATURED_GALLERY[active] ?? FEATURED_GALLERY[0]!;
+  const toggleFilm = () => {
+    const video = videoRef.current;
+    if (!video) return;
+    if (video.paused) void video.play().catch(() => {});
+    else video.pause();
+  };
 
   return (
     <section
@@ -196,56 +210,97 @@ export function FeaturedProject({
             className="relative aspect-[1153/721] w-full xl:h-full xl:aspect-auto"
           >
             <AnimatePresence initial={false} mode="sync">
-              <motion.img
-                draggable={false}
-                key={current.image.src}
-                {...current.image}
-                alt={current.alt}
-                sizes="(min-width: 80rem) 55vw, 100vw"
-                className="absolute inset-0 h-full w-full object-cover"
-                initial={reduced ? { opacity: 1 } : { opacity: 0, scale: 1.04 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={reduced ? { opacity: 1 } : { opacity: 0 }}
-                transition={transition("cinematic", reduced)}
-              />
+              {film ? (
+                <video
+                  key={film}
+                  ref={videoRef}
+                  autoPlay={!reduced}
+                  muted
+                  loop
+                  playsInline
+                  preload="none"
+                  poster={cutOf(film, "poster", ".webp")}
+                  aria-hidden="true"
+                  onPlaying={() => setPlaying(true)}
+                  onPause={() => setPlaying(false)}
+                  className="absolute inset-0 h-full w-full object-cover"
+                >
+                  <source src={cutOf(film, "loop-phone")} media={UPRIGHT} />
+                  <source src={cutOf(film, "loop")} />
+                </video>
+              ) : current ? (
+                <motion.img
+                  draggable={false}
+                  key={current.image.src}
+                  {...current.image}
+                  alt={current.alt}
+                  sizes="(min-width: 80rem) 55vw, 100vw"
+                  className="absolute inset-0 h-full w-full object-cover"
+                  initial={reduced ? { opacity: 1 } : { opacity: 0, scale: 1.04 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={reduced ? { opacity: 1 } : { opacity: 0 }}
+                  transition={transition("cinematic", reduced)}
+                />
+              ) : null}
             </AnimatePresence>
           </div>
 
-          <div className="absolute bottom-[clamp(1rem,2vw,2.25rem)] left-[clamp(1rem,2.5vw,3rem)] flex items-center gap-4">
-            <p className="font-display text-xs font-bold tracking-[0.0625rem] tabular-nums text-white">
-              {String(active + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
-            </p>
-            <div className="h-0.5 w-20 overflow-hidden bg-white/30">
-              <motion.div
-                className="h-0.5 bg-white"
-                animate={{ width: `${((active + 1) / total) * 100}%` }}
-                transition={transition("medium", reduced)}
-              />
-            </div>
-            {/* Pause used to be wired only to onMouseEnter/onFocus on the
-                wrapper — and the wrapper has no focusable children, so onFocus
-                never fired. Keyboard and touch users had no way to stop a loop
-                that runs indefinitely. */}
-            {reduced ? null : (
+          {film ? (
+            <div className="absolute bottom-[clamp(1rem,2vw,2.25rem)] left-[clamp(1rem,2.5vw,3rem)]">
               <button
                 type="button"
-                onClick={() => setPaused((p) => !p)}
-                aria-pressed={paused}
-                aria-label={paused ? "Resume the project gallery" : "Pause the project gallery"}
+                onClick={toggleFilm}
+                aria-label={playing ? "Pause the film" : "Play the film"}
                 className="flex h-11 w-11 items-center justify-center rounded-full text-white transition-colors hover:bg-white/20"
               >
-                {paused ? (
-                  <svg viewBox="0 0 16 16" fill="none" aria-hidden="true" className="h-3.5 w-3.5">
-                    <path d="M4 2.5l9 5.5-9 5.5V2.5Z" fill="currentColor" />
-                  </svg>
-                ) : (
+                {playing ? (
                   <svg viewBox="0 0 16 16" fill="none" aria-hidden="true" className="h-3.5 w-3.5">
                     <path d="M4.5 2.5h2.5v11H4.5zM9 2.5h2.5v11H9z" fill="currentColor" />
                   </svg>
+                ) : (
+                  <svg viewBox="0 0 16 16" fill="none" aria-hidden="true" className="h-3.5 w-3.5">
+                    <path d="M4 2.5l9 5.5-9 5.5V2.5Z" fill="currentColor" />
+                  </svg>
                 )}
               </button>
-            )}
-          </div>
+            </div>
+          ) : (
+            <div className="absolute bottom-[clamp(1rem,2vw,2.25rem)] left-[clamp(1rem,2.5vw,3rem)] flex items-center gap-4">
+              <p className="font-display text-xs font-bold tracking-[0.0625rem] tabular-nums text-white">
+                {String(active + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
+              </p>
+              <div className="h-0.5 w-20 overflow-hidden bg-white/30">
+                <motion.div
+                  className="h-0.5 bg-white"
+                  animate={{ width: `${((active + 1) / total) * 100}%` }}
+                  transition={transition("medium", reduced)}
+                />
+              </div>
+              {/* Pause used to be wired only to onMouseEnter/onFocus on the
+                  wrapper — and the wrapper has no focusable children, so onFocus
+                  never fired. Keyboard and touch users had no way to stop a loop
+                  that runs indefinitely. */}
+              {reduced ? null : (
+                <button
+                  type="button"
+                  onClick={() => setPaused((p) => !p)}
+                  aria-pressed={paused}
+                  aria-label={paused ? "Resume the project gallery" : "Pause the project gallery"}
+                  className="flex h-11 w-11 items-center justify-center rounded-full text-white transition-colors hover:bg-white/20"
+                >
+                  {paused ? (
+                    <svg viewBox="0 0 16 16" fill="none" aria-hidden="true" className="h-3.5 w-3.5">
+                      <path d="M4 2.5l9 5.5-9 5.5V2.5Z" fill="currentColor" />
+                    </svg>
+                  ) : (
+                    <svg viewBox="0 0 16 16" fill="none" aria-hidden="true" className="h-3.5 w-3.5">
+                      <path d="M4.5 2.5h2.5v11H4.5zM9 2.5h2.5v11H9z" fill="currentColor" />
+                    </svg>
+                  )}
+                </button>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </section>

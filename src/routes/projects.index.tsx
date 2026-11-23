@@ -46,6 +46,7 @@ function ProjectsPage() {
         {featured ? (
           <FeaturedProject
             slug={featured.slug}
+            film={featured.slug === "parikrama-house" ? featured.film : ""}
             feature={featured.feature}
             exploreLabel={page.featured.exploreLabel}
           />

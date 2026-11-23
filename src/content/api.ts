@@ -140,7 +140,9 @@ export const fetchProjects = createServerFn({ method: "GET" }).handler(async () 
   const featured = featuredProject(projects);
   return {
     page,
-    featured: featured ? { slug: featured.slug, feature: presentationOf(featured) } : null,
+    featured: featured
+      ? { slug: featured.slug, film: featured.film, feature: presentationOf(featured) }
+      : null,
     portfolio: portfolioOf(projects),
   };
 });
